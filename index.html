@@ -903,6 +903,10 @@
       analysisStatusBox.classList.add("show", "complete");
     }
 
+    function wait(ms) {
+      return new Promise((resolve) => window.setTimeout(resolve, ms));
+    }
+
     function hideAnalysisStatus() {
       analysisStatusBox.classList.remove("show", "complete");
       analysisStatusBox.classList.add("hidden");
@@ -1210,7 +1214,7 @@
     async function selectIdea(index) {
       selectedIdea = currentIdeas[index];
       selectedIdeaText.textContent = `선택한 아이템: ${selectedIdea.name}`;
-      analysisSection.classList.remove("hidden");
+      analysisSection.classList.add("hidden");
       planSection.classList.add("hidden");
       scoreDashboard.replaceChildren();
       analysisGrid.replaceChildren();
@@ -1222,17 +1226,20 @@
       setLoading(true);
       try {
         currentAnalysis = await analyzeIdeaWithAI(currentProfile, selectedIdea);
+        showAnalysisCompleteStatus("아이템 분석 완료!");
+        await wait(700);
         renderAnalysis(currentAnalysis);
         analysisBox.classList.add("hidden");
-        showAnalysisCompleteStatus("아이템 분석 완료!");
+        analysisSection.classList.remove("hidden");
+        analysisSection.scrollIntoView({ behavior: "smooth", block: "start" });
       } catch (error) {
         currentAnalysis = analyzeIdea(currentProfile, selectedIdea);
+        showAnalysisCompleteStatus("기본 분석 결과 준비 완료!");
+        await wait(700);
         renderAnalysis(currentAnalysis);
         analysisBox.classList.remove("hidden");
-        analysisBox.textContent = `AI 분석 호출에 실패하여 기본 분석 로직으로 대체했습니다.
-
-오류: ${error.message}`;
-        hideAnalysisStatus();
+        analysisBox.textContent = `AI 분석 호출에 실패하여 기본 분석 로직으로 대체했습니다.\n\n오류: ${error.message}`;
+        analysisSection.classList.remove("hidden");
       } finally {
         setLoading(false);
       }
