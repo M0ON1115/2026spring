@@ -276,6 +276,28 @@
       flex: 0 0 auto;
     }
 
+    .complete-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #862633;
+      color: white;
+      font-size: 13px;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .status.complete .loader {
+      display: none;
+    }
+
+    .status:not(.complete) .complete-icon {
+      display: none;
+    }
+
     .status-text {
       line-height: 1.6;
     }
@@ -590,6 +612,7 @@
       </div>
       <div class="status" id="statusBox" aria-live="polite">
         <span class="loader" aria-hidden="true"></span>
+        <span class="complete-icon" aria-hidden="true">✓</span>
         <span class="status-text" id="statusText">처리 중입니다...</span>
       </div>
     </section>
@@ -599,6 +622,12 @@
       <p class="panel-desc">아래 아이템 중 하나를 선택하면 시장 전망과 실행 가능성을 심층 분석합니다.</p>
       <div class="cards" id="ideaCards"></div>
     </section>
+
+    <div class="status analysis-status hidden" id="analysisStatusBox" aria-live="polite">
+      <span class="loader" aria-hidden="true"></span>
+      <span class="complete-icon" aria-hidden="true">✓</span>
+      <span class="status-text" id="analysisStatusText">선택한 아이템을 심층 분석하는 중입니다...</span>
+    </div>
 
     <section class="panel hidden" id="analysisSection">
       <h2>아이템 분석 대시보드</h2>
@@ -678,7 +707,9 @@
     const copyPlanBtn = document.getElementById("copyPlanBtn");
     const statusBox = document.getElementById("statusBox");
     const statusText = document.getElementById("statusText");
-        const certificateChecklist = document.getElementById("certificateChecklist");
+    const analysisStatusBox = document.getElementById("analysisStatusBox");
+    const analysisStatusText = document.getElementById("analysisStatusText");
+    const certificateChecklist = document.getElementById("certificateChecklist");
     const primaryCollegeSelect = document.getElementById("primaryCollege");
     const primaryMajorSelect = document.getElementById("primaryMajor");
     const secondaryCollegeSelect = document.getElementById("secondaryCollege");
@@ -828,10 +859,33 @@
 
     function showStatus(message) {
       statusText.textContent = message;
+      statusBox.classList.remove("complete");
       statusBox.classList.add("show");
     }
 
+    function showCompleteStatus(message) {
+      statusText.textContent = message;
+      statusBox.classList.add("show", "complete");
+    }
+
     function hideStatus() { statusBox.classList.remove("show"); }
+
+    function showAnalysisStatus(message) {
+      analysisStatusText.textContent = message;
+      analysisStatusBox.classList.remove("hidden", "complete");
+      analysisStatusBox.classList.add("show");
+    }
+
+    function showAnalysisCompleteStatus(message) {
+      analysisStatusText.textContent = message;
+      analysisStatusBox.classList.remove("hidden");
+      analysisStatusBox.classList.add("show", "complete");
+    }
+
+    function hideAnalysisStatus() {
+      analysisStatusBox.classList.remove("show", "complete");
+      analysisStatusBox.classList.add("hidden");
+    }
 
     function setLoading(isLoading) {
       recommendBtn.disabled = isLoading;
@@ -1142,14 +1196,14 @@
       analysisSummary.classList.add("hidden");
       analysisBox.classList.remove("hidden");
       analysisBox.textContent = "선택한 아이템의 시장성, 고객, 경쟁, 수익 모델을 분석하는 중입니다...";
-      showStatus("선택한 아이템을 심층 분석하는 중입니다...");
-      analysisSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      showAnalysisStatus("선택한 아이템을 심층 분석하는 중입니다...");
+      analysisStatusBox.scrollIntoView({ behavior: "smooth", block: "center" });
       setLoading(true);
       try {
         currentAnalysis = await analyzeIdeaWithAI(currentProfile, selectedIdea);
         renderAnalysis(currentAnalysis);
         analysisBox.classList.add("hidden");
-        hideStatus();
+        showAnalysisCompleteStatus("아이템 분석 완료!");
       } catch (error) {
         currentAnalysis = analyzeIdea(currentProfile, selectedIdea);
         renderAnalysis(currentAnalysis);
@@ -1157,7 +1211,7 @@
         analysisBox.textContent = `AI 분석 호출에 실패하여 기본 분석 로직으로 대체했습니다.
 
 오류: ${error.message}`;
-        hideStatus();
+        hideAnalysisStatus();
       } finally {
         setLoading(false);
       }
@@ -1272,6 +1326,7 @@
       analysisSection.classList.add("hidden");
       planSection.classList.add("hidden");
       hideStatus();
+      hideAnalysisStatus();
       currentProfile = null;
       currentIdeas = [];
       selectedIdea = null;
@@ -1305,13 +1360,15 @@
         recommendationSection.classList.remove("hidden");
         analysisSection.classList.add("hidden");
         planSection.classList.add("hidden");
-        hideStatus();
+        hideAnalysisStatus();
+        showCompleteStatus("추천 아이템 생성 완료!");
       } catch (error) {
         currentIdeas = sampleIdeas(profile);
         renderIdeas(currentIdeas);
         recommendationSection.classList.remove("hidden");
         analysisSection.classList.add("hidden");
         planSection.classList.add("hidden");
+        hideAnalysisStatus();
         showStatus(`AI 호출에 실패하여 기본 샘플 추천으로 대체했습니다. 오류: ${error.message}`);
       } finally {
         setLoading(false);
@@ -1326,7 +1383,7 @@
       }
       showStatus("창업 계획 초안을 정리하는 중입니다...");
       renderBusinessPlan(currentProfile, selectedIdea, currentAnalysis);
-      hideStatus();
+      showCompleteStatus("창업 계획 초안 생성 완료!");
       planSection.classList.remove("hidden");
       planSection.scrollIntoView({ behavior: "smooth", block: "start" });
     });
