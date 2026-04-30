@@ -4,19 +4,93 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-function safeJsonParse(text) {
-  try {
-    return JSON.parse(text);
-  } catch (error) {
-    const start = text.indexOf("{");
-    const end = text.lastIndexOf("}");
+const analysisSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    scores: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        "사용자 적합성": {
+          type: "number",
+          minimum: 0,
+          maximum: 100
+        },
+        "실행 가능성": {
+          type: "number",
+          minimum: 0,
+          maximum: 100
+        },
+        "시장성": {
+          type: "number",
+          minimum: 0,
+          maximum: 100
+        },
+        "수익성": {
+          type: "number",
+          minimum: 0,
+          maximum: 100
+        },
+        "차별성": {
+          type: "number",
+          minimum: 0,
+          maximum: 100
+        },
+        "확장성": {
+          type: "number",
+          minimum: 0,
+          maximum: 100
+        },
+        "리스크 안정성": {
+          type: "number",
+          minimum: 0,
+          maximum: 100
+        }
+      },
+      required: [
+        "사용자 적합성",
+        "실행 가능성",
+        "시장성",
+        "수익성",
+        "차별성",
+        "확장성",
+        "리스크 안정성"
+      ]
+    },
+    sections: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        market: { type: "string" },
+        customer: { type: "string" },
+        competition: { type: "string" },
+        revenue: { type: "string" },
+        mvp: { type: "string" },
+        risk: { type: "string" },
+        growth: { type: "string" }
+      },
+      required: [
+        "market",
+        "customer",
+        "competition",
+        "revenue",
+        "mvp",
+        "risk",
+        "growth"
+      ]
+    },
+    summary: { type: "string" }
+  },
+  required: ["scores", "sections", "summary"]
+};
 
-    if (start === -1 || end === -1 || end <= start) {
-      throw error;
-    }
-
-    return JSON.parse(text.slice(start, end + 1));
+function parseOutput(response) {
+  if (!response.output_text) {
+    throw new Error("OpenAI 응답에 output_text가 없습니다.");
   }
+
+  return JSON.parse(response.output_text);
 }
 
 export default async function handler(req, res) {
@@ -35,7 +109,7 @@ export default async function handler(req, res) {
       "당신은 창업 아이템의 시장성, 실행 가능성, 수익성, 리스크를 평가하는 창업 심사역입니다. " +
       "사용자의 자본과 시간 제약을 엄격히 반영하세요. " +
       "모든 답변은 한국어로 작성하세요. " +
-      "반드시 json 형식의 객체만 반환하세요. 설명 문장, 마크다운, 코드블록 없이 순수 json만 반환하세요.";
+      "반드시 json 형식의 객체만 반환하세요.";
 
     const input = `
 사용자 정보:
@@ -63,30 +137,17 @@ export default async function handler(req, res) {
 - 예상 초기 비용: ${idea.cost}
 
 요청:
-선택 아이템을 심층 분석하세요. 시장 전망, 고객 분석, 경쟁 분석, 수익 모델, 초기 실행 계획, 리스크, 향후 발전 가능성을 포함하세요.
+선택 아이템을 심층 분석하세요.
 
-반환 형식은 반드시 json 객체여야 합니다:
-{
-  "scores": {
-    "사용자 적합성": 0,
-    "실행 가능성": 0,
-    "시장성": 0,
-    "수익성": 0,
-    "차별성": 0,
-    "확장성": 0,
-    "리스크 안정성": 0
-  },
-  "sections": {
-    "market": "시장 전망",
-    "customer": "고객 분석",
-    "competition": "경쟁 분석",
-    "revenue": "수익 모델 분석",
-    "mvp": "초기 실행 계획",
-    "risk": "리스크 및 대응 방안",
-    "growth": "향후 발전 가능성"
-  },
-  "summary": "종합 평가 요약"
-}
+반드시 포함할 분석:
+- 시장 전망
+- 고객 분석
+- 경쟁 분석
+- 수익 모델 분석
+- 초기 실행 계획
+- 리스크 및 대응 방안
+- 향후 발전 가능성
+- 종합 평가 요약
 `;
 
     const response = await client.responses.create({
@@ -95,14 +156,16 @@ export default async function handler(req, res) {
       input,
       text: {
         format: {
-          type: "json_object"
+          type: "json_schema",
+          name: "startup_analysis",
+          strict: true,
+          schema: analysisSchema
         }
       },
-      max_output_tokens: 1800
+      max_output_tokens: 2200
     });
 
-    const text = response.output_text;
-    const parsed = safeJsonParse(text);
+    const parsed = parseOutput(response);
 
     return res.status(200).json(parsed);
   } catch (error) {
