@@ -536,7 +536,6 @@
         <div class="form-group full">
           <label>보유 자격증</label>
           <div class="checklist" id="certificateChecklist"></div>
-          <p class="hint">자격증 목록은 JavaScript의 <code>certificateOptions</code> 배열에 항목을 추가하면 자동으로 체크리스트에 반영됩니다.</p>
         </div>
 
         <div class="form-group">
@@ -1155,7 +1154,9 @@
         currentAnalysis = analyzeIdea(currentProfile, selectedIdea);
         renderAnalysis(currentAnalysis);
         analysisBox.classList.remove("hidden");
-        analysisBox.textContent = `AI 분석 호출에 실패하여 기본 분석 로직으로 대체했습니다.\n\n오류: ${error.message}`;
+        analysisBox.textContent = `AI 분석 호출에 실패하여 기본 분석 로직으로 대체했습니다.
+
+오류: ${error.message}`;
         hideStatus();
       } finally {
         setLoading(false);
