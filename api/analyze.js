@@ -29,33 +29,47 @@ const scoreSchema = {
         "확장성",
         "리스크 안정성"
       ]
-    },
-    keywords: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        market: { type: "string" },
-        customer: { type: "string" },
-        competition: { type: "string" },
-        revenue: { type: "string" },
-        mvp: { type: "string" },
-        risk: { type: "string" },
-        growth: { type: "string" },
-        summary: { type: "string" }
-      },
-      required: [
-        "market",
-        "customer",
-        "competition",
-        "revenue",
-        "mvp",
-        "risk",
-        "growth",
-        "summary"
-      ]
     }
   },
-  required: ["scores", "keywords"]
+  required: ["scores"]
+};
+
+const sectionPrompts = {
+  market: {
+    title: "시장 전망",
+    prompt:
+      "이 창업 아이템의 시장 전망을 분석하세요. 실제 수요 가능성, 초기 검증 방법, 성장 가능성을 중심으로 4~6문장으로 작성하세요."
+  },
+  customer: {
+    title: "고객 분석",
+    prompt:
+      "이 창업 아이템의 핵심 고객을 분석하세요. 고객이 겪는 문제, 지불 가능성, 접근 가능한 초기 고객층을 중심으로 4~6문장으로 작성하세요."
+  },
+  competition: {
+    title: "경쟁 분석",
+    prompt:
+      "이 창업 아이템의 경쟁 상황을 분석하세요. 기존 대체재, 차별화 포인트, 모방 가능성을 중심으로 4~6문장으로 작성하세요."
+  },
+  revenue: {
+    title: "수익 모델 분석",
+    prompt:
+      "이 창업 아이템의 수익 모델을 분석하세요. 초기 수익화 방식, 가격 전략, 반복 매출 가능성을 중심으로 4~6문장으로 작성하세요."
+  },
+  mvp: {
+    title: "초기 실행 계획",
+    prompt:
+      "이 창업 아이템의 MVP 실행 계획을 제안하세요. 첫 2주 안에 할 수 있는 검증, 필요한 기능, 테스트 고객 모집 방법을 중심으로 4~6문장으로 작성하세요."
+  },
+  risk: {
+    title: "리스크 및 대응 방안",
+    prompt:
+      "이 창업 아이템의 주요 리스크와 대응 방안을 분석하세요. 수요 부족, 차별화 실패, 운영 부담, AI 신뢰성 문제를 중심으로 4~6문장으로 작성하세요."
+  },
+  growth: {
+    title: "향후 발전 가능성",
+    prompt:
+      "이 창업 아이템의 향후 발전 가능성을 분석하세요. 기능 확장, 고객층 확장, B2B 가능성, 플랫폼화 가능성을 중심으로 4~6문장으로 작성하세요."
+  }
 };
 
 function clampScore(value, fallback = 75) {
@@ -65,20 +79,16 @@ function clampScore(value, fallback = 75) {
     : fallback;
 }
 
-function defaultScores() {
-  return {
-    "사용자 적합성": 78,
-    "실행 가능성": 76,
-    "시장성": 74,
-    "수익성": 72,
-    "차별성": 70,
-    "확장성": 75,
-    "리스크 안정성": 68
-  };
-}
-
 function normalizeScores(scores = {}) {
-  const base = defaultScores();
+  const base = {
+    "사용자 적합성": 75,
+    "실행 가능성": 75,
+    "시장성": 75,
+    "수익성": 75,
+    "차별성": 75,
+    "확장성": 75,
+    "리스크 안정성": 75
+  };
 
   Object.keys(base).forEach((key) => {
     base[key] = clampScore(scores[key], base[key]);
@@ -87,83 +97,15 @@ function normalizeScores(scores = {}) {
   return base;
 }
 
-function makeSections(profile, idea, keywords = {}) {
-  const marketKeyword = keywords.market || "초기 수요 검증 필요";
-  const customerKeyword = keywords.customer || "명확한 고객 문제 중심";
-  const competitionKeyword = keywords.competition || "기존 대체재와 차별화 필요";
-  const revenueKeyword = keywords.revenue || "소액 결제 또는 구독형 가능";
-  const mvpKeyword = keywords.mvp || "작은 기능부터 검증";
-  const riskKeyword = keywords.risk || "AI 결과 신뢰성과 실제 지불 의사";
-  const growthKeyword = keywords.growth || "기능 확장과 제휴 가능성";
-
-  return {
-    market:
-      `${idea.name}은 ${idea.customer}를 대상으로 하며, 핵심 문제는 "${idea.problem}"입니다. ` +
-      `시장 관점에서는 ${marketKeyword}가 중요합니다. 초기에는 큰 시장 규모를 단정하기보다, ` +
-      `랜딩페이지 신청, 설문, 무료 체험 등을 통해 실제 수요와 지불 의사를 확인하는 방식이 적합합니다.`,
-
-    customer:
-      `주요 고객은 ${idea.customer}입니다. 이 고객층은 ${customerKeyword}라는 특징을 가질 가능성이 있습니다. ` +
-      `따라서 서비스 메시지는 기능 설명보다 고객이 겪는 불편, 시간 절약, 비용 절감, 결과물 품질 향상에 초점을 두는 것이 좋습니다.`,
-
-    competition:
-      `경쟁 측면에서는 ${competitionKeyword}가 핵심입니다. 유사 서비스나 대체재가 이미 존재할 수 있으므로, ` +
-      `단순히 AI를 사용한다는 점만으로는 부족합니다. ${profile.primaryMajorText} 배경, 보유 자격증, 특정 고객층 이해를 결합한 맞춤형 제안이 차별화 포인트가 될 수 있습니다.`,
-
-    revenue:
-      `수익 모델은 ${idea.revenue}를 기본으로 검토할 수 있습니다. 특히 ${revenueKeyword} 방향이 현실적입니다. ` +
-      `초기에는 무료 체험 또는 저가형 상품으로 진입 장벽을 낮추고, 이후 반복 사용 기능이나 프리미엄 리포트로 확장하는 방식이 적합합니다.`,
-
-    mvp:
-      `초기 실행은 ${mvpKeyword} 방식으로 진행하는 것이 좋습니다. 1단계에서는 핵심 기능만 구현하고, ` +
-      `2단계에서는 테스트 사용자 10~20명을 모집해 반응을 확인합니다. 3단계에서는 사용자가 실제로 돈을 낼 기능과 불필요한 기능을 구분해 MVP를 개선합니다.`,
-
-    risk:
-      `주요 리스크는 ${riskKeyword}입니다. AI 분석 결과가 그럴듯해 보여도 실제 시장 검증을 대신할 수는 없습니다. ` +
-      `따라서 고객 인터뷰, 클릭률, 신청률, 결제 전환율 같은 지표를 통해 아이템의 현실성을 확인해야 합니다.`,
-
-    growth:
-      `향후에는 ${growthKeyword} 방향으로 확장할 수 있습니다. 초기에는 단일 기능 서비스로 시작하되, ` +
-      `사용자 계정, 결과 저장, 계획서 PDF 출력, 시장 데이터 연동, 팀원 매칭 기능 등으로 발전시킬 수 있습니다.`
-  };
-}
-
-function makeSummary(profile, idea, scores, keywords = {}) {
-  const average = Math.round(
+function getAverageScore(scores) {
+  return Math.round(
     Object.values(scores).reduce((sum, value) => sum + value, 0) /
       Object.keys(scores).length
   );
-
-  return (
-    keywords.summary ||
-    `${idea.name}은 ${profile.primaryMajorText} 배경과 사용자의 조건을 반영했을 때 종합 ${average}점 수준의 검토 가치가 있는 아이템입니다. ` +
-      `다만 실제 창업 가능성은 초기 고객 반응과 지불 의사 검증을 통해 확인해야 합니다.`
-  );
 }
 
-function parseOutput(response) {
-  if (response.status === "incomplete") {
-    throw new Error(
-      `OpenAI 응답이 중간에 잘렸습니다. reason: ${
-        response.incomplete_details?.reason || "unknown"
-      }`
-    );
-  }
-
-  if (!response.output_text) {
-    throw new Error("OpenAI 응답에 output_text가 없습니다.");
-  }
-
-  return JSON.parse(response.output_text);
-}
-
-async function createScoreAnalysis(profile, idea) {
-  const instructions =
-    "당신은 창업 아이템을 평가하는 심사역입니다. " +
-    "긴 문장을 쓰지 말고, 점수와 매우 짧은 키워드만 반환하세요. " +
-    "모든 응답은 한국어로 작성하세요. 반드시 json 객체만 반환하세요.";
-
-  const input = `
+function getContext(profile, idea) {
+  return `
 사용자 정보:
 - 제1전공: ${profile.primaryMajorText}
 - 제2전공: ${profile.secondaryMajorText}
@@ -187,29 +129,135 @@ async function createScoreAnalysis(profile, idea) {
 - 추천 적합도: ${idea.fitScore}점
 - 난이도: ${idea.difficulty}
 - 예상 초기 비용: ${idea.cost}
-
-요청:
-아래 평가 점수와 각 분석 항목의 핵심 키워드만 작성하세요.
-keywords의 각 값은 반드시 30자 이내로 작성하세요.
-summary도 반드시 80자 이내로 작성하세요.
 `;
+}
 
+function extractText(response) {
+  if (response.status === "incomplete") {
+    throw new Error(
+      `OpenAI 응답이 중간에 잘렸습니다. reason: ${
+        response.incomplete_details?.reason || "unknown"
+      }`
+    );
+  }
+
+  if (typeof response.output_text === "string" && response.output_text.trim()) {
+    return response.output_text.trim();
+  }
+
+  throw new Error("OpenAI 응답에 output_text가 없습니다.");
+}
+
+async function createScores(profile, idea) {
   const response = await client.responses.create({
     model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-    instructions,
-    input,
+    instructions:
+      "당신은 창업 아이템을 평가하는 심사역입니다. 사용자의 전공, 자격증, 자본, 시간 제약을 반영해 점수를 매기세요. 반드시 json 객체만 반환하세요.",
+    input: `
+${getContext(profile, idea)}
+
+요청:
+아래 7개 항목을 0~100점으로 평가하세요.
+- 사용자 적합성
+- 실행 가능성
+- 시장성
+- 수익성
+- 차별성
+- 확장성
+- 리스크 안정성
+
+반환 형식은 반드시 json 객체여야 합니다.
+`,
     text: {
       format: {
         type: "json_schema",
-        name: "startup_score_analysis",
+        name: "startup_scores",
         strict: true,
         schema: scoreSchema
       }
     },
-    max_output_tokens: 900
+    max_output_tokens: 600
   });
 
-  return parseOutput(response);
+  const text = extractText(response);
+  const parsed = JSON.parse(text);
+
+  return normalizeScores(parsed.scores);
+}
+
+async function createSection(profile, idea, sectionKey, sectionConfig) {
+  const response = await client.responses.create({
+    model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+    instructions:
+      "당신은 창업 아이템을 분석하는 전문 컨설턴트입니다. 한국어로 작성하세요. 과장하지 말고, 사용자의 조건과 선택 아이템을 근거로 실용적으로 분석하세요. JSON을 반환하지 말고 일반 텍스트만 반환하세요.",
+    input: `
+${getContext(profile, idea)}
+
+분석 항목:
+${sectionConfig.title}
+
+요청:
+${sectionConfig.prompt}
+
+작성 규칙:
+- 제목은 쓰지 마세요.
+- 목록 대신 자연스러운 문단으로 작성하세요.
+- 4~6문장으로 작성하세요.
+- 사용자의 자본과 투입 가능 시간을 반드시 반영하세요.
+`,
+    max_output_tokens: 700
+  });
+
+  return extractText(response);
+}
+
+async function createSummary(profile, idea, scores, sections) {
+  const response = await client.responses.create({
+    model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+    instructions:
+      "당신은 창업 아이템 분석 결과를 요약하는 컨설턴트입니다. 한국어로 작성하세요. JSON을 반환하지 말고 일반 텍스트만 반환하세요.",
+    input: `
+사용자 제1전공: ${profile.primaryMajorText}
+창업 아이템: ${idea.name}
+종합 점수: ${getAverageScore(scores)}점
+
+점수:
+${Object.entries(scores)
+  .map(([key, value]) => `- ${key}: ${value}점`)
+  .join("\n")}
+
+분석 요약 자료:
+- 시장 전망: ${sections.market}
+- 고객 분석: ${sections.customer}
+- 리스크: ${sections.risk}
+
+요청:
+이 아이템의 종합 평가를 3~4문장으로 요약하세요.
+`,
+    max_output_tokens: 500
+  });
+
+  return extractText(response);
+}
+
+async function createFullAnalysis(profile, idea) {
+  const scores = await createScores(profile, idea);
+
+  const sectionEntries = await Promise.all(
+    Object.entries(sectionPrompts).map(async ([key, config]) => {
+      const value = await createSection(profile, idea, key, config);
+      return [key, value];
+    })
+  );
+
+  const sections = Object.fromEntries(sectionEntries);
+  const summary = await createSummary(profile, idea, scores, sections);
+
+  return {
+    scores,
+    sections,
+    summary
+  };
 }
 
 export default async function handler(req, res) {
@@ -217,36 +265,23 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "POST 요청만 허용됩니다." });
   }
 
-  const { profile, idea } = req.body || {};
-
-  if (!profile || !idea) {
-    return res.status(400).json({
-      error: "profile 또는 idea 데이터가 없습니다."
-    });
-  }
-
   try {
-    const aiResult = await createScoreAnalysis(profile, idea);
-    const scores = normalizeScores(aiResult.scores);
-    const sections = makeSections(profile, idea, aiResult.keywords);
-    const summary = makeSummary(profile, idea, scores, aiResult.keywords);
+    const { profile, idea } = req.body || {};
 
-    return res.status(200).json({
-      scores,
-      sections,
-      summary
-    });
+    if (!profile || !idea) {
+      return res.status(400).json({
+        error: "profile 또는 idea 데이터가 없습니다."
+      });
+    }
+
+    const result = await createFullAnalysis(profile, idea);
+
+    return res.status(200).json(result);
   } catch (error) {
-    console.warn("AI score analysis failed. Using server fallback:", error.message);
+    console.error("analyze error:", error);
 
-    const scores = normalizeScores();
-    const sections = makeSections(profile, idea, {});
-    const summary = makeSummary(profile, idea, scores, {});
-
-    return res.status(200).json({
-      scores,
-      sections,
-      summary
+    return res.status(500).json({
+      error: error.message || "분석 생성 중 오류가 발생했습니다."
     });
   }
 }
