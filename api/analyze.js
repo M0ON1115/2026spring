@@ -12,41 +12,13 @@ const analysisSchema = {
       type: "object",
       additionalProperties: false,
       properties: {
-        "사용자 적합성": {
-          type: "number",
-          minimum: 0,
-          maximum: 100
-        },
-        "실행 가능성": {
-          type: "number",
-          minimum: 0,
-          maximum: 100
-        },
-        "시장성": {
-          type: "number",
-          minimum: 0,
-          maximum: 100
-        },
-        "수익성": {
-          type: "number",
-          minimum: 0,
-          maximum: 100
-        },
-        "차별성": {
-          type: "number",
-          minimum: 0,
-          maximum: 100
-        },
-        "확장성": {
-          type: "number",
-          minimum: 0,
-          maximum: 100
-        },
-        "리스크 안정성": {
-          type: "number",
-          minimum: 0,
-          maximum: 100
-        }
+        "사용자 적합성": { type: "number", minimum: 0, maximum: 100 },
+        "실행 가능성": { type: "number", minimum: 0, maximum: 100 },
+        "시장성": { type: "number", minimum: 0, maximum: 100 },
+        "수익성": { type: "number", minimum: 0, maximum: 100 },
+        "차별성": { type: "number", minimum: 0, maximum: 100 },
+        "확장성": { type: "number", minimum: 0, maximum: 100 },
+        "리스크 안정성": { type: "number", minimum: 0, maximum: 100 }
       },
       required: [
         "사용자 적합성",
@@ -86,6 +58,11 @@ const analysisSchema = {
 };
 
 function parseOutput(response) {
+  if (response.status === "incomplete") {
+    const reason = response.incomplete_details?.reason || "unknown";
+    throw new Error(`OpenAI 응답이 중간에 잘렸습니다. reason: ${reason}`);
+  }
+
   if (!response.output_text) {
     throw new Error("OpenAI 응답에 output_text가 없습니다.");
   }
@@ -93,25 +70,19 @@ function parseOutput(response) {
   return JSON.parse(response.output_text);
 }
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "POST 요청만 허용됩니다." });
-  }
+async function createAnalysis({ profile, idea, compact = false }) {
+  const instructions =
+    "당신은 창업 아이템의 시장성, 실행 가능성, 수익성, 리스크를 평가하는 창업 심사역입니다. " +
+    "사용자의 자본과 시간 제약을 엄격히 반영하세요. " +
+    "모든 답변은 한국어로 작성하세요. " +
+    "반드시 json 형식의 객체만 반환하세요. " +
+    "설명 문장, 마크다운, 코드블록 없이 순수 json만 반환하세요.";
 
-  try {
-    const { profile, idea } = req.body;
+  const lengthRule = compact
+    ? "각 sections 항목은 반드시 250자 이내로 작성하세요. summary는 150자 이내로 작성하세요."
+    : "각 sections 항목은 반드시 500자 이내로 작성하세요. summary는 250자 이내로 작성하세요.";
 
-    if (!profile || !idea) {
-      return res.status(400).json({ error: "profile 또는 idea 데이터가 없습니다." });
-    }
-
-    const instructions =
-      "당신은 창업 아이템의 시장성, 실행 가능성, 수익성, 리스크를 평가하는 창업 심사역입니다. " +
-      "사용자의 자본과 시간 제약을 엄격히 반영하세요. " +
-      "모든 답변은 한국어로 작성하세요. " +
-      "반드시 json 형식의 객체만 반환하세요.";
-
-    const input = `
+  const input = `
 사용자 정보:
 - 제1전공: ${profile.primaryMajorText}
 - 제2전공: ${profile.secondaryMajorText}
@@ -148,28 +119,78 @@ export default async function handler(req, res) {
 - 리스크 및 대응 방안
 - 향후 발전 가능성
 - 종합 평가 요약
+
+길이 제한:
+${lengthRule}
+
+반환 형식은 반드시 json 객체여야 합니다:
+{
+  "scores": {
+    "사용자 적합성": 0,
+    "실행 가능성": 0,
+    "시장성": 0,
+    "수익성": 0,
+    "차별성": 0,
+    "확장성": 0,
+    "리스크 안정성": 0
+  },
+  "sections": {
+    "market": "시장 전망",
+    "customer": "고객 분석",
+    "competition": "경쟁 분석",
+    "revenue": "수익 모델 분석",
+    "mvp": "초기 실행 계획",
+    "risk": "리스크 및 대응 방안",
+    "growth": "향후 발전 가능성"
+  },
+  "summary": "종합 평가 요약"
+}
 `;
 
-    const response = await client.responses.create({
-      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-      instructions,
-      input,
-      text: {
-        format: {
-          type: "json_schema",
-          name: "startup_analysis",
-          strict: true,
-          schema: analysisSchema
-        }
-      },
-      max_output_tokens: 2200
-    });
+  const response = await client.responses.create({
+    model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+    instructions,
+    input,
+    text: {
+      format: {
+        type: "json_schema",
+        name: "startup_analysis",
+        strict: true,
+        schema: analysisSchema
+      }
+    },
+    max_output_tokens: compact ? 2500 : 4000
+  });
 
-    const parsed = parseOutput(response);
+  return parseOutput(response);
+}
 
-    return res.status(200).json(parsed);
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "POST 요청만 허용됩니다." });
+  }
+
+  try {
+    const { profile, idea } = req.body;
+
+    if (!profile || !idea) {
+      return res.status(400).json({
+        error: "profile 또는 idea 데이터가 없습니다."
+      });
+    }
+
+    try {
+      const parsed = await createAnalysis({ profile, idea, compact: false });
+      return res.status(200).json(parsed);
+    } catch (firstError) {
+      console.warn("first analyze attempt failed:", firstError.message);
+
+      const parsed = await createAnalysis({ profile, idea, compact: true });
+      return res.status(200).json(parsed);
+    }
   } catch (error) {
     console.error("analyze error:", error);
+
     return res.status(500).json({
       error: error.message || "분석 생성 중 오류가 발생했습니다."
     });
