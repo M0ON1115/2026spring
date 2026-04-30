@@ -248,7 +248,7 @@
     .primary-btn { background: #862633; color: white; }
     .secondary-btn { background: #f3e8eb; color: #862633; }
 
-    .danger-note, .status {
+    .danger-note {
       margin-top: 18px;
       padding: 14px 16px;
       background: #fbf4f5;
@@ -257,6 +257,22 @@
       border-radius: 16px;
       font-size: 14px;
       line-height: 1.6;
+    }
+
+    .status {
+      color: #862633;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.6;
+    }
+
+    .status-panel {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 24px;
+      padding: 22px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 32px rgba(134, 38, 51, 0.07);
     }
 
     .status { display: none; }
@@ -610,11 +626,12 @@
         <button class="secondary-btn" id="sampleBtn">예시 정보 채우기</button>
         <button class="secondary-btn" id="resetBtn">초기화</button>
       </div>
-      <div class="status" id="statusBox" aria-live="polite">
-        <span class="loader" aria-hidden="true"></span>
-        <span class="complete-icon" aria-hidden="true">✓</span>
-        <span class="status-text" id="statusText">처리 중입니다...</span>
-      </div>
+    </section>
+
+    <section class="status status-panel hidden" id="statusBox" aria-live="polite">
+      <span class="loader" aria-hidden="true"></span>
+      <span class="complete-icon" aria-hidden="true">✓</span>
+      <span class="status-text" id="statusText">처리 중입니다...</span>
     </section>
 
     <section class="panel hidden" id="recommendationSection">
@@ -623,11 +640,11 @@
       <div class="cards" id="ideaCards"></div>
     </section>
 
-    <div class="status analysis-status hidden" id="analysisStatusBox" aria-live="polite">
+    <section class="status status-panel analysis-status hidden" id="analysisStatusBox" aria-live="polite">
       <span class="loader" aria-hidden="true"></span>
       <span class="complete-icon" aria-hidden="true">✓</span>
       <span class="status-text" id="analysisStatusText">선택한 아이템을 심층 분석하는 중입니다...</span>
-    </div>
+    </section>
 
     <section class="panel hidden" id="analysisSection">
       <h2>아이템 분석 대시보드</h2>
@@ -859,16 +876,20 @@
 
     function showStatus(message) {
       statusText.textContent = message;
-      statusBox.classList.remove("complete");
+      statusBox.classList.remove("hidden", "complete");
       statusBox.classList.add("show");
     }
 
     function showCompleteStatus(message) {
       statusText.textContent = message;
+      statusBox.classList.remove("hidden");
       statusBox.classList.add("show", "complete");
     }
 
-    function hideStatus() { statusBox.classList.remove("show"); }
+    function hideStatus() {
+      statusBox.classList.remove("show", "complete");
+      statusBox.classList.add("hidden");
+    }
 
     function showAnalysisStatus(message) {
       analysisStatusText.textContent = message;
