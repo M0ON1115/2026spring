@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vowel Space & Formants Lab</title>
+
+  <style>
+    :root {
+      --bg-main: #070b14;
+      --bg-panel: rgba(15, 23, 42, 0.78);
+      --border: rgba(148, 163, 184, 0.22);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --text-faint: #64748b;
+      --accent: #38bdf8;
+      --red: #fb7185;
+      --green: #34d399;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(14, 165, 233, 0.24), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.18), transparent 28%),
+        radial-gradient(circle at bottom, rgba(20, 184, 166, 0.12), transparent 32%),
+        var(--bg-main);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black, transparent 78%);
+    }
+
+    header {
+      width: min(1320px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 44px 0 26px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+    }
+
+    .title-block {
+      max-width: 820px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 999px;
+      color: #bae6fd;
+      background: rgba(14, 165, 233, 0.12);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 16px var(--green);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(40px, 6vw, 76px);
+      line-height: 0.94;
+      letter-spacing: -0.07em;
+      font-weight: 800;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #f8fafc 20%, #7dd3fc 48%, #c4b5fd 82%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    header p {
+      margin: 18px 0 0;
+      color: var(--text-sub);
+      font-size: 16px;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .status-card {
+      min-width: 260px;
+      max-width: 390px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: rgba(15, 23, 42, 0.58);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .status-card > span {
+      display: block;
+      color: var(--text-faint);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .current-vowel-card {
+      display: block;
+    }
+
+    .current-vowel-card .current-ipa {
+      display: block;
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text-main);
+      line-height: 1.05;
+    }
+
+    .current-vowel-card .current-word {
+      display: block;
+      margin-top: 8px;
+      color: var(--text-sub);
+      font-size: 16px;
+      line-height: 1.5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    main {
+      width: min(1320px, calc(100% - 40px));
+      margin: 0 auto 60px;
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      background: var(--bg-panel);
+      backdrop-filter: blur(22px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      height: fit-content;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08),
+        transparent 28%,
+        transparent 72%,
+        rgba(56, 189, 248, 0.06)
+      );
+    }
+
+    .panel-inner {
+      position: relative;
+      padding: 22px;
+    }
+
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .section-title,
+    .visual-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .section-title {
+      margin-bottom: 14px;
+    }
+
+    .section-title h2,
+    .visual-header h2 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .visual-header h2 {
+      font-size: 18px;
+    }
+
+    .section-title small,
+    .visual-header span {
+      color: var(--text-faint);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .vowel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .vowel-btn {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 17px;
+      padding: 13px 14px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
+      color: var(--text-main);
+      cursor: pointer;
+      text-align: left;
+      transition: 0.18s ease;
+    }
+
+    .vowel-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.42);
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    .vowel-btn.active {
+      border-color: rgba(56, 189, 248, 0.8);
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.32), transparent 46%),
+        rgba(14, 165, 233, 0.16);
+      box-shadow:
+        inset 0 0 0 1px rgba(125, 211, 252, 0.12),
+        0 0 28px rgba(56, 189, 248, 0.16);
+    }
+
+    .vowel-symbol {
+      display: block;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .vowel-word {
+      display: block;
+      margin-top: 6px;
+      color: var(--text-sub);
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: nowrap;
+    }
+
+    .sound-highlight {
+      display: inline;
+      color: #67e8f9;
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 6px;
+      padding: 0 3px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    #wordText {
+      display: block;
+      margin-top: 4px;
+      color: var(--text-sub);
+      font-size: 15px;
+      white-space: nowrap;
+    }
+
+    .selected-vowel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .selected-vowel strong {
+      font-size: 38px;
+      letter-spacing: -0.06em;
+    }
+
+    .selected-vowel span {
+      color: var(--text-sub);
+      font-size: 14px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      padding: 13px;
+      border-radius: 15px;
+      background: rgba(2, 6, 23, 0.34);
+      border: 1px solid rgba(148, 163, 184, 0.13);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--text-faint);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .metric strong {
+      font-size: 16px;
+    }
+
+    .slider-group {
+      margin-top: 15px;
+    }
+
+    .slider-head {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-sub);
+      font-size: 13px;
+      margin-bottom: 9px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .play-btn {
+      width: 100%;
+      margin-top: 18px;
+      border: none;
+      border-radius: 18px;
+      padding: 15px 18px;
+      color: #00111f;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      background: linear-gradient(135deg, #67e8f9, #38bdf8 45%, #818cf8);
+      box-shadow: 0 18px 32px rgba(56, 189, 248, 0.22);
+      transition: 0.18s ease;
+    }
+
+    .play-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.07);
+    }
+
+    .play-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .guide-text {
+      margin: 0;
+      color: var(--text-sub);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .visual-card {
+      padding: 20px;
+      height: fit-content;
+    }
+
+    .visual-header {
+      margin-bottom: 14px;
+    }
+
+    .canvas-shell {
+      position: relative;
+      border-radius: 22px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.86), rgba(2, 6, 23, 0.88));
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 16px;
+      background: #020617;
+    }
+
+    .canvas-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .caption {
+      margin: 12px 4px 0;
+      color: var(--text-sub);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      color: var(--text-sub);
+      font-size: 13px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .red {
+      background: var(--red);
+      box-shadow: 0 0 14px var(--red);
+    }
+
+    .green {
+      background: var(--green);
+      box-shadow: 0 0 14px var(--green);
+    }
+
+    @media (max-width: 1050px) {
+      header {
+        display: block;
+      }
+
+      .status-card {
+        margin-top: 24px;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .canvas-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="title-block">
+      <div class="eyebrow">Acoustic Phonetics Lab</div>
+      <h1>
+        Vowel Space<br />
+        <span class="gradient-text">& Formants</span>
+      </h1>
+      <p>
+        Explore how the same vocal source is shaped by different vocal-tract filters.
+        Select a vowel to generate a synthetic sound and visualize its spectrogram,
+        spectrum, and F1/F2 position.
+      </p>
+    </div>
+
+    <div class="status-card">
+      <span>Current vowel</span>
+      <strong id="headerCurrent"></strong>
+    </div>
+  </header>
+
+  <main>
+    <aside class="side-panel">
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="section-title">
+            <h2>Vowel Selector</h2>
+            <small>IPA</small>
+          </div>
+          <div class="vowel-grid" id="vowelButtons"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="section-title">
+            <h2>Formant Profile</h2>
+            <small>F1 · F2</small>
+          </div>
+
+          <div class="selected-vowel">
+            <div>
+              <strong id="selectedTitle">/i/</strong>
+              <span id="wordText"></span>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric">
+              <span>Height</span>
+              <strong id="heightText">high</strong>
+            </div>
+            <div class="metric">
+              <span>Backness</span>
+              <strong id="backnessText">front</strong>
+            </div>
+            <div class="metric">
+              <span>F1</span>
+              <strong id="f1Text">270 Hz</strong>
+            </div>
+            <div class="metric">
+              <span>F2</span>
+              <strong id="f2Text">2290 Hz</strong>
+            </div>
+            <div class="metric">
+              <span>Model</span>
+              <strong>source-filter</strong>
+            </div>
+            <div class="metric">
+              <span>Analysis</span>
+              <strong>F1/F2 only</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="section-title">
+            <h2>Voice Source</h2>
+            <small>f0</small>
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-head">
+              <span>Fundamental frequency</span>
+              <strong id="f0Value">120 Hz</strong>
+            </div>
+            <input id="f0Slider" type="range" min="80" max="240" value="120" />
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-head">
+              <span>Duration</span>
+              <strong id="durationValue">1.2 s</strong>
+            </div>
+            <input id="durationSlider" type="range" min="0.5" max="2.5" step="0.1" value="1.2" />
+          </div>
+
+          <button class="play-btn" id="playButton">Play selected vowel</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="section-title">
+            <h2>Guide</h2>
+          </div>
+          <p class="guide-text">
+            F1 is inversely related to vowel height. High vowels have low F1.
+            F2 is related to frontness. Front vowels have high F2.
+          </p>
+        </div>
+      </section>
+    </aside>
+
+    <section class="dashboard">
+      <section class="panel visual-card">
+        <div class="visual-header">
+          <h2>Live Spectrogram</h2>
+          <span id="spectrogramStatus">waiting</span>
+        </div>
+
+        <div class="canvas-shell">
+          <canvas id="spectrogramCanvas" width="1000" height="320"></canvas>
+        </div>
+
+        <div class="legend">
+          <span class="legend-item"><span class="dot red"></span>F1</span>
+          <span class="legend-item"><span class="dot green"></span>F2</span>
+        </div>
+
+        <p class="caption">
+          The spectrogram is written from left to right during playback. F1 and F2 guides appear after recording.
+        </p>
+      </section>
+
+      <div class="canvas-row">
+        <section class="panel visual-card">
+          <div class="visual-header">
+            <h2>Live Spectrum</h2>
+            <span id="spectrumStatus">waiting</span>
+          </div>
+
+          <div class="canvas-shell">
+            <canvas id="spectrumCanvas" width="560" height="310"></canvas>
+          </div>
+
+          <p class="caption">
+            The spectrum is drawn gradually during playback. Final F1/F2 markers appear after analysis.
+          </p>
+        </section>
+
+        <section class="panel visual-card">
+          <div class="visual-header">
+            <h2>Vowel Space</h2>
+            <span id="vowelStatus">waiting</span>
+          </div>
+
+          <div class="canvas-shell">
+            <canvas id="vowelSpaceCanvas" width="680" height="500"></canvas>
+          </div>
+
+          <p class="caption">
+            Both axes use standard graph direction: F2 increases to the right, and F1 increases upward.
+          </p>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const vowels = [
+      {
+        symbol: "i",
+        label: "/i/",
+        f1: 270,
+        f2: 2290,
+        height: "high",
+        backness: "front",
+        examples: [
+          { plain: "fleece", html: `fl<span class="sound-highlight">ee</span>ce` },
+          { plain: "see", html: `s<span class="sound-highlight">ee</span>` },
+          { plain: "green", html: `gr<span class="sound-highlight">ee</span>n` },
+          { plain: "machine", html: `mach<span class="sound-highlight">ine</span>` },
+          { plain: "key", html: `k<span class="sound-highlight">ey</span>` }
+        ]
+      },
+      {
+        symbol: "ɪ",
+        label: "/ɪ/",
+        f1: 390,
+        f2: 1990,
+        height: "near-high",
+        backness: "front",
+        examples: [
+          { plain: "kit", html: `k<span class="sound-highlight">i</span>t` },
+          { plain: "sit", html: `s<span class="sound-highlight">i</span>t` },
+          { plain: "fish", html: `f<span class="sound-highlight">i</span>sh` },
+          { plain: "build", html: `b<span class="sound-highlight">ui</span>ld` },
+          { plain: "women", html: `w<span class="sound-highlight">o</span>men` }
+        ]
+      },
+      {
+        symbol: "eɪ",
+        label: "/eɪ/",
+        f1: 530,
+        f2: 1840,
+        height: "mid",
+        backness: "front",
+        examples: [
+          { plain: "face", html: `f<span class="sound-highlight">a</span>ce` },
+          { plain: "day", html: `d<span class="sound-highlight">ay</span>` },
+          { plain: "name", html: `n<span class="sound-highlight">a</span>me` },
+          { plain: "rain", html: `r<span class="sound-highlight">ai</span>n` },
+          { plain: "late", html: `l<span class="sound-highlight">a</span>te` }
+        ]
+      },
+      {
+        symbol: "ɛ",
+        label: "/ɛ/",
+        f1: 610,
+        f2: 1900,
+        height: "mid-low",
+        backness: "front",
+        examples: [
+          { plain: "dress", html: `dr<span class="sound-highlight">e</span>ss` },
+          { plain: "bed", html: `b<span class="sound-highlight">e</span>d` },
+          { plain: "head", html: `h<span class="sound-highlight">ea</span>d` },
+          { plain: "said", html: `s<span class="sound-highlight">ai</span>d` },
+          { plain: "friend", html: `fri<span class="sound-highlight">e</span>nd` }
+        ]
+      },
+      {
+        symbol: "æ",
+        label: "/æ/",
+        f1: 730,
+        f2: 1720,
+        height: "low",
+        backness: "front",
+        examples: [
+          { plain: "trap", html: `tr<span class="sound-highlight">a</span>p` },
+          { plain: "cat", html: `c<span class="sound-highlight">a</span>t` },
+          { plain: "bad", html: `b<span class="sound-highlight">a</span>d` },
+          { plain: "laugh", html: `l<span class="sound-highlight">au</span>gh` },
+          { plain: "apple", html: `<span class="sound-highlight">a</span>pple` }
+        ]
+      },
+      {
+        symbol: "ɑ",
+        label: "/ɑ/",
+        f1: 730,
+        f2: 1090,
+        height: "low",
+        backness: "back",
+        examples: [
+          { plain: "father", html: `f<span class="sound-highlight">a</span>ther` },
+          { plain: "spa", html: `sp<span class="sound-highlight">a</span>` },
+          { plain: "calm", html: `c<span class="sound-highlight">a</span>lm` },
+          { plain: "palm", html: `p<span class="sound-highlight">a</span>lm` },
+          { plain: "hot", html: `h<span class="sound-highlight">o</span>t` }
+        ]
+      },
+      {
+        symbol: "ɔ",
+        label: "/ɔ/",
+        f1: 570,
+        f2: 840,
+        height: "mid-low",
+        backness: "back",
+        examples: [
+          { plain: "thought", html: `th<span class="sound-highlight">ough</span>t` },
+          { plain: "law", html: `l<span class="sound-highlight">aw</span>` },
+          { plain: "caught", html: `c<span class="sound-highlight">augh</span>t` },
+          { plain: "talk", html: `t<span class="sound-highlight">al</span>k` },
+          { plain: "saw", html: `s<span class="sound-highlight">aw</span>` }
+        ]
+      },
+      {
+        symbol: "oʊ",
+        label: "/oʊ/",
+        f1: 500,
+        f2: 900,
+        height: "mid",
+        backness: "back",
+        examples: [
+          { plain: "goat", html: `g<span class="sound-highlight">oa</span>t` },
+          { plain: "go", html: `g<span class="sound-highlight">o</span>` },
+          { plain: "home", html: `h<span class="sound-highlight">o</span>me` },
+          { plain: "road", html: `r<span class="sound-highlight">oa</span>d` },
+          { plain: "show", html: `sh<span class="sound-highlight">ow</span>` }
+        ]
+      },
+      {
+        symbol: "ʊ",
+        label: "/ʊ/",
+        f1: 440,
+        f2: 1020,
+        height: "near-high",
+        backness: "back",
+        examples: [
+          { plain: "foot", html: `f<span class="sound-highlight">oo</span>t` },
+          { plain: "good", html: `g<span class="sound-highlight">oo</span>d` },
+          { plain: "book", html: `b<span class="sound-highlight">oo</span>k` },
+          { plain: "put", html: `p<span class="sound-highlight">u</span>t` },
+          { plain: "could", html: `c<span class="sound-highlight">oul</span>d` }
+        ]
+      },
+      {
+        symbol: "u",
+        label: "/u/",
+        f1: 300,
+        f2: 870,
+        height: "high",
+        backness: "back",
+        examples: [
+          { plain: "goose", html: `g<span class="sound-highlight">oo</span>se` },
+          { plain: "blue", html: `bl<span class="sound-highlight">ue</span>` },
+          { plain: "food", html: `f<span class="sound-highlight">oo</span>d` },
+          { plain: "two", html: `t<span class="sound-highlight">wo</span>` },
+          { plain: "true", html: `tr<span class="sound-highlight">ue</span>` }
+        ]
+      }
+    ];
+
+    let selected = vowels[0];
+    let currentExample = getRandomExample(selected);
+    let audioContext = null;
+    let activeButton = null;
+    let isRecording = false;
+    let animationFrameId = null;
+
+    const buttonContainer = document.getElementById("vowelButtons");
+    const selectedTitle = document.getElementById("selectedTitle");
+    const headerCurrent = document.getElementById("headerCurrent");
+    const wordText = document.getElementById("wordText");
+    const heightText = document.getElementById("heightText");
+    const backnessText = document.getElementById("backnessText");
+    const f1Text = document.getElementById("f1Text");
+    const f2Text = document.getElementById("f2Text");
+    const f0Slider = document.getElementById("f0Slider");
+    const durationSlider = document.getElementById("durationSlider");
+    const f0Value = document.getElementById("f0Value");
+    const durationValue = document.getElementById("durationValue");
+    const playButton = document.getElementById("playButton");
+
+    const spectrogramStatus = document.getElementById("spectrogramStatus");
+    const spectrumStatus = document.getElementById("spectrumStatus");
+    const vowelStatus = document.getElementById("vowelStatus");
+
+    const spectrogramCanvas = document.getElementById("spectrogramCanvas");
+    const spectrumCanvas = document.getElementById("spectrumCanvas");
+    const vowelSpaceCanvas = document.getElementById("vowelSpaceCanvas");
+
+    const spectrogramCtx = spectrogramCanvas.getContext("2d");
+    const spectrumCtx = spectrumCanvas.getContext("2d");
+    const vowelSpaceCtx = vowelSpaceCanvas.getContext("2d");
+
+    function getRandomExample(vowel) {
+      const index = Math.floor(Math.random() * vowel.examples.length);
+      return vowel.examples[index];
+    }
+
+    vowels.forEach((vowel, index) => {
+      const button = document.createElement("button");
+      const previewExample = getRandomExample(vowel);
+
+      button.className = "vowel-btn";
+      button.innerHTML = `
+        <span class="vowel-symbol">${vowel.label}</span>
+        <span class="vowel-word">${previewExample.html}</span>
+      `;
+
+      if (index === 0) {
+        button.classList.add("active");
+        activeButton = button;
+      }
+
+      button.addEventListener("click", () => {
+        if (activeButton) activeButton.classList.remove("active");
+        button.classList.add("active");
+        activeButton = button;
+
+        selected = vowel;
+        currentExample = getRandomExample(vowel);
+
+        button.innerHTML = `
+          <span class="vowel-symbol">${vowel.label}</span>
+          <span class="vowel-word">${currentExample.html}</span>
+        `;
+
+        updateInfo();
+        playVowel();
+      });
+
+      buttonContainer.appendChild(button);
+    });
+
+    f0Slider.addEventListener("input", () => {
+      f0Value.textContent = `${f0Slider.value} Hz`;
+      if (!isRecording) resetAnalysisViews();
+    });
+
+    durationSlider.addEventListener("input", () => {
+      durationValue.textContent = `${durationSlider.value} s`;
+      if (!isRecording) resetAnalysisViews();
+    });
+
+    playButton.addEventListener("click", playVowel);
+
+    function updateInfo() {
+      selectedTitle.textContent = selected.label;
+      wordText.innerHTML = currentExample.html;
+
+      headerCurrent.innerHTML = `
+        <span class="current-vowel-card">
+          <span class="current-ipa">${selected.label}</span>
+          <span class="current-word">${currentExample.html}</span>
+        </span>
+      `;
+
+      heightText.textContent = selected.height;
+      backnessText.textContent = selected.backness;
+      f1Text.textContent = `${selected.f1} Hz`;
+      f2Text.textContent = `${selected.f2} Hz`;
+    }
+
+    function getAudioContext() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioContext;
+    }
+
+    function playVowel() {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+      isRecording = true;
+
+      spectrogramStatus.textContent = "recording";
+      spectrumStatus.textContent = "recording";
+      vowelStatus.textContent = "pending";
+
+      playButton.textContent = "Recording acoustic signal...";
+      playButton.disabled = true;
+
+      resetAnalysisViews();
+
+      const ctx = getAudioContext();
+      const now = ctx.currentTime;
+      const duration = Number(durationSlider.value);
+      const f0 = Number(f0Slider.value);
+
+      const source = ctx.createOscillator();
+      source.type = "sawtooth";
+      source.frequency.setValueAtTime(f0, now);
+
+      const sourceGain = ctx.createGain();
+      sourceGain.gain.setValueAtTime(0.0001, now);
+      sourceGain.gain.exponentialRampToValueAtTime(0.25, now + 0.04);
+      sourceGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      const output = ctx.createGain();
+      output.gain.setValueAtTime(0.75, now);
+
+      const formantData = [
+        { frequency: selected.f1, q: 10, gain: 1.0 },
+        { frequency: selected.f2, q: 14, gain: 0.65 }
+      ];
+
+      formantData.forEach(item => {
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(item.frequency, now);
+        filter.Q.setValueAtTime(item.q, now);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(item.gain, now);
+
+        source.connect(filter);
+        filter.connect(gain);
+        gain.connect(output);
+      });
+
+      output.connect(sourceGain);
+      sourceGain.connect(ctx.destination);
+
+      source.start(now);
+      source.stop(now + duration + 0.05);
+
+      animateRecording(duration);
+    }
+
+    function frequencyToY(freq, canvas, maxFreq = 4000) {
+      const marginTop = 26;
+      const marginBottom = 34;
+      const plotHeight = canvas.height - marginTop - marginBottom;
+      return marginTop + plotHeight * (1 - freq / maxFreq);
+    }
+
+    function gaussian(x, center, width) {
+      const z = (x - center) / width;
+      return Math.exp(-0.5 * z * z);
+    }
+
+    function spectrumEnergy(freq, vowel) {
+      const f0 = Number(f0Slider.value);
+      const harmonic = Math.max(0, 1 - Math.abs((freq % f0) - f0 / 2) / (f0 / 2));
+      const sourceTilt = Math.exp(-freq / 2400);
+
+      const e1 = 1.0 * gaussian(freq, vowel.f1, 90);
+      const e2 = 0.82 * gaussian(freq, vowel.f2, 130);
+
+      return Math.min(1, (0.10 + harmonic * 0.35) * sourceTilt + e1 + e2);
+    }
+
+    function drawDarkAxes(ctx, canvas, maxFreq = 4000) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, "#07111f");
+      gradient.addColorStop(1, "#020617");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const marginLeft = 52;
+      const marginTop = 26;
+      const marginBottom = 34;
+      const marginRight = 18;
+
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.22)";
+      ctx.lineWidth = 1;
+
+      ctx.beginPath();
+      ctx.moveTo(marginLeft, marginTop);
+      ctx.lineTo(marginLeft, canvas.height - marginBottom);
+      ctx.lineTo(canvas.width - marginRight, canvas.height - marginBottom);
+      ctx.stroke();
+
+      ctx.font = "12px Arial";
+
+      for (let f = 0; f <= maxFreq; f += 1000) {
+        const y = frequencyToY(f, canvas, maxFreq);
+
+        ctx.strokeStyle = "rgba(148, 163, 184, 0.09)";
+        ctx.beginPath();
+        ctx.moveTo(marginLeft, y);
+        ctx.lineTo(canvas.width - marginRight, y);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(203, 213, 225, 0.72)";
+        ctx.fillText(`${f}`, 14, y + 4);
+      }
+
+      ctx.fillStyle = "rgba(203, 213, 225, 0.72)";
+      ctx.fillText("Hz", 16, 18);
+    }
+
+    function resetAnalysisViews() {
+      spectrogramStatus.textContent = "waiting";
+      spectrumStatus.textContent = "waiting";
+      vowelStatus.textContent = "waiting";
+
+      drawDarkAxes(spectrogramCtx, spectrogramCanvas, 4000);
+      drawEmptySpectrum();
+      drawEmptyVowelSpace();
+    }
+
+    function drawEmptySpectrum() {
+      drawDarkAxes(spectrumCtx, spectrumCanvas, 4000);
+    }
+
+    function drawEmptyVowelSpace() {
+      const ctx = vowelSpaceCtx;
+      const canvas = vowelSpaceCanvas;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, "#07111f");
+      gradient.addColorStop(1, "#020617");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "rgba(148, 163, 184, 0.68)";
+      ctx.font = "bold 14px Arial";
+      ctx.fillText("Vowel classification pending", 72, 64);
+
+      ctx.fillStyle = "rgba(148, 163, 184, 0.48)";
+      ctx.font = "13px Arial";
+      ctx.fillText("F1/F2 position will be plotted after analysis.", 72, 88);
+    }
+
+    function animateRecording(duration) {
+      const start = performance.now();
+      const total = duration * 1000;
+
+      function frame(now) {
+        const progress = Math.min(1, (now - start) / total);
+
+        drawSpectrogramDuringRecording(progress);
+        drawSpectrumDuringRecording(progress);
+        drawRecordingCursor(progress);
+
+        if (progress < 1) {
+          animationFrameId = requestAnimationFrame(frame);
+        } else {
+          finishRecordingAnalysis();
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(frame);
+    }
+
+    function drawSpectrogramDuringRecording(progress) {
+      const ctx = spectrogramCtx;
+      const canvas = spectrogramCanvas;
+      const maxFreq = 4000;
+
+      drawDarkAxes(ctx, canvas, maxFreq);
+
+      const marginLeft = 52;
+      const marginRight = 18;
+      const marginTop = 26;
+      const marginBottom = 34;
+      const plotWidth = canvas.width - marginLeft - marginRight;
+      const plotHeight = canvas.height - marginTop - marginBottom;
+      const visibleWidth = plotWidth * progress;
+
+      for (let x = 0; x < visibleWidth; x += 3) {
+        for (let y = 0; y < plotHeight; y += 3) {
+          const freq = maxFreq * (1 - y / plotHeight);
+          const energy = spectrumEnergy(freq, selected);
+
+          const pulse = 0.74 + 0.26 * Math.sin(x * 0.08 + performance.now() * 0.006);
+          const noise = pseudoNoise(x, y) * 0.16;
+          const intensity = Math.min(1, energy * pulse + noise);
+
+          const blue = Math.floor(28 + 210 * intensity);
+          const green = Math.floor(18 + 145 * intensity);
+          const red = Math.floor(8 + 42 * intensity);
+
+          ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+          ctx.fillRect(marginLeft + x, marginTop + y, 3, 3);
+        }
+      }
+    }
+
+    function drawSpectrumDuringRecording(progress) {
+      drawSpectrumBase(progress, true);
+
+      const ctx = spectrumCtx;
+      const canvas = spectrumCanvas;
+      const marginLeft = 52;
+      const marginRight = 18;
+      const plotWidth = canvas.width - marginLeft - marginRight;
+      const cursorX = marginLeft + plotWidth * progress;
+
+      ctx.strokeStyle = "rgba(125, 211, 252, 0.95)";
+      ctx.lineWidth = 2;
+      ctx.shadowColor = "rgba(56, 189, 248, 0.95)";
+      ctx.shadowBlur = 16;
+
+      ctx.beginPath();
+      ctx.moveTo(cursorX, 26);
+      ctx.lineTo(cursorX, canvas.height - 34);
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+    }
+
+    function drawRecordingCursor(progress) {
+      const ctx = spectrogramCtx;
+      const canvas = spectrogramCanvas;
+
+      const marginLeft = 52;
+      const marginRight = 18;
+      const marginTop = 26;
+      const marginBottom = 34;
+      const plotWidth = canvas.width - marginLeft - marginRight;
+
+      const x = marginLeft + plotWidth * progress;
+
+      ctx.strokeStyle = "rgba(125, 211, 252, 0.95)";
+      ctx.lineWidth = 2;
+      ctx.shadowColor = "rgba(56, 189, 248, 0.95)";
+      ctx.shadowBlur = 18;
+
+      ctx.beginPath();
+      ctx.moveTo(x, marginTop);
+      ctx.lineTo(x, canvas.height - marginBottom);
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+    }
+
+    function finishRecordingAnalysis() {
+      isRecording = false;
+
+      spectrogramStatus.textContent = "analyzing";
+      spectrumStatus.textContent = "analyzing";
+      vowelStatus.textContent = "analyzing";
+
+      playButton.textContent = "Analyzing formants...";
+      playButton.disabled = true;
+
+      setTimeout(() => {
+        drawFinalSpectrogram();
+        drawFinalSpectrum();
+
+        setTimeout(() => {
+          drawVowelSpace();
+
+          spectrogramStatus.textContent = "complete";
+          spectrumStatus.textContent = "complete";
+          vowelStatus.textContent = "complete";
+
+          playButton.textContent = "Play selected vowel";
+          playButton.disabled = false;
+        }, 520);
+      }, 450);
+    }
+
+    function drawFinalSpectrogram() {
+      const ctx = spectrogramCtx;
+      const canvas = spectrogramCanvas;
+      const maxFreq = 4000;
+
+      drawSpectrogramBase(1);
+
+      setTimeout(() => {
+        drawHorizontalFormant(ctx, canvas, selected.f1, "F1", "#fb7185", maxFreq);
+      }, 120);
+
+      setTimeout(() => {
+        drawHorizontalFormant(ctx, canvas, selected.f2, "F2", "#34d399", maxFreq);
+      }, 280);
+    }
+
+    function drawSpectrogramBase(progress) {
+      const ctx = spectrogramCtx;
+      const canvas = spectrogramCanvas;
+      const maxFreq = 4000;
+
+      drawDarkAxes(ctx, canvas, maxFreq);
+
+      const marginLeft = 52;
+      const marginRight = 18;
+      const marginTop = 26;
+      const marginBottom = 34;
+      const plotWidth = canvas.width - marginLeft - marginRight;
+      const plotHeight = canvas.height - marginTop - marginBottom;
+      const visibleWidth = plotWidth * progress;
+
+      for (let x = 0; x < visibleWidth; x += 3) {
+        for (let y = 0; y < plotHeight; y += 3) {
+          const freq = maxFreq * (1 - y / plotHeight);
+          const energy = spectrumEnergy(freq, selected);
+
+          const pulse = 0.82 + 0.18 * Math.sin(x * 0.08);
+          const noise = pseudoNoise(x, y) * 0.10;
+          const intensity = Math.min(1, energy * pulse + noise);
+
+          const blue = Math.floor(28 + 210 * intensity);
+          const green = Math.floor(18 + 145 * intensity);
+          const red = Math.floor(8 + 42 * intensity);
+
+          ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+          ctx.fillRect(marginLeft + x, marginTop + y, 3, 3);
+        }
+      }
+    }
+
+    function drawFinalSpectrum() {
+      const ctx = spectrumCtx;
+      const canvas = spectrumCanvas;
+      const maxFreq = 4000;
+
+      drawSpectrumBase(1, false);
+
+      setTimeout(() => {
+        drawVerticalFormant(ctx, canvas, selected.f1, "F1", "#fb7185", maxFreq);
+      }, 120);
+
+      setTimeout(() => {
+        drawVerticalFormant(ctx, canvas, selected.f2, "F2", "#34d399", maxFreq);
+      }, 280);
+    }
+
+    function drawSpectrumBase(progress, animated) {
+      const ctx = spectrumCtx;
+      const canvas = spectrumCanvas;
+      const maxFreq = 4000;
+
+      drawDarkAxes(ctx, canvas, maxFreq);
+
+      const marginLeft = 52;
+      const marginRight = 18;
+      const marginBottom = 34;
+      const plotWidth = canvas.width - marginLeft - marginRight;
+      const baseY = canvas.height - marginBottom;
+      const visibleWidth = plotWidth * progress;
+
+      const fillGradient = ctx.createLinearGradient(0, 40, 0, baseY);
+      fillGradient.addColorStop(0, "rgba(56, 189, 248, 0.55)");
+      fillGradient.addColorStop(1, "rgba(56, 189, 248, 0.02)");
+
+      ctx.beginPath();
+      ctx.moveTo(marginLeft, baseY);
+
+      for (let px = 0; px <= visibleWidth; px++) {
+        const x = marginLeft + px;
+        const freq = (px / plotWidth) * maxFreq;
+        const energy = spectrumEnergy(freq, selected);
+        const jitter = animated ? 1 + 0.04 * Math.sin(px * 0.12 + performance.now() * 0.01) : 1;
+        const y = baseY - energy * 220 * jitter;
+        ctx.lineTo(x, y);
+      }
+
+      ctx.lineTo(marginLeft + visibleWidth, baseY);
+      ctx.closePath();
+      ctx.fillStyle = fillGradient;
+      ctx.fill();
+
+      ctx.strokeStyle = "#7dd3fc";
+      ctx.lineWidth = 2;
+      ctx.shadowColor = "rgba(56, 189, 248, 0.7)";
+      ctx.shadowBlur = 16;
+
+      ctx.beginPath();
+
+      for (let px = 0; px <= visibleWidth; px++) {
+        const x = marginLeft + px;
+        const freq = (px / plotWidth) * maxFreq;
+        const energy = spectrumEnergy(freq, selected);
+        const jitter = animated ? 1 + 0.04 * Math.sin(px * 0.12 + performance.now() * 0.01) : 1;
+        const y = baseY - energy * 220 * jitter;
+
+        if (px === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    function drawVerticalFormant(ctx, canvas, freq, label, color, maxFreq = 4000) {
+      const marginLeft = 52;
+      const marginRight = 18;
+      const plotWidth = canvas.width - marginLeft - marginRight;
+      const x = marginLeft + (freq / maxFreq) * plotWidth;
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 10;
+
+      ctx.beginPath();
+      ctx.moveTo(x, 26);
+      ctx.lineTo(x, canvas.height - 34);
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = color;
+      ctx.font = "bold 12px Arial";
+      ctx.fillText(`${label} ${freq}`, x + 7, 46);
+    }
+
+    function drawHorizontalFormant(ctx, canvas, freq, label, color, maxFreq = 4000) {
+      const marginLeft = 52;
+      const marginRight = 18;
+      const y = frequencyToY(freq, canvas, maxFreq);
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 12;
+
+      ctx.beginPath();
+      ctx.moveTo(marginLeft, y);
+      ctx.lineTo(canvas.width - marginRight, y);
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = color;
+      ctx.font = "bold 13px Arial";
+      ctx.fillText(`${label} ${freq} Hz`, canvas.width - 115, y - 8);
+    }
+
+    function drawVowelSpace() {
+      const ctx = vowelSpaceCtx;
+      const canvas = vowelSpaceCanvas;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, "#07111f");
+      gradient.addColorStop(1, "#020617");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const marginLeft = 96;
+      const marginRight = 104;
+      const marginTop = 58;
+      const marginBottom = 112;
+
+      const minF2 = 600;
+      const maxF2 = 2700;
+      const minF1 = 200;
+      const maxF1 = 850;
+
+      const plotLeft = marginLeft;
+      const plotRight = canvas.width - marginRight;
+      const plotTop = marginTop;
+      const plotBottom = canvas.height - marginBottom;
+      const plotWidth = plotRight - plotLeft;
+      const plotHeight = plotBottom - plotTop;
+
+      function mapX(f2) {
+        return plotLeft + ((f2 - minF2) / (maxF2 - minF2)) * plotWidth;
+      }
+
+      function mapY(f1) {
+        return plotBottom - ((f1 - minF1) / (maxF1 - minF1)) * plotHeight;
+      }
+
+      const selectedX = mapX(selected.f2);
+      const selectedY = mapY(selected.f1);
+
+      ctx.fillStyle = "rgba(2, 6, 23, 0.34)";
+      ctx.fillRect(plotLeft, plotTop, plotWidth, plotHeight);
+
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.12)";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= 5; i++) {
+        const x = plotLeft + (plotWidth / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(x, plotTop);
+        ctx.lineTo(x, plotBottom);
+        ctx.stroke();
+
+        const y = plotTop + (plotHeight / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(plotLeft, y);
+        ctx.lineTo(plotRight, y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(203, 213, 225, 0.38)";
+      ctx.lineWidth = 1.3;
+
+      ctx.beginPath();
+      ctx.moveTo(plotLeft, plotBottom);
+      ctx.lineTo(plotRight, plotBottom);
+      ctx.moveTo(plotLeft, plotBottom);
+      ctx.lineTo(plotLeft, plotTop);
+      ctx.stroke();
+
+      const f2ArrowY = plotBottom + 52;
+
+      ctx.strokeStyle = "rgba(125, 211, 252, 0.72)";
+      ctx.fillStyle = "rgba(125, 211, 252, 0.9)";
+      ctx.lineWidth = 2;
+
+      ctx.beginPath();
+      ctx.moveTo(plotLeft, f2ArrowY);
+      ctx.lineTo(plotRight, f2ArrowY);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(plotRight, f2ArrowY);
+      ctx.lineTo(plotRight - 10, f2ArrowY - 6);
+      ctx.lineTo(plotRight - 10, f2ArrowY + 6);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.font = "bold 13px Arial";
+      ctx.fillText("F2 increases → front vowel", plotLeft + 4, f2ArrowY + 30);
+
+      const f1ArrowX = plotLeft - 46;
+
+      ctx.strokeStyle = "rgba(251, 113, 133, 0.72)";
+      ctx.fillStyle = "rgba(251, 113, 133, 0.9)";
+      ctx.lineWidth = 2;
+
+      ctx.beginPath();
+      ctx.moveTo(f1ArrowX, plotBottom);
+      ctx.lineTo(f1ArrowX, plotTop);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(f1ArrowX, plotTop);
+      ctx.lineTo(f1ArrowX - 6, plotTop + 10);
+      ctx.lineTo(f1ArrowX + 6, plotTop + 10);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.save();
+      ctx.translate(f1ArrowX - 24, plotTop + plotHeight / 2 + 80);
+      ctx.rotate(-Math.PI / 2);
+      ctx.font = "bold 13px Arial";
+      ctx.fillText("F1 increases → low vowel", 0, 0);
+      ctx.restore();
+
+      ctx.fillStyle = "rgba(203, 213, 225, 0.78)";
+      ctx.font = "bold 13px Arial";
+
+      const heightLabelX = plotLeft - 34;
+      ctx.fillText("low", heightLabelX, plotTop + 6);
+      ctx.fillText("high", heightLabelX, plotBottom - 6);
+
+      ctx.fillText("back", plotLeft, plotBottom + 30);
+      ctx.fillText("front", plotRight - 42, plotBottom + 30);
+
+      ctx.setLineDash([6, 6]);
+
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.42)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(selectedX, plotTop);
+      ctx.lineTo(selectedX, plotBottom);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(251, 113, 133, 0.42)";
+      ctx.beginPath();
+      ctx.moveTo(plotLeft, selectedY);
+      ctx.lineTo(plotRight, selectedY);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "rgba(56, 189, 248, 0.95)";
+      ctx.font = "bold 12px Arial";
+      ctx.fillText(`F2 ${selected.f2}`, selectedX + 12, plotBottom - 12);
+
+      ctx.fillStyle = "rgba(251, 113, 133, 0.95)";
+      ctx.font = "bold 12px Arial";
+      ctx.fillText(`F1 ${selected.f1}`, plotLeft + 8, selectedY - 8);
+
+      vowels.forEach(vowel => {
+        const x = mapX(vowel.f2);
+        const y = mapY(vowel.f1);
+        const isSelected = vowel.symbol === selected.symbol;
+
+        ctx.beginPath();
+        ctx.arc(x, y, isSelected ? 13 : 7, 0, Math.PI * 2);
+        ctx.fillStyle = isSelected ? "#38bdf8" : "rgba(226, 232, 240, 0.82)";
+        ctx.shadowColor = isSelected ? "rgba(56, 189, 248, 0.95)" : "transparent";
+        ctx.shadowBlur = isSelected ? 18 : 0;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = isSelected ? "#7dd3fc" : "rgba(203, 213, 225, 0.78)";
+        ctx.font = isSelected ? "bold 17px Arial" : "14px Arial";
+
+        ctx.fillText(vowel.label, x + 14, y + 5);
+      });
+    }
+
+    function pseudoNoise(x, y) {
+      const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+      return n - Math.floor(n);
+    }
+
+    updateInfo();
+    resetAnalysisViews();
+  </script>
+</body>
+</html>
