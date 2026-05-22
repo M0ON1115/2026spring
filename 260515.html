@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>벡터와 행렬 상호작용 학습</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Arial, sans-serif; background:#f3f4f6; color:#111827; line-height:1.6; }
+    header { background:linear-gradient(135deg,#111827,#1d4ed8); color:#fff; padding:34px 18px; text-align:center; }
+    header h1 { margin:0 0 8px; font-size:30px; }
+    header p { margin:0; color:#dbeafe; }
+    nav { position:sticky; top:0; z-index:50; display:flex; gap:8px; overflow-x:auto; padding:12px; background:#fff; border-bottom:1px solid #d1d5db; }
+    nav button { border:0; background:#e5e7eb; padding:10px 14px; border-radius:999px; white-space:nowrap; cursor:pointer; font-size:14px; }
+    nav button.active { background:#2563eb; color:#fff; }
+    main { max-width:1240px; margin:26px auto; padding:0 16px 50px; }
+    section { display:none; background:#fff; border-radius:20px; padding:24px; box-shadow:0 8px 24px rgba(0,0,0,.08); margin-bottom:24px; }
+    section.active { display:block; }
+    h2 { margin-top:0; border-bottom:2px solid #e5e7eb; padding-bottom:10px; }
+    h3 { margin-top:24px; margin-bottom:10px; }
+    .layout { display:grid; grid-template-columns:1fr 1.05fr; gap:22px; align-items:start; }
+    @media (max-width:900px){ .layout{ grid-template-columns:1fr; } }
+    .panel { background:#f9fafb; border:1px solid #e5e7eb; border-radius:16px; padding:18px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+    .card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:15px; margin-bottom:14px; }
+    .card h4 { margin:0 0 8px; }
+    .concept { background:#eff6ff; border-left:5px solid #2563eb; padding:14px 16px; border-radius:12px; margin:14px 0; }
+    .note { background:#fefce8; border-left:5px solid #ca8a04; padding:14px 16px; border-radius:12px; margin:14px 0; }
+    .concept ul, .note ul, .result ul { margin:0; padding-left:20px; }
+    .formula,.matrix-box { background:#111827; color:white; padding:14px; border-radius:12px; font-family:"Courier New", monospace; overflow-x:auto; margin:12px 0; line-height:1.7; }
+    .matrix-box { text-align:center; min-height:70px; }
+    .sample-buttons { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
+    button.sample, button.action { border:0; background:#2563eb; color:#fff; padding:10px 13px; border-radius:10px; cursor:pointer; font-size:14px; }
+    button.gray { background:#4b5563; } button.green { background:#16a34a; } button.red { background:#dc2626; } button.yellow{ background:#ca8a04; }
+    button.sample:hover, button.action:hover { filter:brightness(.95); }
+    canvas { width:100%; max-width:560px; height:auto; background:#fff; border:1px solid #d1d5db; border-radius:14px; display:block; margin:0 auto; }
+    #vector3DCanvas { cursor:grab; touch-action:none; background:linear-gradient(#ffffff,#f8fafc); }
+    #vector3DCanvas:active { cursor:grabbing; }
+    .result { background:#f8fafc; border:1px solid #cbd5e1; padding:14px; border-radius:12px; min-height:86px; margin-top:14px; }
+    table { width:100%; border-collapse:collapse; margin:14px 0; }
+    th,td { border:1px solid #e5e7eb; padding:10px; text-align:center; vertical-align:top; }
+    th { background:#f3f4f6; }
+    input[type="number"], input[type="range"] { width:100%; margin:6px 0; }
+    input[type="number"] { padding:8px; border:1px solid #cbd5e1; border-radius:8px; }
+    .two-cols { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .three-cols { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .slider-label { display:flex; justify-content:space-between; gap:10px; font-size:14px; color:#374151; margin-top:8px; }
+    .interactive-matrix-wrap { overflow-x:auto; padding:10px 0; }
+    .interactive-matrix { display:inline-grid; gap:6px; background:#111827; padding:14px; border-radius:14px; user-select:none; touch-action:none; }
+    .matrix-cell { width:52px; height:44px; border-radius:10px; background:#374151; color:white; display:flex; align-items:center; justify-content:center; font-family:"Courier New",monospace; cursor:pointer; border:2px solid transparent; }
+    .matrix-cell.selected { background:#2563eb; border-color:#bfdbfe; }
+    .matrix-cell.anchor { background:#16a34a; border-color:#bbf7d0; }
+    .application-card { border-left:5px solid #2563eb; }
+    .implication-card { border-left:5px solid #ca8a04; }
+    .app-demo-box { background:#f8fafc; border:1px solid #cbd5e1; border-radius:14px; padding:14px; margin-top:14px; }
+    .bar-row { display:grid; grid-template-columns:100px 1fr 60px; align-items:center; gap:8px; margin:8px 0; }
+    .bar-track { height:16px; background:#e5e7eb; border-radius:999px; overflow:hidden; }
+    .bar-fill { height:100%; background:#2563eb; width:0%; }
+    .mini { font-size:14px; color:#4b5563; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>벡터와 행렬 상호작용 학습</h1>
+    <p>숫자 배열 · 차원 · 방향 · 길이 · 유사도 · 변환 · 실제 예시</p>
+  </header>
+
+  <nav>
+    <button class="active" onclick="showSection('basic', this)">1. 기본</button>
+    <button onclick="showSection('matrixSize', this)">2. 행렬</button>
+    <button onclick="showSection('applications', this)">3. 예시</button>
+    <button onclick="showSection('dataVector', this)">4. 데이터 벡터</button>
+    <button onclick="showSection('vector2D', this)">5. 2D 벡터</button>
+    <button onclick="showSection('vector3D', this)">6. 3D 벡터</button>
+    <button onclick="showSection('operation', this)">7. 연산</button>
+    <button onclick="showSection('similarity', this)">8. 유사도</button>
+    <button onclick="showSection('matrixTransform', this)">9. 행렬 변환</button>
+    <button onclick="showSection('inverseEigen', this)">10. 역행렬·고유벡터</button>
+  </nav>
+
+  <main>
+    <section id="basic" class="active">
+      <h2>1. 기본</h2>
+      <div class="grid">
+        <div class="card"><h4>스칼라 Scalar</h4><div class="formula">3</div><ul><li>숫자 하나</li><li>크기</li><li>배율</li><li>점수 하나</li></ul></div>
+        <div class="card"><h4>벡터 Vector</h4><div class="formula">[3, 4]</div><ul><li>숫자 한 줄</li><li>성분들의 묶음</li><li>방향 + 길이</li><li>공간 속 점</li></ul></div>
+        <div class="card"><h4>행렬 Matrix</h4><div class="formula">[1 2]<br>[3 4]</div><ul><li>숫자의 직사각형 배열</li><li>행 row</li><li>열 column</li><li>벡터 변환</li></ul></div>
+      </div>
+      <h3>관계</h3>
+      <div class="concept"><ul><li>스칼라 → 숫자 하나</li><li>벡터 → 숫자 여러 개를 한 줄로 배열</li><li>행렬 → 여러 벡터를 쌓은 형태</li><li>데이터 → 벡터</li><li>벡터 → 행렬을 통해 변환</li></ul></div>
+    </section>
+
+    <section id="matrixSize">
+      <h2>2. 행렬</h2>
+      <div class="layout">
+        <div class="panel">
+          <h3>행렬 크기 선택</h3>
+          <div class="sample-buttons">
+            <button class="sample" onclick="setMatrixSize(1,1)">1×1</button><button class="sample" onclick="setMatrixSize(1,4)">1×4</button><button class="sample" onclick="setMatrixSize(4,1)">4×1</button><button class="sample" onclick="setMatrixSize(2,3)">2×3</button><button class="sample" onclick="setMatrixSize(3,2)">3×2</button><button class="sample gray" onclick="setMatrixSize(4,4)">4×4</button>
+          </div>
+          <div class="two-cols"><div><label>행 m</label><input type="number" id="rows" min="1" max="6" value="2" oninput="updateMatrixSizeFromInput()"></div><div><label>열 n</label><input type="number" id="cols" min="1" max="6" value="3" oninput="updateMatrixSizeFromInput()"></div></div>
+          <div class="result" id="matrixSizeResult"></div>
+          <h3>선택 영역 판정</h3>
+          <div class="result" id="selectionResult"></div>
+        </div>
+        <div class="panel">
+          <h3>생성된 행렬</h3><div class="matrix-box" id="matrixSizeBox"></div>
+          <h3>클릭 / 드래그 선택</h3><div class="interactive-matrix-wrap"><div class="interactive-matrix" id="interactiveMatrix"></div></div>
+          <div class="concept"><ul><li>1×1 선택 = 스칼라</li><li>1×n 선택 = 행벡터</li><li>n×1 선택 = 열벡터</li><li>m×n 선택 = 행렬</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="applications">
+      <h2>3. 예시</h2>
+      <div class="layout">
+        <div class="panel">
+          <h3>직접 확인하는 예시</h3>
+          <div class="sample-buttons">
+            <button class="sample" onclick="setApplicationDemo('recommend')">추천 시스템</button>
+            <button class="sample" onclick="setApplicationDemo('sentence')">문장 유사도</button>
+            <button class="sample" onclick="setApplicationDemo('image')">이미지 변환</button>
+            <button class="sample red" onclick="setApplicationDemo('loss')">정보 손실</button>
+          </div>
+          <div class="result" id="applicationResult"></div>
+          <div class="app-demo-box" id="applicationBars"></div>
+        </div>
+        <div class="panel">
+          <canvas id="applicationCanvas" width="560" height="420"></canvas>
+          <div class="note"><ul><li>데이터를 벡터로 바꾸면 비교 가능</li><li>비슷한 방향은 비슷한 성질을 나타냄</li><li>행렬 변환은 공간 배치를 바꿈</li><li>압축은 정보를 줄이지만 일부를 잃을 수 있음</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="dataVector">
+      <h2>4. 데이터를 벡터로 보기</h2>
+      <div class="layout">
+        <div class="panel"><h3>샘플 데이터</h3><div class="sample-buttons"><button class="sample" onclick="setDataSample('score')">학생 점수</button><button class="sample" onclick="setDataSample('image')">간단한 이미지</button><button class="sample" onclick="setDataSample('sound')">간단한 음성</button><button class="sample gray" onclick="setDataSample('text')">문장 의미값</button></div><div id="dataControls"></div><div class="result" id="dataVectorResult"></div></div>
+        <div class="panel"><h3>벡터 막대 표시</h3><canvas id="dataCanvas" width="560" height="360"></canvas><div class="note"><ul><li>각 막대 = 하나의 성분</li><li>막대 높이 = 성분값의 크기</li><li>성분 개수 = 차원</li></ul></div></div>
+      </div>
+    </section>
+
+    <section id="vector2D">
+      <h2>5. 2D 벡터</h2>
+      <div class="layout"><div class="panel"><h3>샘플</h3><div class="sample-buttons"><button class="sample" onclick="setVector(3,4)">[3, 4]</button><button class="sample" onclick="setVector(6,8)">[6, 8]</button><button class="sample" onclick="setVector(-3,4)">[-3, 4]</button><button class="sample" onclick="setVector(4,-2)">[4, -2]</button><button class="sample gray" onclick="setVector(0,5)">[0, 5]</button></div><h3>직접 입력</h3><div class="two-cols"><div><label>x</label><input type="number" id="vx" value="3" step="0.5" oninput="updateVectorFromInput()"></div><div><label>y</label><input type="number" id="vy" value="4" step="0.5" oninput="updateVectorFromInput()"></div></div><div class="result" id="vectorResult"></div></div><div class="panel"><canvas id="vectorCanvas" width="560" height="560"></canvas><div class="concept"><ul><li>벡터 = 원점에서 출발하는 화살표</li><li>x 성분 변화 → 좌우 이동</li><li>y 성분 변화 → 상하 이동</li><li>성분값이 커질수록 길이 증가</li></ul></div></div></div>
+    </section>
+
+    <section id="vector3D">
+      <h2>6. 3D 벡터</h2>
+      <div class="layout">
+        <div class="panel">
+          <h3>샘플</h3>
+          <div class="sample-buttons"><button class="sample" onclick="setVector3D(3,4,2)">[3, 4, 2]</button><button class="sample" onclick="setVector3D(5,1,5)">[5, 1, 5]</button><button class="sample" onclick="setVector3D(-3,4,3)">[-3, 4, 3]</button><button class="sample gray" onclick="setVector3D(0,0,6)">[0, 0, 6]</button></div>
+          <h3>직접 입력</h3>
+          <div class="three-cols"><div><label>x</label><input type="number" id="v3x" value="3" step="0.5" oninput="updateVector3DFromInput()"></div><div><label>y</label><input type="number" id="v3y" value="4" step="0.5" oninput="updateVector3DFromInput()"></div><div><label>z</label><input type="number" id="v3z" value="2" step="0.5" oninput="updateVector3DFromInput()"></div></div>
+          <div class="result" id="vector3DResult"></div>
+          <div class="note"><ul><li>캔버스 위에서 마우스 드래그 → 회전</li><li>휠 → 확대/축소</li><li>검은 화살표 = 현재 3D 벡터</li><li>점선 그림자 = xy 평면 투영</li></ul></div>
+        </div>
+        <div class="panel"><canvas id="vector3DCanvas" width="560" height="560"></canvas></div>
+      </div>
+    </section>
+
+    <section id="operation"><h2>7. 벡터 연산</h2><div class="layout"><div class="panel"><h3>연산 선택</h3><div class="sample-buttons"><button class="sample" onclick="setOperationMode('add')">A + B</button><button class="sample" onclick="setOperationMode('scale')">kA</button></div><h3>샘플</h3><div class="sample-buttons"><button class="sample" onclick="setOperationVectors(3,2,2,1,1)">기본</button><button class="sample" onclick="setOperationVectors(-3,2,4,1,1)">방향 다름</button><button class="sample" onclick="setOperationVectors(6,8,0,0,0.5)">절반</button><button class="sample gray" onclick="setOperationVectors(3,4,0,0,-1)">반대 방향</button></div><div id="operationControls"></div><div class="result" id="operationResult"></div></div><div class="panel"><canvas id="operationCanvas" width="560" height="560"></canvas><div class="formula">[a,b] + [c,d] = [a+c, b+d]<br>k[a,b] = [ka, kb]</div></div></div></section>
+
+    <section id="similarity"><h2>8. 내적과 코사인 유사도</h2><div class="layout"><div class="panel"><h3>샘플</h3><div class="sample-buttons"><button class="sample green" onclick="setPair(3,4,6,8,'같은 방향')">같은 방향</button><button class="sample" onclick="setPair(3,4,4,1,'비슷한 방향')">비슷한 방향</button><button class="sample gray" onclick="setPair(0,4,4,0,'직각')">직각</button><button class="sample red" onclick="setPair(3,4,-3,-4,'반대 방향')">반대 방향</button></div><h3>직접 입력</h3><div class="two-cols"><div><label>A x</label><input type="number" id="pairAx" value="3" step="0.5" oninput="updatePairFromInput()"><label>A y</label><input type="number" id="pairAy" value="4" step="0.5" oninput="updatePairFromInput()"></div><div><label>B x</label><input type="number" id="pairBx" value="6" step="0.5" oninput="updatePairFromInput()"><label>B y</label><input type="number" id="pairBy" value="8" step="0.5" oninput="updatePairFromInput()"></div></div><div class="result" id="similarityResult"></div></div><div class="panel"><canvas id="similarityCanvas" width="560" height="560"></canvas><div class="formula">A · B = A₁B₁ + A₂B₂<br>cosθ = (A · B) / (|A||B|)</div></div></div></section>
+
+    <section id="matrixTransform"><h2>9. 행렬 변환</h2><div class="layout"><div class="panel"><h3>변환 샘플</h3><div class="sample-buttons"><button class="sample" onclick="setMatrix(1,0,0,1,'단위행렬')">변화 없음</button><button class="sample" onclick="setMatrix(2,0,0,2,'2배 확대')">확대</button><button class="sample" onclick="setMatrix(.5,0,0,.5,'0.5배 축소')">축소</button><button class="sample" onclick="setMatrix(1,1,0,1,'기울이기')">기울이기</button><button class="sample" onclick="setMatrix(0,-1,1,0,'90도 회전')">회전</button><button class="sample red" onclick="setMatrix(1,1,1,1,'압축')">압축</button></div><h3>행렬 A</h3><div class="two-cols"><input type="number" id="m11" value="1" step="0.1" oninput="updateMatrix()"><input type="number" id="m12" value="0" step="0.1" oninput="updateMatrix()"><input type="number" id="m21" value="0" step="0.1" oninput="updateMatrix()"><input type="number" id="m22" value="1" step="0.1" oninput="updateMatrix()"></div><h3>입력 벡터 x</h3><div class="two-cols"><input type="number" id="inputX" value="2" step="0.1" oninput="updateMatrixInput()"><input type="number" id="inputY" value="2" step="0.1" oninput="updateMatrixInput()"></div><div class="result" id="matrixResult"></div></div><div class="panel"><canvas id="matrixCanvas" width="560" height="560"></canvas><div class="note"><ul><li>회색 격자 = 원래 공간</li><li>붉은 격자 = 변환된 공간</li><li>파란 화살표 = 입력 벡터</li><li>빨간 화살표 = 출력 벡터</li></ul></div></div></div></section>
+
+    <section id="inverseEigen"><h2>10. 역행렬·고유벡터</h2><div class="layout"><div class="panel"><h3>샘플</h3><div class="sample-buttons"><button class="sample green" onclick="setInverseEigen(2,0,0,2,'확대')">되돌릴 수 있음</button><button class="sample green" onclick="setInverseEigen(1,1,0,1,'기울이기')">기울이기</button><button class="sample red" onclick="setInverseEigen(1,1,1,1,'압축')">되돌릴 수 없음</button><button class="sample gray" onclick="setInverseEigen(2,0,0,1,'x축 2배')">고유벡터 보기</button></div><h3>행렬 A</h3><div class="two-cols"><input type="number" id="ie11" value="2" step="0.1" oninput="updateInverseEigen()"><input type="number" id="ie12" value="0" step="0.1" oninput="updateInverseEigen()"><input type="number" id="ie21" value="0" step="0.1" oninput="updateInverseEigen()"><input type="number" id="ie22" value="2" step="0.1" oninput="updateInverseEigen()"></div><div class="result" id="inverseEigenResult"></div></div><div class="panel"><canvas id="inverseEigenCanvas" width="560" height="560"></canvas><div class="formula">A x = b<br>A⁻¹ b = x<br>A x = λx</div></div></div></section>
+  </main>
+
+  <script>
+    const state = {
+      matrixRows:2, matrixCols:3, isSelecting:false, selectionAnchor:null, selectionEnd:null,
+      dataVector:[90,85,70], vector:{x:3,y:4}, vector3D:{x:3,y:4,z:2},
+      rotation3D:{x:-0.55,y:0.75}, zoom3D:1, isDragging3D:false, lastMouse3D:{x:0,y:0},
+      operationMode:"add", operation:{ax:3,ay:2,bx:2,by:1,scalar:1},
+      pair:{ax:3,ay:4,bx:6,by:8,label:"같은 방향"},
+      matrix:{m11:1,m12:0,m21:0,m22:1,label:"단위행렬",vx:2,vy:2},
+      inverseEigen:{m11:2,m12:0,m21:0,m22:2,label:"확대"}
+    };
+
+    function showSection(id, button){
+      document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+      document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+      document.getElementById(id).classList.add("active"); button.classList.add("active");
+      if(id==="matrixSize") updateMatrixSizeFromInput();
+      if(id==="applications") setApplicationDemo("recommend");
+      if(id==="dataVector") setDataSample("score");
+      if(id==="vector2D") drawVector();
+      if(id==="vector3D") drawVector3D();
+      if(id==="operation") drawOperation();
+      if(id==="similarity") drawSimilarity();
+      if(id==="matrixTransform") updateMatrix();
+      if(id==="inverseEigen") updateInverseEigen();
+    }
+    function getNumber(id){ return parseFloat(document.getElementById(id).value)||0; }
+    function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+    function line(ctx,x1,y1,x2,y2){ ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); }
+    function point(x,y,w,h,scale){ return {x:w/2+x*scale,y:h/2-y*scale}; }
+    function vectorLength(v){ return Math.sqrt(v.x*v.x+v.y*v.y); }
+    function vector3DLength(v){ return Math.sqrt(v.x*v.x+v.y*v.y+v.z*v.z); }
+    function dotValue(a,b){ return a.x*b.x+a.y*b.y; }
+    function cosineValue(a,b){ const la=vectorLength(a), lb=vectorLength(b); if(la===0||lb===0) return null; return dotValue(a,b)/(la*lb); }
+    function angleValue(a,b){ const c=cosineValue(a,b); if(c===null) return null; return Math.acos(Math.max(-1,Math.min(1,c)))*180/Math.PI; }
+
+    function drawBase(ctx,w,h,scale){
+      ctx.clearRect(0,0,w,h); const cx=w/2, cy=h/2;
+      ctx.strokeStyle="#e5e7eb"; ctx.lineWidth=1;
+      for(let x=cx; x<=w; x+=scale) line(ctx,x,0,x,h); for(let x=cx; x>=0; x-=scale) line(ctx,x,0,x,h);
+      for(let y=cy; y<=h; y+=scale) line(ctx,0,y,w,y); for(let y=cy; y>=0; y-=scale) line(ctx,0,y,w,y);
+      ctx.strokeStyle="#111827"; ctx.lineWidth=2; line(ctx,0,cy,w,cy); line(ctx,cx,0,cx,h);
+      ctx.fillStyle="#6b7280"; ctx.font="13px Arial"; ctx.fillText("x",w-18,cy-8); ctx.fillText("y",cx+8,18); ctx.fillText("0",cx+6,cy+16);
+    }
+    function drawArrow(ctx,x1,y1,x2,y2,color,label){
+      const head=12, angle=Math.atan2(y2-y1,x2-x1); ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=4;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-head*Math.cos(angle-Math.PI/6),y2-head*Math.sin(angle-Math.PI/6)); ctx.lineTo(x2-head*Math.cos(angle+Math.PI/6),y2-head*Math.sin(angle+Math.PI/6)); ctx.closePath(); ctx.fill();
+      if(label){ ctx.font="14px Arial"; ctx.fillText(label,x2+8,y2-8); }
+    }
+    function drawVectorArrow(ctx,v,color,label,scale,w,h){ const s=point(0,0,w,h,scale), e=point(v.x,v.y,w,h,scale); drawArrow(ctx,s.x,s.y,e.x,e.y,color,label); }
+
+    function setMatrixSize(rows,cols){ document.getElementById("rows").value=rows; document.getElementById("cols").value=cols; updateMatrixSizeFromInput(); }
+    function updateMatrixSizeFromInput(){
+      let rows=clamp(Math.round(getNumber("rows")),1,6), cols=clamp(Math.round(getNumber("cols")),1,6);
+      document.getElementById("rows").value=rows; document.getElementById("cols").value=cols; state.matrixRows=rows; state.matrixCols=cols; state.selectionAnchor=null; state.selectionEnd=null;
+      drawMatrixText(rows,cols); renderInteractiveMatrix(rows,cols); updateMatrixSelectionResult(null);
+    }
+    function drawMatrixText(rows,cols){
+      let html="", count=1; for(let r=0;r<rows;r++){ html+="[ "; for(let c=0;c<cols;c++){ html+=String(count).padStart(2," "); if(c<cols-1) html+="&nbsp;&nbsp;"; count++; } html+=" ]"; if(r<rows-1) html+="<br>"; }
+      let type="일반 행렬"; if(rows===1&&cols===1) type="스칼라처럼 볼 수 있는 1×1 행렬"; else if(rows===1) type="행벡터"; else if(cols===1) type="열벡터";
+      document.getElementById("matrixSizeBox").innerHTML=html;
+      document.getElementById("matrixSizeResult").innerHTML=`<ul><li>크기 = ${rows}×${cols}</li><li>행 개수 = ${rows}</li><li>열 개수 = ${cols}</li><li>원소 개수 = ${rows*cols}</li><li>전체 형태 = ${type}</li></ul>`;
+    }
+    function renderInteractiveMatrix(rows,cols){
+      const container=document.getElementById("interactiveMatrix");
+      container.innerHTML="";
+      container.style.gridTemplateColumns=`repeat(${cols},52px)`;
+      let count=1;
+
+      for(let r=0;r<rows;r++){
+        for(let c=0;c<cols;c++){
+          const cell=document.createElement("div");
+          cell.className="matrix-cell";
+          cell.textContent=count;
+          cell.dataset.row=r;
+          cell.dataset.col=c;
+
+          cell.addEventListener("pointerdown",e=>{
+            e.preventDefault();
+            beginMatrixSelection(r,c);
+          });
+
+          container.appendChild(cell);
+          count++;
+        }
+      }
+    }
+
+    function getMatrixCellFromPoint(clientX, clientY){
+      const element=document.elementFromPoint(clientX, clientY);
+      if(!element) return null;
+      const cell=element.closest(".matrix-cell");
+      if(!cell) return null;
+      return {
+        row:parseInt(cell.dataset.row,10),
+        col:parseInt(cell.dataset.col,10)
+      };
+    }
+
+    document.addEventListener("pointermove",e=>{
+      if(!state.isSelecting) return;
+      const cell=getMatrixCellFromPoint(e.clientX,e.clientY);
+      if(cell) extendMatrixSelection(cell.row,cell.col);
+    });
+
+    document.addEventListener("pointerup",()=>{
+      if(state.isSelecting) endMatrixSelection();
+    });
+    function beginMatrixSelection(row,col){ state.isSelecting=true; state.selectionAnchor={row,col}; state.selectionEnd={row,col}; highlightMatrixSelection(); updateMatrixSelectionResult(getSelectionInfo()); }
+    function extendMatrixSelection(row,col){ state.selectionEnd={row,col}; highlightMatrixSelection(); updateMatrixSelectionResult(getSelectionInfo()); }
+    function endMatrixSelection(){ state.isSelecting=false; highlightMatrixSelection(); updateMatrixSelectionResult(getSelectionInfo()); }
+    function getSelectionInfo(){
+      if(!state.selectionAnchor||!state.selectionEnd) return null; const r1=Math.min(state.selectionAnchor.row,state.selectionEnd.row), r2=Math.max(state.selectionAnchor.row,state.selectionEnd.row), c1=Math.min(state.selectionAnchor.col,state.selectionEnd.col), c2=Math.max(state.selectionAnchor.col,state.selectionEnd.col);
+      const rowCount=r2-r1+1, colCount=c2-c1+1, cellCount=rowCount*colCount; let type="행렬"; if(rowCount===1&&colCount===1) type="스칼라"; else if(rowCount===1) type="행벡터"; else if(colCount===1) type="열벡터";
+      return {r1,r2,c1,c2,rowCount,colCount,cellCount,type};
+    }
+    function highlightMatrixSelection(){ const info=getSelectionInfo(); document.querySelectorAll(".matrix-cell").forEach(cell=>{ cell.classList.remove("selected","anchor"); if(!info) return; const row=parseInt(cell.dataset.row), col=parseInt(cell.dataset.col); if(row>=info.r1&&row<=info.r2&&col>=info.c1&&col<=info.c2) cell.classList.add("selected"); if(state.selectionAnchor&&row===state.selectionAnchor.row&&col===state.selectionAnchor.col) cell.classList.add("anchor"); }); }
+    function updateMatrixSelectionResult(info){ document.getElementById("selectionResult").innerHTML = !info ? `<ul><li>선택 영역 없음</li><li>행렬 칸을 클릭하거나 드래그</li></ul>` : `<ul><li>판정 = ${info.type}</li><li>선택 크기 = ${info.rowCount}×${info.colCount}</li><li>선택 원소 수 = ${info.cellCount}</li><li>행 범위 = ${info.r1+1}행 ~ ${info.r2+1}행</li><li>열 범위 = ${info.c1+1}열 ~ ${info.c2+1}열</li></ul>`; }
+
+    function setApplicationDemo(type){
+      const demos={
+        recommend:{title:"추천 시스템", A:[0.9,0.8,0.1], B:[0.8,0.9,0.2], C:[0.1,0.2,0.9], labels:["액션","코미디","공포"], app:"사용자 취향과 콘텐츠 특징을 숫자 배열로 놓고 비교", imp:"가까운 방향의 벡터일수록 더 잘 맞는 추천으로 볼 수 있음"},
+        sentence:{title:"문장 유사도", A:[0.8,0.7,0.1], B:[0.75,0.65,0.2], C:[0.1,0.2,0.85], labels:["학교","공부","음식"], app:"문장의 의미 성분을 숫자 배열로 표현하고 방향을 비교", imp:"표현이 달라도 의미 방향이 가까우면 비슷한 문장으로 볼 수 있음"},
+        image:{title:"이미지 변환", A:[2,2], B:[4,4], C:[-2,2], labels:["원본","확대","회전/변환"], app:"좌표에 행렬을 곱해 확대·회전·기울이기", imp:"행렬은 개별 숫자뿐 아니라 점들의 배치 전체를 바꿈"},
+        loss:{title:"정보 손실", A:[1,2], B:[2,4], C:[3,6], labels:["점1","점2","점3"], app:"여러 점이 한 선 위로 압축되는 상황", imp:"압축 뒤에는 서로 다른 원래 위치를 구분하기 어려움"}
+      };
+      const d=demos[type]; drawApplicationDemo(type,d); renderApplicationBars(d);
+    }
+    function renderApplicationBars(d){
+      function row(label,value){ return `<div class="bar-row"><div>${label}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.abs(value)*100}%"></div></div><div>${value}</div></div>`; }
+      let html=`<h4>${d.title}</h4><p class="mini">${d.app}</p>`; d.labels.forEach((lab,i)=>{ if(typeof d.A[i]==='number' && Math.abs(d.A[i])<=1) html+=row(lab,d.A[i]); });
+      html+=`<div class="note"><ul><li>사용 예시: ${d.app}</li><li>확인할 점: ${d.imp}</li></ul></div>`; document.getElementById("applicationBars").innerHTML=html;
+      document.getElementById("applicationResult").innerHTML=`<ul><li>예시 = ${d.title}</li><li>벡터 A = [${d.A.join(", ")}]</li><li>벡터 B = [${d.B.join(", ")}]</li><li>비교 또는 변환 결과를 오른쪽 그림에서 확인</li></ul>`;
+    }
+    function drawApplicationDemo(type,d){
+      const canvas=document.getElementById("applicationCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height; ctx.clearRect(0,0,w,h); ctx.fillStyle="#fff"; ctx.fillRect(0,0,w,h);
+      if(type==="recommend"||type==="sentence"){
+        const A={x:d.A[0]*5,y:d.A[1]*5}, B={x:d.B[0]*5,y:d.B[1]*5}, C={x:d.C[0]*5,y:d.C[1]*5}; drawBase(ctx,w,h,34); drawVectorArrow(ctx,A,"#2563eb","A",34,w,h); drawVectorArrow(ctx,B,"#16a34a","B",34,w,h); drawVectorArrow(ctx,C,"#dc2626","C",34,w,h);
+        const simAB=cosineValue(A,B), simAC=cosineValue(A,C); ctx.fillStyle="#111827"; ctx.font="15px Arial"; ctx.fillText(`cos(A,B) ≈ ${simAB.toFixed(3)} / cos(A,C) ≈ ${simAC.toFixed(3)}`,30,35);
+      } else if(type==="image") { drawBase(ctx,w,h,34); drawVectorArrow(ctx,{x:2,y:2},"#2563eb","원본",34,w,h); drawVectorArrow(ctx,{x:4,y:4},"#16a34a","확대",34,w,h); drawVectorArrow(ctx,{x:-2,y:2},"#dc2626","회전",34,w,h); }
+      else { drawBase(ctx,w,h,34); [{x:1,y:2},{x:2,y:4},{x:3,y:6}].forEach((p,i)=>drawVectorArrow(ctx,p,["#2563eb","#16a34a","#dc2626"][i],`원래${i+1}`,34,w,h)); ctx.strokeStyle="#111827"; ctx.setLineDash([8,6]); const a=point(-6,-2,w,h,34), b=point(6,-2,w,h,34); line(ctx,a.x,a.y,b.x,b.y); ctx.setLineDash([]); ctx.fillStyle="#111827"; ctx.font="14px Arial"; ctx.fillText("압축 후 같은 선 위로 몰림 → 복원 어려움",25,35); }
+    }
+
+    function setDataSample(type){ if(type==="score"){state.dataVector=[90,85,70]; makeDataControls(["국어","영어","수학"],state.dataVector);} if(type==="image"){state.dataVector=[20,60,180,230]; makeDataControls(["픽셀1","픽셀2","픽셀3","픽셀4"],state.dataVector);} if(type==="sound"){state.dataVector=[0.1,0.5,0.2,-0.3,-0.6,-0.1]; makeDataControls(["s1","s2","s3","s4","s5","s6"],state.dataVector);} if(type==="text"){state.dataVector=[0.8,0.2,0.6,0.4]; makeDataControls(["의미1","의미2","의미3","의미4"],state.dataVector);} drawDataVector(); }
+    function makeDataControls(labels,values){ let html="<h3>성분 직접 입력</h3>"; labels.forEach((label,i)=>{ html+=`<label>${label}</label><input type="number" id="dataInput${i}" value="${values[i]}" step="0.1" oninput="updateDataVectorFromInput()">`; }); document.getElementById("dataControls").innerHTML=html; }
+    function updateDataVectorFromInput(){ state.dataVector=[]; document.querySelectorAll("[id^='dataInput']").forEach(input=>state.dataVector.push(parseFloat(input.value)||0)); drawDataVector(); }
+    function drawDataVector(){ const canvas=document.getElementById("dataCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height; ctx.clearRect(0,0,w,h); const data=state.dataVector, maxAbs=Math.max(...data.map(v=>Math.abs(v)),1), barWidth=w/(data.length*1.8), gap=barWidth*.8, baseY=h/2; ctx.strokeStyle="#111827"; ctx.lineWidth=2; line(ctx,30,baseY,w-30,baseY); data.forEach((value,i)=>{ const x=45+i*(barWidth+gap), bh=(value/maxAbs)*120, y=value>=0?baseY-bh:baseY; ctx.fillStyle=value>=0?"#2563eb":"#dc2626"; ctx.fillRect(x,y,barWidth,Math.abs(bh)); ctx.fillStyle="#111827"; ctx.font="13px Arial"; ctx.fillText(String(value),x,value>=0?y-6:y+Math.abs(bh)+16); ctx.fillText("x"+(i+1),x,baseY+34); }); const length=Math.sqrt(data.reduce((sum,v)=>sum+v*v,0)); document.getElementById("dataVectorResult").innerHTML=`<ul><li>벡터 = [${data.join(", ")}]</li><li>차원 = ${data.length}</li><li>성분 개수 = ${data.length}</li><li>벡터 길이 = ${length.toFixed(3)}</li></ul>`; }
+
+    function setVector(x,y){ state.vector={x,y}; document.getElementById("vx").value=x; document.getElementById("vy").value=y; drawVector(); }
+    function updateVectorFromInput(){ state.vector.x=getNumber("vx"); state.vector.y=getNumber("vy"); drawVector(); }
+    function drawVector(){ const canvas=document.getElementById("vectorCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height, scale=32; drawBase(ctx,w,h,scale); drawVectorArrow(ctx,state.vector,"#2563eb","v",scale,w,h); const len=vectorLength(state.vector); document.getElementById("vectorResult").innerHTML=`<ul><li>v = [${state.vector.x}, ${state.vector.y}]</li><li>x 성분 = ${state.vector.x}</li><li>y 성분 = ${state.vector.y}</li><li>차원 = 2</li><li>|v| = √(${state.vector.x}² + ${state.vector.y}²) = ${len.toFixed(3)}</li></ul>`; }
+
+    function setVector3D(x,y,z){ state.vector3D={x,y,z}; document.getElementById("v3x").value=x; document.getElementById("v3y").value=y; document.getElementById("v3z").value=z; drawVector3D(); }
+    function updateVector3DFromInput(){ state.vector3D.x=getNumber("v3x"); state.vector3D.y=getNumber("v3y"); state.vector3D.z=getNumber("v3z"); drawVector3D(); }
+    function setup3DCanvasEvents(){ const canvas=document.getElementById("vector3DCanvas"); canvas.addEventListener("pointerdown",e=>{ e.preventDefault(); canvas.setPointerCapture(e.pointerId); state.isDragging3D=true; const rect=canvas.getBoundingClientRect(); state.lastMouse3D.x=e.clientX-rect.left; state.lastMouse3D.y=e.clientY-rect.top; }); canvas.addEventListener("pointermove",e=>{ if(!state.isDragging3D) return; const rect=canvas.getBoundingClientRect(); const x=e.clientX-rect.left, y=e.clientY-rect.top; const dx=x-state.lastMouse3D.x, dy=y-state.lastMouse3D.y; state.rotation3D.y+=dx*.012; state.rotation3D.x+=dy*.012; state.lastMouse3D={x,y}; drawVector3D(); }); canvas.addEventListener("pointerup",e=>{ state.isDragging3D=false; try{canvas.releasePointerCapture(e.pointerId);}catch(_){} }); canvas.addEventListener("pointercancel",()=>state.isDragging3D=false); canvas.addEventListener("wheel",e=>{ e.preventDefault(); state.zoom3D=clamp(state.zoom3D+(e.deltaY<0?.08:-.08),.55,1.8); drawVector3D(); },{passive:false}); }
+    function rotate3D(p){ const ax=state.rotation3D.x, ay=state.rotation3D.y; let x=p.x,y=p.y,z=p.z; const cy=Math.cos(ay), sy=Math.sin(ay); [x,z]=[x*cy+z*sy,-x*sy+z*cy]; const cx=Math.cos(ax), sx=Math.sin(ax); [y,z]=[y*cx-z*sx,y*sx+z*cx]; return {x,y,z}; }
+    function project3D(p,w,h,scale){ const r=rotate3D(p), depth=12, factor=depth/(depth+r.z); return {x:w/2+r.x*scale*factor, y:h/2-r.y*scale*factor, z:r.z}; }
+    function draw3DLine(ctx,a,b,color,label,dashed=false){ const canvas=document.getElementById("vector3DCanvas"), w=canvas.width,h=canvas.height, scale=38*state.zoom3D; const p1=project3D(a,w,h,scale), p2=project3D(b,w,h,scale); ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=3; if(dashed) ctx.setLineDash([6,6]); ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke(); ctx.setLineDash([]); if(label){ ctx.font="bold 15px Arial"; ctx.fillText(label,p2.x+8,p2.y-8); } }
+    function draw3DArrow(ctx,v,color,label){ const canvas=document.getElementById("vector3DCanvas"), w=canvas.width,h=canvas.height, scale=38*state.zoom3D; const s=project3D({x:0,y:0,z:0},w,h,scale), e=project3D(v,w,h,scale); ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(e.x,e.y); ctx.stroke(); ctx.beginPath(); ctx.arc(e.x,e.y,8,0,Math.PI*2); ctx.fill(); ctx.font="bold 15px Arial"; ctx.fillText(label,e.x+10,e.y-10); }
+    function drawVector3D(){ const canvas=document.getElementById("vector3DCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height; ctx.clearRect(0,0,w,h); ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,w,h); for(let i=-6;i<=6;i++){ draw3DLine(ctx,{x:-6,y:i,z:0},{x:6,y:i,z:0},"#e5e7eb",null,true); draw3DLine(ctx,{x:i,y:-6,z:0},{x:i,y:6,z:0},"#e5e7eb",null,true); } draw3DLine(ctx,{x:-6,y:0,z:0},{x:6,y:0,z:0},"#dc2626","x"); draw3DLine(ctx,{x:0,y:-6,z:0},{x:0,y:6,z:0},"#16a34a","y"); draw3DLine(ctx,{x:0,y:0,z:-6},{x:0,y:0,z:6},"#2563eb","z"); draw3DLine(ctx,{x:state.vector3D.x,y:state.vector3D.y,z:0},state.vector3D,"#9ca3af",null,true); draw3DArrow(ctx,{x:state.vector3D.x,y:state.vector3D.y,z:0},"#6b7280","xy 투영"); draw3DArrow(ctx,state.vector3D,"#111827","v"); const len=vector3DLength(state.vector3D); document.getElementById("vector3DResult").innerHTML=`<ul><li>v = [${state.vector3D.x}, ${state.vector3D.y}, ${state.vector3D.z}]</li><li>x 성분 = ${state.vector3D.x}</li><li>y 성분 = ${state.vector3D.y}</li><li>z 성분 = ${state.vector3D.z}</li><li>차원 = 3</li><li>|v| = √(${state.vector3D.x}² + ${state.vector3D.y}² + ${state.vector3D.z}²) = ${len.toFixed(3)}</li></ul>`; }
+
+    function setOperationMode(mode){ state.operationMode=mode; drawOperation(); }
+    function setOperationVectors(ax,ay,bx,by,scalar){ state.operation={ax,ay,bx,by,scalar}; state.operationMode=bx===0&&by===0?"scale":"add"; drawOperation(); }
+    function drawOperation(){ const A={x:state.operation.ax,y:state.operation.ay}, B={x:state.operation.bx,y:state.operation.by}, scalar=state.operation.scalar; document.getElementById("operationControls").innerHTML=state.operationMode==="add"?`<h3>현재 연산</h3><div class="formula">A + B</div><div class="concept"><ul><li>A = [${A.x}, ${A.y}]</li><li>B = [${B.x}, ${B.y}]</li><li>성분끼리 더하기</li></ul></div>`:`<h3>스칼라 k</h3><input type="number" id="scalarSlider" value="${scalar}" step="0.5" oninput="updateScalar()"><div class="formula">k = <span id="scalarValue">${scalar}</span></div>`; const canvas=document.getElementById("operationCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height, scale=32; drawBase(ctx,w,h,scale); drawVectorArrow(ctx,A,"#2563eb","A",scale,w,h); if(state.operationMode==="add"){ const sum={x:A.x+B.x,y:A.y+B.y}; drawVectorArrow(ctx,B,"#16a34a","B",scale,w,h); drawVectorArrow(ctx,sum,"#dc2626","A+B",scale,w,h); document.getElementById("operationResult").innerHTML=`<ul><li>A = [${A.x}, ${A.y}]</li><li>B = [${B.x}, ${B.y}]</li><li>A + B = [${sum.x}, ${sum.y}]</li><li>계산 = [${A.x}+${B.x}, ${A.y}+${B.y}]</li></ul>`; } else { const scaled={x:A.x*scalar,y:A.y*scalar}; drawVectorArrow(ctx,scaled,"#dc2626","kA",scale,w,h); document.getElementById("operationResult").innerHTML=`<ul><li>A = [${A.x}, ${A.y}]</li><li>k = ${scalar}</li><li>kA = [${scaled.x}, ${scaled.y}]</li><li>계산 = [${scalar}×${A.x}, ${scalar}×${A.y}]</li></ul>`; }}
+    function updateScalar(){ state.operation.scalar=getNumber("scalarSlider"); document.getElementById("scalarValue").textContent=state.operation.scalar; drawOperation(); }
+
+    function setPair(ax,ay,bx,by,label){ state.pair={ax,ay,bx,by,label}; document.getElementById("pairAx").value=ax; document.getElementById("pairAy").value=ay; document.getElementById("pairBx").value=bx; document.getElementById("pairBy").value=by; drawSimilarity(); }
+    function updatePairFromInput(){ state.pair.ax=getNumber("pairAx"); state.pair.ay=getNumber("pairAy"); state.pair.bx=getNumber("pairBx"); state.pair.by=getNumber("pairBy"); state.pair.label="직접 입력"; drawSimilarity(); }
+    function drawSimilarity(){ const canvas=document.getElementById("similarityCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height, scale=32; drawBase(ctx,w,h,scale); const A={x:state.pair.ax,y:state.pair.ay}, B={x:state.pair.bx,y:state.pair.by}; drawVectorArrow(ctx,A,"#2563eb","A",scale,w,h); drawVectorArrow(ctx,B,"#dc2626","B",scale,w,h); const d=dotValue(A,B), c=cosineValue(A,B), angle=angleValue(A,B); let level=c===null?"계산 불가":c>.85?"높음":c>.35?"중간":c>-.35?"낮음":"반대 방향"; document.getElementById("similarityResult").innerHTML=`<ul><li>${state.pair.label}</li><li>A = [${A.x}, ${A.y}]</li><li>B = [${B.x}, ${B.y}]</li><li>A · B = ${d.toFixed(3)}</li><li>|A| = ${vectorLength(A).toFixed(3)}</li><li>|B| = ${vectorLength(B).toFixed(3)}</li><li>cosθ = ${c===null?"계산 불가":c.toFixed(4)}</li><li>각도 ≈ ${angle===null?"계산 불가":angle.toFixed(2)+"°"}</li><li>유사도 = ${level}</li></ul>`; }
+
+    function setMatrix(m11,m12,m21,m22,label){ state.matrix.m11=m11; state.matrix.m12=m12; state.matrix.m21=m21; state.matrix.m22=m22; state.matrix.label=label; document.getElementById("m11").value=m11; document.getElementById("m12").value=m12; document.getElementById("m21").value=m21; document.getElementById("m22").value=m22; updateMatrix(); }
+    function updateMatrixInput(){ state.matrix.vx=getNumber("inputX"); state.matrix.vy=getNumber("inputY"); updateMatrix(); }
+    function updateMatrix(){ state.matrix.m11=getNumber("m11"); state.matrix.m12=getNumber("m12"); state.matrix.m21=getNumber("m21"); state.matrix.m22=getNumber("m22"); state.matrix.vx=getNumber("inputX"); state.matrix.vy=getNumber("inputY"); const {m11,m12,m21,m22,vx,vy,label}=state.matrix, out=transform(vx,vy,m11,m12,m21,m22), det=m11*m22-m12*m21; const canvas=document.getElementById("matrixCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height, scale=32; drawBase(ctx,w,h,scale); drawGridTransform(ctx,m11,m12,m21,m22,scale,w,h); drawVectorArrow(ctx,{x:vx,y:vy},"#2563eb","x",scale,w,h); drawVectorArrow(ctx,out,"#dc2626","Ax",scale,w,h); document.getElementById("matrixResult").innerHTML=`<ul><li>${label}</li><li>A = [[${m11}, ${m12}], [${m21}, ${m22}]]</li><li>x = [${vx}, ${vy}]</li><li>Ax = [${out.x.toFixed(3)}, ${out.y.toFixed(3)}]</li><li>계산1 = ${m11}×${vx} + ${m12}×${vy}</li><li>계산2 = ${m21}×${vx} + ${m22}×${vy}</li><li>det(A) = ${det.toFixed(3)}</li></ul>`; }
+    function transform(x,y,m11,m12,m21,m22){ return {x:m11*x+m12*y,y:m21*x+m22*y}; }
+    function drawGridTransform(ctx,m11,m12,m21,m22,scale,w,h){ ctx.strokeStyle="rgba(220,38,38,.28)"; ctx.lineWidth=1.5; for(let i=-7;i<=7;i++){ let p1=transform(-7,i,m11,m12,m21,m22), p2=transform(7,i,m11,m12,m21,m22); drawTransformedLine(ctx,p1,p2,scale,w,h); p1=transform(i,-7,m11,m12,m21,m22); p2=transform(i,7,m11,m12,m21,m22); drawTransformedLine(ctx,p1,p2,scale,w,h); }}
+    function drawTransformedLine(ctx,p1,p2,scale,w,h){ const c1=point(p1.x,p1.y,w,h,scale), c2=point(p2.x,p2.y,w,h,scale); line(ctx,c1.x,c1.y,c2.x,c2.y); }
+    function setInverseEigen(m11,m12,m21,m22,label){ state.inverseEigen={m11,m12,m21,m22,label}; document.getElementById("ie11").value=m11; document.getElementById("ie12").value=m12; document.getElementById("ie21").value=m21; document.getElementById("ie22").value=m22; updateInverseEigen(); }
+    function updateInverseEigen(){ state.inverseEigen.m11=getNumber("ie11"); state.inverseEigen.m12=getNumber("ie12"); state.inverseEigen.m21=getNumber("ie21"); state.inverseEigen.m22=getNumber("ie22"); const {m11,m12,m21,m22,label}=state.inverseEigen, det=m11*m22-m12*m21; const canvas=document.getElementById("inverseEigenCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height, scale=32; drawBase(ctx,w,h,scale); drawGridTransform(ctx,m11,m12,m21,m22,scale,w,h); const xChanged=transform(2,0,m11,m12,m21,m22), yChanged=transform(0,2,m11,m12,m21,m22); drawVectorArrow(ctx,{x:2,y:0},"#2563eb","x축",scale,w,h); drawVectorArrow(ctx,xChanged,"#dc2626","A[x]",scale,w,h); drawVectorArrow(ctx,{x:0,y:2},"#16a34a","y축",scale,w,h); drawVectorArrow(ctx,yChanged,"#f59e0b","A[y]",scale,w,h); document.getElementById("inverseEigenResult").innerHTML=`<ul><li>${label}</li><li>A = [[${m11}, ${m12}], [${m21}, ${m22}]]</li><li>det(A) = ${det.toFixed(3)}</li><li>역행렬 = ${Math.abs(det)<.000001?"불가능":"가능"}</li><li>x축 방향 변환 = [${xChanged.x.toFixed(3)}, ${xChanged.y.toFixed(3)}]</li><li>y축 방향 변환 = [${yChanged.x.toFixed(3)}, ${yChanged.y.toFixed(3)}]</li><li>같은 축 위에 남는 방향 → 고유벡터 후보</li></ul>`; }
+
+    window.onload=function(){ updateMatrixSizeFromInput(); setup3DCanvasEvents(); };
+  </script>
+</body>
+</html>
