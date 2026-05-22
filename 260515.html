@@ -5,58 +5,680 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>벡터와 행렬 상호작용 학습</title>
   <style>
+    :root {
+      --bg: #eef2f7;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --surface-blue: #eff6ff;
+      --ink: #111827;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --line-strong: #cbd5e1;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --green: #16a34a;
+      --red: #dc2626;
+      --yellow: #ca8a04;
+      --gray: #475569;
+      --shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
+      --shadow-soft: 0 8px 20px rgba(15, 23, 42, 0.07);
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 11px;
+    }
+
     * { box-sizing: border-box; }
-    body { margin:0; font-family: Arial, sans-serif; background:#f3f4f6; color:#111827; line-height:1.6; }
-    header { background:linear-gradient(135deg,#111827,#1d4ed8); color:#fff; padding:34px 18px; text-align:center; }
-    header h1 { margin:0 0 8px; font-size:30px; }
-    header p { margin:0; color:#dbeafe; }
-    nav { position:sticky; top:0; z-index:50; display:flex; gap:8px; overflow-x:auto; padding:12px; background:#fff; border-bottom:1px solid #d1d5db; }
-    nav button { border:0; background:#e5e7eb; padding:10px 14px; border-radius:999px; white-space:nowrap; cursor:pointer; font-size:14px; }
-    nav button.active { background:#2563eb; color:#fff; }
-    main { max-width:1240px; margin:26px auto; padding:0 16px 50px; }
-    section { display:none; background:#fff; border-radius:20px; padding:24px; box-shadow:0 8px 24px rgba(0,0,0,.08); margin-bottom:24px; }
-    section.active { display:block; }
-    h2 { margin-top:0; border-bottom:2px solid #e5e7eb; padding-bottom:10px; }
-    h3 { margin-top:24px; margin-bottom:10px; }
-    .layout { display:grid; grid-template-columns:1fr 1.05fr; gap:22px; align-items:start; }
-    @media (max-width:900px){ .layout{ grid-template-columns:1fr; } }
-    .panel { background:#f9fafb; border:1px solid #e5e7eb; border-radius:16px; padding:18px; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
-    .card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:15px; margin-bottom:14px; }
-    .card h4 { margin:0 0 8px; }
-    .concept { background:#eff6ff; border-left:5px solid #2563eb; padding:14px 16px; border-radius:12px; margin:14px 0; }
-    .note { background:#fefce8; border-left:5px solid #ca8a04; padding:14px 16px; border-radius:12px; margin:14px 0; }
-    .concept ul, .note ul, .result ul { margin:0; padding-left:20px; }
-    .formula,.matrix-box { background:#111827; color:white; padding:14px; border-radius:12px; font-family:"Courier New", monospace; overflow-x:auto; margin:12px 0; line-height:1.7; }
-    .matrix-box { text-align:center; min-height:70px; }
-    .sample-buttons { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
-    button.sample, button.action { border:0; background:#2563eb; color:#fff; padding:10px 13px; border-radius:10px; cursor:pointer; font-size:14px; }
-    button.gray { background:#4b5563; } button.green { background:#16a34a; } button.red { background:#dc2626; } button.yellow{ background:#ca8a04; }
-    button.sample:hover, button.action:hover { filter:brightness(.95); }
-    canvas { width:100%; max-width:560px; height:auto; background:#fff; border:1px solid #d1d5db; border-radius:14px; display:block; margin:0 auto; }
-    #vector3DCanvas { cursor:grab; touch-action:none; background:linear-gradient(#ffffff,#f8fafc); }
-    #vector3DCanvas:active { cursor:grabbing; }
-    .result { background:#f8fafc; border:1px solid #cbd5e1; padding:14px; border-radius:12px; min-height:86px; margin-top:14px; }
-    table { width:100%; border-collapse:collapse; margin:14px 0; }
-    th,td { border:1px solid #e5e7eb; padding:10px; text-align:center; vertical-align:top; }
-    th { background:#f3f4f6; }
-    input[type="number"], input[type="range"] { width:100%; margin:6px 0; }
-    input[type="number"] { padding:8px; border:1px solid #cbd5e1; border-radius:8px; }
-    .two-cols { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .three-cols { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-    .slider-label { display:flex; justify-content:space-between; gap:10px; font-size:14px; color:#374151; margin-top:8px; }
-    .interactive-matrix-wrap { overflow-x:auto; padding:10px 0; }
-    .interactive-matrix { display:inline-grid; gap:6px; background:#111827; padding:14px; border-radius:14px; user-select:none; touch-action:none; }
-    .matrix-cell { width:52px; height:44px; border-radius:10px; background:#374151; color:white; display:flex; align-items:center; justify-content:center; font-family:"Courier New",monospace; cursor:pointer; border:2px solid transparent; }
-    .matrix-cell.selected { background:#2563eb; border-color:#bfdbfe; }
-    .matrix-cell.anchor { background:#16a34a; border-color:#bbf7d0; }
-    .application-card { border-left:5px solid #2563eb; }
-    .implication-card { border-left:5px solid #ca8a04; }
-    .app-demo-box { background:#f8fafc; border:1px solid #cbd5e1; border-radius:14px; padding:14px; margin-top:14px; }
-    .bar-row { display:grid; grid-template-columns:100px 1fr 60px; align-items:center; gap:8px; margin:8px 0; }
-    .bar-track { height:16px; background:#e5e7eb; border-radius:999px; overflow:hidden; }
-    .bar-fill { height:100%; background:#2563eb; width:0%; }
-    .mini { font-size:14px; color:#4b5563; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans KR", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+        linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+      color: var(--ink);
+      line-height: 1.65;
+    }
+
+    header {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, #0f172a 0%, #1d4ed8 58%, #2563eb 100%);
+      color: white;
+      padding: 42px 20px 40px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -140px auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.11);
+      pointer-events: none;
+    }
+
+    header h1 {
+      position: relative;
+      margin: 0 0 10px;
+      font-size: clamp(26px, 3vw, 38px);
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
+
+    header p {
+      position: relative;
+      margin: 0;
+      color: #dbeafe;
+      font-size: 16px;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 12px max(12px, calc((100vw - 1240px) / 2 + 16px));
+      background: rgba(255, 255, 255, 0.90);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    nav::-webkit-scrollbar { height: 8px; }
+    nav::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+
+    nav button {
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      color: #334155;
+      padding: 10px 14px;
+      border-radius: 999px;
+      white-space: nowrap;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      transition: transform .12s ease, background .12s ease, color .12s ease, box-shadow .12s ease;
+    }
+
+    nav button:hover {
+      transform: translateY(-1px);
+      background: #eaf1ff;
+      color: var(--blue-dark);
+      box-shadow: var(--shadow-soft);
+    }
+
+    nav button.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.26);
+    }
+
+    main {
+      max-width: 1240px;
+      margin: 28px auto;
+      padding: 0 16px 56px;
+    }
+
+    section {
+      display: none;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(203, 213, 225, 0.85);
+      border-radius: var(--radius-lg);
+      padding: clamp(18px, 2.5vw, 28px);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    section.active { display: block; }
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #e5eaf3;
+      font-size: clamp(22px, 2vw, 30px);
+      letter-spacing: -0.035em;
+    }
+
+    h2::before {
+      content: "";
+      width: 10px;
+      height: 30px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--blue), #60a5fa);
+      flex: 0 0 auto;
+    }
+
+    h3 {
+      margin: 24px 0 12px;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    h4 {
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    ul { padding-left: 20px; }
+
+    li + li { margin-top: 4px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.92fr) minmax(360px, 1.08fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card h4 {
+      margin: 0 0 10px;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .concept,
+    .note {
+      padding: 15px 16px;
+      border-radius: var(--radius-md);
+      margin: 14px 0;
+      border: 1px solid transparent;
+    }
+
+    .concept {
+      background: var(--surface-blue);
+      border-color: #bfdbfe;
+      border-left: 6px solid var(--blue);
+    }
+
+    .note {
+      background: #fff7ed;
+      border-color: #fed7aa;
+      border-left: 6px solid var(--yellow);
+    }
+
+    .concept ul,
+    .note ul,
+    .result ul { margin: 0; }
+
+    .formula,
+    .matrix-box {
+      background: #0f172a;
+      color: white;
+      padding: 15px 16px;
+      border-radius: var(--radius-md);
+      font-family: "Courier New", monospace;
+      overflow-x: auto;
+      margin: 12px 0;
+      line-height: 1.75;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .matrix-box {
+      text-align: center;
+      min-height: 76px;
+      font-size: 16px;
+    }
+
+    .sample-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: 14px 0;
+    }
+
+    button.sample,
+    button.action {
+      border: none;
+      background: var(--blue);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 11px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 7px 15px rgba(37, 99, 235, 0.18);
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+    }
+
+    button.sample:hover,
+    button.action:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.98);
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.24);
+    }
+
+    button.gray { background: var(--gray); box-shadow: 0 7px 15px rgba(71, 85, 105, .18); }
+    button.green { background: var(--green); box-shadow: 0 7px 15px rgba(22, 163, 74, .18); }
+    button.red { background: var(--red); box-shadow: 0 7px 15px rgba(220, 38, 38, .18); }
+    button.yellow { background: var(--yellow); box-shadow: 0 7px 15px rgba(202, 138, 4, .18); }
+
+    canvas {
+      width: 100%;
+      max-width: 560px;
+      height: auto;
+      background:
+        linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      display: block;
+      margin: 0 auto;
+      box-shadow: var(--shadow-soft);
+    }
+
+    #vector3DCanvas {
+      cursor: grab;
+      touch-action: none;
+      background:
+        radial-gradient(circle at 50% 42%, #ffffff 0%, #f8fafc 60%, #eaf1ff 100%);
+    }
+
+    #vector3DCanvas:active { cursor: grabbing; }
+
+    .result {
+      background: #ffffff;
+      border: 1px solid var(--line-strong);
+      padding: 15px 16px;
+      border-radius: var(--radius-md);
+      min-height: 90px;
+      margin-top: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .result li::marker,
+    .concept li::marker,
+    .note li::marker { color: var(--blue); }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 14px 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: white;
+      box-shadow: var(--shadow-soft);
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      padding: 11px 10px;
+      text-align: center;
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    th:last-child, td:last-child { border-right: none; }
+
+    th {
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    label {
+      display: block;
+      margin-top: 8px;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    input[type="number"],
+    input[type="range"] {
+      width: 100%;
+      margin: 6px 0 10px;
+    }
+
+    input[type="number"] {
+      padding: 10px 11px;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: white;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      outline: none;
+      transition: border-color .12s ease, box-shadow .12s ease;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+    }
+
+    input[type="range"] {
+      accent-color: var(--blue);
+    }
+
+    .two-cols {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .three-cols {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .two-cols,
+      .three-cols { grid-template-columns: 1fr; }
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 14px;
+      color: #374151;
+      margin-top: 8px;
+      font-weight: 700;
+    }
+
+    .interactive-matrix-wrap {
+      overflow-x: auto;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    .interactive-matrix {
+      display: inline-grid;
+      gap: 7px;
+      background: #0f172a;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      user-select: none;
+      touch-action: none;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .matrix-cell {
+      width: 54px;
+      height: 46px;
+      border-radius: 12px;
+      background: #334155;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      cursor: pointer;
+      border: 2px solid transparent;
+      font-weight: 800;
+      transition: transform .08s ease, background .08s ease, border-color .08s ease;
+    }
+
+    .matrix-cell:hover { transform: translateY(-1px); background: #475569; }
+    .matrix-cell.selected { background: var(--blue); border-color: #bfdbfe; }
+    .matrix-cell.anchor { background: var(--green); border-color: #bbf7d0; }
+
+    .application-card { border-left: 6px solid var(--blue); }
+    .implication-card { border-left: 6px solid var(--yellow); }
+
+    .app-demo-box {
+      background: white;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      padding: 15px;
+      margin-top: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 96px 1fr 60px;
+      align-items: center;
+      gap: 10px;
+      margin: 9px 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .bar-track {
+      height: 17px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.12);
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), #60a5fa);
+      width: 0%;
+      border-radius: 999px;
+    }
+
+    .mini {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 4px 0 10px;
+    }
+
+    .mode-box {
+      background: #ffffff;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin: 14px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .matmul-stage {
+      display: grid;
+      grid-template-columns: minmax(180px, auto) auto minmax(180px, auto) auto minmax(180px, auto);
+      gap: 10px;
+      align-items: center;
+      justify-items: center;
+      margin-top: 14px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .matmul-stage {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .matmul-symbol {
+      font-size: 30px;
+      font-weight: 900;
+      color: #334155;
+    }
+
+    .matrix-table {
+      display: inline-grid;
+      gap: 6px;
+      background: #0f172a;
+      padding: 10px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .matrix-table input,
+    .matrix-entry {
+      width: 54px;
+      height: 42px;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 900;
+      font-family: Arial, sans-serif;
+    }
+
+    .matrix-table input {
+      margin: 0;
+      background: #ffffff;
+      color: #0f172a;
+      padding: 0;
+    }
+
+    .matrix-entry {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eaf1ff;
+      color: #1e3a8a;
+      cursor: pointer;
+    }
+
+    .matrix-entry:hover {
+      border-color: var(--blue);
+      background: #dbeafe;
+    }
+
+    .matrix-entry.active {
+      background: var(--blue);
+      color: white;
+      border-color: #bfdbfe;
+    }
+
+    .matrix-table .row-highlight {
+      background: #dcfce7;
+      border-color: #22c55e;
+    }
+
+    .matrix-table .col-highlight {
+      background: #fee2e2;
+      border-color: #ef4444;
+    }
+
+    .matrix-table .row-highlight.col-highlight {
+      background: #fef3c7;
+      border-color: #f59e0b;
+    }
+
+    .matmul-caption {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 900;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .matmul-explain {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-left: 6px solid var(--yellow);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-top: 14px;
+      font-weight: 800;
+      overflow-x: auto;
+    }
+
+    .compact-result {
+      min-height: auto;
+      padding: 12px 14px;
+    }
+
+    .compact-result ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .operation-workspace {
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .operation-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .operation-toolbar h3 {
+      margin: 0;
+    }
+
+    .operation-body {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.72fr) minmax(420px, 1.28fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .operation-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .operation-side,
+    .operation-visual {
+      background: #ffffff;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .operation-visual canvas {
+      max-width: none;
+    }
+
+    .operation-full {
+      grid-column: 1 / -1;
+      background: #ffffff;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+    }
   </style>
 </head>
 <body>
@@ -160,7 +782,70 @@
       </div>
     </section>
 
-    <section id="operation"><h2>7. 벡터 연산</h2><div class="layout"><div class="panel"><h3>연산 선택</h3><div class="sample-buttons"><button class="sample" onclick="setOperationMode('add')">A + B</button><button class="sample" onclick="setOperationMode('scale')">kA</button></div><h3>샘플</h3><div class="sample-buttons"><button class="sample" onclick="setOperationVectors(3,2,2,1,1)">기본</button><button class="sample" onclick="setOperationVectors(-3,2,4,1,1)">방향 다름</button><button class="sample" onclick="setOperationVectors(6,8,0,0,0.5)">절반</button><button class="sample gray" onclick="setOperationVectors(3,4,0,0,-1)">반대 방향</button></div><div id="operationControls"></div><div class="result" id="operationResult"></div></div><div class="panel"><canvas id="operationCanvas" width="560" height="560"></canvas><div class="formula">[a,b] + [c,d] = [a+c, b+d]<br>k[a,b] = [ka, kb]</div></div></div></section>
+    <section id="operation">
+      <h2>7. 연산</h2>
+
+      <div class="operation-workspace">
+        <div class="operation-toolbar">
+          <h3>연산 모드</h3>
+          <div class="sample-buttons" style="margin:0;">
+            <button class="sample" onclick="setOperationMode('add')">벡터 덧셈</button>
+            <button class="sample" onclick="setOperationMode('scale')">스칼라배</button>
+            <button class="sample green" onclick="setOperationMode('matmul')">행렬 × 행렬</button>
+          </div>
+        </div>
+
+        <div class="operation-body">
+          <div class="operation-side">
+            <div class="mode-box" id="operationControls"></div>
+            <div class="result" id="operationResult"></div>
+          </div>
+
+          <div class="operation-visual">
+            <canvas id="operationCanvas" width="760" height="470"></canvas>
+            <div class="formula" id="operationFormula">
+              [a,b] + [c,d] = [a+c, b+d]<br>
+              k[a,b] = [ka, kb]
+            </div>
+          </div>
+
+          <div id="matrixMultiplyPanel" class="operation-full" style="display:none;">
+            <h3 style="margin-top:0;">행렬 곱 실험</h3>
+
+            <div class="sample-buttons">
+              <button class="sample" onclick="setMatrixProductPreset('2x2')">2×2 × 2×2</button>
+              <button class="sample" onclick="setMatrixProductPreset('2x3_3x2')">2×3 × 3×2</button>
+              <button class="sample" onclick="setMatrixProductPreset('3x2_2x3')">3×2 × 2×3</button>
+              <button class="sample gray" onclick="setMatrixProductPreset('1x3_3x1')">1×3 × 3×1</button>
+            </div>
+
+            <div class="matmul-stage">
+              <div>
+                <div class="matmul-caption" id="matrixACaption">A</div>
+                <div class="matrix-table" id="matrixAInput"></div>
+              </div>
+
+              <div class="matmul-symbol">×</div>
+
+              <div>
+                <div class="matmul-caption" id="matrixBCaption">B</div>
+                <div class="matrix-table" id="matrixBInput"></div>
+              </div>
+
+              <div class="matmul-symbol">=</div>
+
+              <div>
+                <div class="matmul-caption" id="matrixCCaption">AB</div>
+                <div class="matrix-table" id="matrixProductOutput"></div>
+              </div>
+            </div>
+
+            <div class="matmul-explain" id="matrixProductExplain"></div>
+            <div class="result compact-result" id="matrixProductResult"></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section id="similarity"><h2>8. 내적과 코사인 유사도</h2><div class="layout"><div class="panel"><h3>샘플</h3><div class="sample-buttons"><button class="sample green" onclick="setPair(3,4,6,8,'같은 방향')">같은 방향</button><button class="sample" onclick="setPair(3,4,4,1,'비슷한 방향')">비슷한 방향</button><button class="sample gray" onclick="setPair(0,4,4,0,'직각')">직각</button><button class="sample red" onclick="setPair(3,4,-3,-4,'반대 방향')">반대 방향</button></div><h3>직접 입력</h3><div class="two-cols"><div><label>A x</label><input type="number" id="pairAx" value="3" step="0.5" oninput="updatePairFromInput()"><label>A y</label><input type="number" id="pairAy" value="4" step="0.5" oninput="updatePairFromInput()"></div><div><label>B x</label><input type="number" id="pairBx" value="6" step="0.5" oninput="updatePairFromInput()"><label>B y</label><input type="number" id="pairBy" value="8" step="0.5" oninput="updatePairFromInput()"></div></div><div class="result" id="similarityResult"></div></div><div class="panel"><canvas id="similarityCanvas" width="560" height="560"></canvas><div class="formula">A · B = A₁B₁ + A₂B₂<br>cosθ = (A · B) / (|A||B|)</div></div></div></section>
 
@@ -174,7 +859,7 @@
       matrixRows:2, matrixCols:3, isSelecting:false, selectionAnchor:null, selectionEnd:null,
       dataVector:[90,85,70], vector:{x:3,y:4}, vector3D:{x:3,y:4,z:2},
       rotation3D:{x:-0.55,y:0.75}, zoom3D:1, isDragging3D:false, lastMouse3D:{x:0,y:0},
-      operationMode:"add", operation:{ax:3,ay:2,bx:2,by:1,scalar:1},
+      operationMode:"add", operation:{ax:3,ay:2,bx:2,by:1,scalar:1}, selectedProductCell:{row:0,col:0}, matrixProduct:{aRows:2,aCols:2,bRows:2,bCols:2,A:[[1,2],[3,4]],B:[[2,0],[1,2]]},
       pair:{ax:3,ay:4,bx:6,by:8,label:"같은 방향"},
       matrix:{m11:1,m12:0,m21:0,m22:1,label:"단위행렬",vx:2,vy:2},
       inverseEigen:{m11:2,m12:0,m21:0,m22:2,label:"확대"}
@@ -332,8 +1017,264 @@
 
     function setOperationMode(mode){ state.operationMode=mode; drawOperation(); }
     function setOperationVectors(ax,ay,bx,by,scalar){ state.operation={ax,ay,bx,by,scalar}; state.operationMode=bx===0&&by===0?"scale":"add"; drawOperation(); }
-    function drawOperation(){ const A={x:state.operation.ax,y:state.operation.ay}, B={x:state.operation.bx,y:state.operation.by}, scalar=state.operation.scalar; document.getElementById("operationControls").innerHTML=state.operationMode==="add"?`<h3>현재 연산</h3><div class="formula">A + B</div><div class="concept"><ul><li>A = [${A.x}, ${A.y}]</li><li>B = [${B.x}, ${B.y}]</li><li>성분끼리 더하기</li></ul></div>`:`<h3>스칼라 k</h3><input type="number" id="scalarSlider" value="${scalar}" step="0.5" oninput="updateScalar()"><div class="formula">k = <span id="scalarValue">${scalar}</span></div>`; const canvas=document.getElementById("operationCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height, scale=32; drawBase(ctx,w,h,scale); drawVectorArrow(ctx,A,"#2563eb","A",scale,w,h); if(state.operationMode==="add"){ const sum={x:A.x+B.x,y:A.y+B.y}; drawVectorArrow(ctx,B,"#16a34a","B",scale,w,h); drawVectorArrow(ctx,sum,"#dc2626","A+B",scale,w,h); document.getElementById("operationResult").innerHTML=`<ul><li>A = [${A.x}, ${A.y}]</li><li>B = [${B.x}, ${B.y}]</li><li>A + B = [${sum.x}, ${sum.y}]</li><li>계산 = [${A.x}+${B.x}, ${A.y}+${B.y}]</li></ul>`; } else { const scaled={x:A.x*scalar,y:A.y*scalar}; drawVectorArrow(ctx,scaled,"#dc2626","kA",scale,w,h); document.getElementById("operationResult").innerHTML=`<ul><li>A = [${A.x}, ${A.y}]</li><li>k = ${scalar}</li><li>kA = [${scaled.x}, ${scaled.y}]</li><li>계산 = [${scalar}×${A.x}, ${scalar}×${A.y}]</li></ul>`; }}
-    function updateScalar(){ state.operation.scalar=getNumber("scalarSlider"); document.getElementById("scalarValue").textContent=state.operation.scalar; drawOperation(); }
+    function drawOperation(){
+      const A={x:state.operation.ax,y:state.operation.ay}, B={x:state.operation.bx,y:state.operation.by}, scalar=state.operation.scalar;
+      const matrixPanel=document.getElementById("matrixMultiplyPanel");
+      const formula=document.getElementById("operationFormula");
+
+      if(state.operationMode==="matmul"){
+        document.getElementById("operationControls").innerHTML=`
+          <h3 style="margin-top:0;">현재 모드: 행렬 × 행렬</h3>
+          <div class="formula">AB = A × B</div>
+          <ul>
+            <li>결과의 한 칸을 먼저 고름</li>
+            <li>A에서는 같은 번호의 행을 봄</li>
+            <li>B에서는 같은 번호의 열을 봄</li>
+            <li>행과 열을 서로 곱해서 더함</li>
+          </ul>`;
+        document.getElementById("operationResult").innerHTML=`
+          <ul>
+            <li>행렬 곱은 같은 위치끼리 곱하는 연산이 아님</li>
+            <li>A의 열 개수와 B의 행 개수가 같아야 계산 가능</li>
+            <li>2×2 × 2×2 → 2×2</li>
+          </ul>`;
+        if(matrixPanel) matrixPanel.style.display="block";
+        if(formula) formula.innerHTML="AB의 각 칸 = A의 한 행 · B의 한 열<br>예: (AB)₁₁ = A의 1행 · B의 1열";
+        updateMatrixProduct();
+        drawMatrixProductCanvas();
+        return;
+      }
+
+      if(matrixPanel) matrixPanel.style.display="none";
+      if(formula) formula.innerHTML="[a,b] + [c,d] = [a+c, b+d]<br>k[a,b] = [ka, kb]";
+
+      document.getElementById("operationControls").innerHTML=state.operationMode==="add"?`
+        <h3 style="margin-top:0;">현재 모드: 벡터 덧셈</h3>
+        <div class="formula">A + B</div>
+        <ul>
+          <li>A = [${A.x}, ${A.y}]</li>
+          <li>B = [${B.x}, ${B.y}]</li>
+          <li>x끼리, y끼리 더함</li>
+        </ul>`:`
+        <h3 style="margin-top:0;">현재 모드: 스칼라배</h3>
+        <label>스칼라 k</label>
+        <input type="number" id="scalarSlider" value="${scalar}" step="0.5" oninput="updateScalar()">
+        <div class="formula">k = <span id="scalarValue">${scalar}</span></div>`;
+
+      const canvas=document.getElementById("operationCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height, scale=32;
+      drawBase(ctx,w,h,scale);
+      drawVectorArrow(ctx,A,"#2563eb","A",scale,w,h);
+
+      if(state.operationMode==="add"){
+        const sum={x:A.x+B.x,y:A.y+B.y};
+        drawVectorArrow(ctx,B,"#16a34a","B",scale,w,h);
+        drawVectorArrow(ctx,sum,"#dc2626","A+B",scale,w,h);
+        document.getElementById("operationResult").innerHTML=`
+          <ul>
+            <li>A = [${A.x}, ${A.y}]</li>
+            <li>B = [${B.x}, ${B.y}]</li>
+            <li>A + B = [${sum.x}, ${sum.y}]</li>
+            <li>계산 = [${A.x}+${B.x}, ${A.y}+${B.y}]</li>
+          </ul>`;
+      } else {
+        const scaled={x:A.x*scalar,y:A.y*scalar};
+        drawVectorArrow(ctx,scaled,"#dc2626","kA",scale,w,h);
+        document.getElementById("operationResult").innerHTML=`
+          <ul>
+            <li>A = [${A.x}, ${A.y}]</li>
+            <li>k = ${scalar}</li>
+            <li>kA = [${scaled.x}, ${scaled.y}]</li>
+            <li>계산 = [${scalar}×${A.x}, ${scalar}×${A.y}]</li>
+          </ul>`;
+      }
+    }
+
+    function updateScalar(){
+      state.operation.scalar=getNumber("scalarSlider");
+      document.getElementById("scalarValue").textContent=state.operation.scalar;
+      drawOperation();
+    }
+
+    function setMatrixProductPreset(type){
+      const presets={
+        "2x2":{aRows:2,aCols:2,bRows:2,bCols:2,A:[[1,2],[3,4]],B:[[2,0],[1,2]]},
+        "2x3_3x2":{aRows:2,aCols:3,bRows:3,bCols:2,A:[[1,2,3],[4,5,6]],B:[[1,2],[3,4],[5,6]]},
+        "3x2_2x3":{aRows:3,aCols:2,bRows:2,bCols:3,A:[[1,2],[3,4],[5,6]],B:[[1,2,3],[4,5,6]]},
+        "1x3_3x1":{aRows:1,aCols:3,bRows:3,bCols:1,A:[[2,3,4]],B:[[5],[6],[7]]}
+      };
+      state.matrixProduct=JSON.parse(JSON.stringify(presets[type]));
+      state.selectedProductCell={row:0,col:0};
+      renderMatrixProductInputs();
+      updateMatrixProduct();
+      drawMatrixProductCanvas();
+    }
+
+    function renderMatrixProductInputs(){
+      const mp=state.matrixProduct;
+      const aBox=document.getElementById("matrixAInput");
+      const bBox=document.getElementById("matrixBInput");
+      const cBox=document.getElementById("matrixProductOutput");
+      if(!aBox||!bBox||!cBox) return;
+
+      document.getElementById("matrixACaption").textContent=`A (${mp.aRows}×${mp.aCols})`;
+      document.getElementById("matrixBCaption").textContent=`B (${mp.bRows}×${mp.bCols})`;
+      document.getElementById("matrixCCaption").textContent=`AB (${mp.aRows}×${mp.bCols})`;
+
+      aBox.innerHTML=""; bBox.innerHTML=""; cBox.innerHTML="";
+      aBox.style.gridTemplateColumns=`repeat(${mp.aCols},54px)`;
+      bBox.style.gridTemplateColumns=`repeat(${mp.bCols},54px)`;
+      cBox.style.gridTemplateColumns=`repeat(${mp.bCols},54px)`;
+
+      for(let r=0;r<mp.aRows;r++){
+        for(let c=0;c<mp.aCols;c++){
+          const input=document.createElement("input");
+          input.type="number"; input.step="1"; input.value=mp.A[r][c];
+          input.dataset.matrix="A"; input.dataset.row=r; input.dataset.col=c;
+          input.addEventListener("input",()=>{
+            mp.A[r][c]=parseFloat(input.value)||0;
+            updateMatrixProduct();
+            drawMatrixProductCanvas();
+          });
+          aBox.appendChild(input);
+        }
+      }
+
+      for(let r=0;r<mp.bRows;r++){
+        for(let c=0;c<mp.bCols;c++){
+          const input=document.createElement("input");
+          input.type="number"; input.step="1"; input.value=mp.B[r][c];
+          input.dataset.matrix="B"; input.dataset.row=r; input.dataset.col=c;
+          input.addEventListener("input",()=>{
+            mp.B[r][c]=parseFloat(input.value)||0;
+            updateMatrixProduct();
+            drawMatrixProductCanvas();
+          });
+          bBox.appendChild(input);
+        }
+      }
+
+      for(let r=0;r<mp.aRows;r++){
+        for(let c=0;c<mp.bCols;c++){
+          const cell=document.createElement("div");
+          cell.className="matrix-entry";
+          cell.dataset.row=r; cell.dataset.col=c;
+          cell.onclick=()=>selectProductCell(r,c);
+          cBox.appendChild(cell);
+        }
+      }
+    }
+
+    function readMatrixProductValues(){
+      const mp=state.matrixProduct;
+      const C=[];
+      for(let r=0;r<mp.aRows;r++){
+        const row=[];
+        for(let c=0;c<mp.bCols;c++){
+          let sum=0;
+          for(let k=0;k<mp.aCols;k++) sum+=mp.A[r][k]*mp.B[k][c];
+          row.push(sum);
+        }
+        C.push(row);
+      }
+      return {A:mp.A,B:mp.B,C,aRows:mp.aRows,aCols:mp.aCols,bRows:mp.bRows,bCols:mp.bCols};
+    }
+
+    function selectProductCell(row,col){
+      state.selectedProductCell={row,col};
+      updateMatrixProduct();
+      drawMatrixProductCanvas();
+    }
+
+    function updateMatrixProduct(){
+      if(state.operationMode!=="matmul") return;
+      if(!document.getElementById("matrixAInput").children.length) renderMatrixProductInputs();
+      const {A,B,C,aRows,aCols,bCols}=readMatrixProductValues();
+      let row=Math.min(state.selectedProductCell.row,aRows-1);
+      let col=Math.min(state.selectedProductCell.col,bCols-1);
+      state.selectedProductCell={row,col};
+
+      const output=document.getElementById("matrixProductOutput");
+      Array.from(output.children).forEach(cell=>{
+        const r=parseInt(cell.dataset.row,10), c=parseInt(cell.dataset.col,10);
+        cell.textContent=C[r][c];
+        cell.classList.toggle("active",r===row&&c===col);
+      });
+
+      document.querySelectorAll("#matrixAInput input, #matrixBInput input").forEach(input=>input.classList.remove("row-highlight","col-highlight"));
+      document.querySelectorAll(`#matrixAInput input[data-row="${row}"]`).forEach(input=>input.classList.add("row-highlight"));
+      document.querySelectorAll(`#matrixBInput input[data-col="${col}"]`).forEach(input=>input.classList.add("col-highlight"));
+
+      const rowValues=A[row];
+      const colValues=B.map(r=>r[col]);
+      const terms=[];
+      for(let k=0;k<aCols;k++) terms.push(`${rowValues[k]}×${colValues[k]}`);
+      const value=C[row][col];
+
+      document.getElementById("matrixProductExplain").innerHTML=`선택: (AB)<sub>${row+1}${col+1}</sub> = ${terms.join(" + ")} = <strong>${value}</strong>`;
+      document.getElementById("matrixProductResult").innerHTML=`<ul><li>결과 AB = ${matrixToString(C)}</li><li>강조: A의 ${row+1}행 × B의 ${col+1}열</li></ul>`;
+    }
+
+    function matrixToString(M){
+      return "["+M.map(row=>"["+row.join(", ")+"]").join(", ")+"]";
+    }
+
+    function setMatrixProductSample(a11,a12,a21,a22,b11,b12,b21,b22){
+      state.matrixProduct={aRows:2,aCols:2,bRows:2,bCols:2,A:[[a11,a12],[a21,a22]],B:[[b11,b12],[b21,b22]]};
+      state.selectedProductCell={row:0,col:0};
+      renderMatrixProductInputs();
+      updateMatrixProduct();
+      drawMatrixProductCanvas();
+    }
+
+    function drawMatrixProductCanvas(){
+      const canvas=document.getElementById("operationCanvas"), ctx=canvas.getContext("2d"), w=canvas.width,h=canvas.height;
+      const {A,B,C,aRows,aCols,bRows,bCols}=readMatrixProductValues();
+      const row=state.selectedProductCell.row;
+      const col=state.selectedProductCell.col;
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,w,h);
+      ctx.fillStyle="#111827"; ctx.font="bold 23px Arial"; ctx.fillText("행렬 곱: A의 행 × B의 열",125,50);
+
+      const aX=50, bX=225, cX=400, y=105;
+      drawMatrixMini(ctx,aX,y,A,"A",row,null);
+      drawMatrixMini(ctx,bX,y,B,"B",null,col);
+      drawMatrixMini(ctx,cX,y,C,"AB",row,col);
+      ctx.font="bold 28px Arial"; ctx.fillStyle="#334155"; ctx.fillText("×",190,180); ctx.fillText("=",365,180);
+
+      const rowValues=A[row];
+      const colValues=B.map(r=>r[col]);
+      const terms=[];
+      for(let k=0;k<aCols;k++) terms.push(`${rowValues[k]}×${colValues[k]}`);
+      ctx.fillStyle="#111827"; ctx.font="16px Arial";
+      ctx.fillText(`선택: 결과의 ${row+1}행 ${col+1}열`,70,315);
+      ctx.font="bold 18px Arial";
+      ctx.fillText(`${terms.join(" + ")} = ${C[row][col]}`,70,350);
+    }
+
+    function drawMatrixMini(ctx,x,y,m,label,highlightRow=null,highlightCol=null){
+      const rows=m.length;
+      const cols=m[0].length;
+      const cell=42;
+      ctx.fillStyle="#111827";
+      ctx.font="bold 16px Arial";
+      ctx.fillText(label,x+Math.max(10,(cols*cell)/2-8),y-18);
+      for(let r=0;r<rows;r++){
+        for(let c=0;c<cols;c++){
+          let fill="#eff6ff";
+          if(highlightRow===r && highlightCol===c) fill="#fef3c7";
+          else if(highlightRow===r) fill="#dcfce7";
+          else if(highlightCol===c) fill="#fee2e2";
+          ctx.fillStyle=fill;
+          ctx.strokeStyle="#0f172a";
+          ctx.lineWidth=2;
+          ctx.fillRect(x+c*cell,y+r*cell,cell,cell);
+          ctx.strokeRect(x+c*cell,y+r*cell,cell,cell);
+          ctx.fillStyle="#0f172a";
+          ctx.font="bold 14px Arial";
+          ctx.fillText(m[r][c],x+14+c*cell,y+27+r*cell);
+        }
+      }
+    }
 
     function setPair(ax,ay,bx,by,label){ state.pair={ax,ay,bx,by,label}; document.getElementById("pairAx").value=ax; document.getElementById("pairAy").value=ay; document.getElementById("pairBx").value=bx; document.getElementById("pairBy").value=by; drawSimilarity(); }
     function updatePairFromInput(){ state.pair.ax=getNumber("pairAx"); state.pair.ay=getNumber("pairAy"); state.pair.bx=getNumber("pairBx"); state.pair.by=getNumber("pairBy"); state.pair.label="직접 입력"; drawSimilarity(); }
