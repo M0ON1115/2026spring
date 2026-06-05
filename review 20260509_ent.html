@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 구조 실험실</title>
+
+  <style>
+    :root {
+      --bg: #f7f4f1;
+      --panel: #ffffff;
+      --ink: #20242d;
+      --muted: #6b7280;
+      --line: #e7dfda;
+      --wine: #7a1f2a;
+      --wine-dark: #4c121a;
+      --wine-soft: #faecee;
+      --blue: #265d9c;
+      --blue-soft: #eef5ff;
+      --green: #267256;
+      --green-soft: #eef9f4;
+      --amber: #a55a00;
+      --amber-soft: #fff7e8;
+      --shadow: 0 18px 44px rgba(74, 47, 43, 0.09);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, Pretendard, "Noto Sans KR", Arial, sans-serif;
+      line-height: 1.65;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hero {
+      padding: 54px 22px 42px;
+      color: white;
+      background:
+        radial-gradient(circle at 88% 20%, rgba(255, 255, 255, 0.18), transparent 20%),
+        linear-gradient(135deg, var(--wine-dark), var(--wine) 58%, #a12a38);
+    }
+
+    .hero-inner,
+    .wrap {
+      max-width: 1160px;
+      margin: auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      font-size: clamp(36px, 7vw, 68px);
+      line-height: 1.04;
+    }
+
+    .hero p {
+      max-width: 840px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 16px;
+    }
+
+    .sticky {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav {
+      display: flex;
+      max-width: 1160px;
+      margin: auto;
+      padding: 10px 14px;
+      gap: 8px;
+      overflow: auto;
+    }
+
+    .nav a {
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: var(--ink);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .nav a:hover {
+      color: var(--wine);
+      background: var(--wine-soft);
+    }
+
+    .wrap {
+      padding: 28px 18px 78px;
+    }
+
+    .section-head {
+      margin: 28px 0 14px;
+      padding: 18px 20px;
+      border-left: 5px solid var(--wine);
+      border-radius: 0 18px 18px 0;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 29px;
+    }
+
+    .section-head p {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      margin: 16px 0 28px;
+    }
+
+    .card {
+      grid-column: span 12;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .half {
+      grid-column: span 6;
+    }
+
+    .third {
+      grid-column: span 4;
+    }
+
+    .two-third {
+      grid-column: span 8;
+    }
+
+    @media (max-width: 860px) {
+      .half,
+      .third,
+      .two-third {
+        grid-column: span 12;
+      }
+    }
+
+    .tag {
+      display: inline-flex;
+      margin-bottom: 9px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: var(--wine);
+      background: var(--wine-soft);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 21px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .tabs,
+    .button-row,
+    .flow,
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--ink);
+      background: white;
+      font-weight: 850;
+      transition: 0.16s;
+    }
+
+    .btn:hover {
+      border-color: #c9c2bc;
+      transform: translateY(-1px);
+    }
+
+    .btn.active,
+    .btn.primary {
+      color: white;
+      background: var(--wine);
+      border-color: var(--wine);
+    }
+
+    .btn.blue {
+      color: var(--blue);
+      background: var(--blue-soft);
+      border-color: #c8dcfa;
+    }
+
+    .btn.green {
+      color: var(--green);
+      background: var(--green-soft);
+      border-color: #c6ead9;
+    }
+
+    .btn.amber {
+      color: var(--amber);
+      background: var(--amber-soft);
+      border-color: #f5d8ad;
+    }
+
+    .lab {
+      margin-top: 15px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fcfbfa;
+    }
+
+    .lab-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .machine {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .machine {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .machine-box {
+      min-height: 96px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+    }
+
+    .machine-box strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--wine);
+    }
+
+    .arrow {
+      color: #9b8f89;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .console {
+      min-height: 104px;
+      max-height: 240px;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      color: #e7eefc;
+      background: #182033;
+      font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace;
+      white-space: pre-line;
+      overflow: auto;
+    }
+
+    .pixel-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 25px);
+      justify-content: center;
+      gap: 3px;
+      padding: 9px;
+    }
+
+    .pixel {
+      width: 25px;
+      height: 25px;
+      border-radius: 5px;
+      border: 1px solid rgba(0, 0, 0, 0.07);
+    }
+
+    .wave {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 140px;
+      gap: 4px;
+    }
+
+    .wave-bar {
+      width: 8px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .tokens {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+      padding: 14px 4px;
+    }
+
+    .token {
+      padding: 8px 10px;
+      border-radius: 11px;
+      color: var(--blue);
+      background: var(--blue-soft);
+      font-weight: 900;
+    }
+
+    .vector-output {
+      margin-top: 12px;
+      padding: 11px;
+      border-radius: 11px;
+      color: #e7eefc;
+      background: #182033;
+      font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+      white-space: nowrap;
+      overflow: auto;
+    }
+
+    .model-stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 760px) {
+      .model-stage {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .model-box {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+    }
+
+    .model-box h4 {
+      margin: 0 0 7px;
+    }
+
+    .meter {
+      height: 12px;
+      margin-top: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #eee8e5;
+    }
+
+    .meter > div {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: var(--wine);
+      transition: width 0.3s ease;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .metric {
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfaf9;
+    }
+
+    .metric b {
+      display: block;
+      color: var(--wine);
+      font-size: 18px;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 760px) {
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stage {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: white;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 850;
+      transition: 0.22s;
+    }
+
+    .stage.current {
+      color: white;
+      background: var(--wine);
+      border-color: var(--wine);
+      transform: translateY(-3px);
+    }
+
+    .stage.done {
+      color: var(--green);
+      background: var(--green-soft);
+      border-color: #c6ead9;
+    }
+
+    .scenario {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: white;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .scenario.active {
+      border-color: var(--wine);
+      box-shadow: 0 0 0 3px rgba(122, 31, 42, 0.08);
+    }
+
+    .raw-grid,
+    .ontology-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 620px) {
+      .raw-grid,
+      .ontology-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .raw,
+    .onto {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: white;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .onto {
+      color: var(--green);
+      background: var(--green-soft);
+      border-color: #c6ead9;
+    }
+
+    .claim {
+      padding: 14px;
+      border-left: 4px solid var(--wine);
+      border-radius: 12px;
+      background: var(--wine-soft);
+      font-weight: 850;
+    }
+
+    .reveal {
+      display: none;
+      margin-top: 11px;
+      padding: 11px;
+      border-radius: 11px;
+      color: var(--amber);
+      background: var(--amber-soft);
+      font-size: 13px;
+    }
+
+    .reveal.show {
+      display: block;
+    }
+
+    .footer {
+      padding-top: 14px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">Interactive Lecture Lab</span>
+      <h1>AI를 작동 방식으로 이해하기</h1>
+      <p>
+        강의 텍스트에 등장한 핵심 흐름을 따라가며,
+        AI를 함수, 벡터, 학습, 파이프라인, 에이전트, 온톨로지의 관점에서 직접 조작합니다.
+      </p>
+    </div>
+  </header>
+
+  <div class="sticky">
+    <nav class="nav">
+      <a href="#function">함수</a>
+      <a href="#encoding">벡터화</a>
+      <a href="#training">학습</a>
+      <a href="#aicc">AICC</a>
+      <a href="#agent">워크플로와 에이전트</a>
+      <a href="#ontology">온톨로지</a>
+      <a href="#attitude">태도</a>
+    </nav>
+  </div>
+
+  <main class="wrap">
+    <section id="function" class="section-head">
+      <h2>AI는 입력을 받아 출력을 만드는 함수다</h2>
+      <p>강의의 출발점은 “함수는 입출력이다”라는 단순한 정의입니다.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card two-third">
+        <span class="tag">실험 01</span>
+        <h3>AI 함수 조작기</h3>
+        <p>입력 유형을 고르면, 그 입력을 처리하는 AI 함수와 출력이 바뀝니다.</p>
+
+        <div class="tabs">
+          <button type="button" class="btn active" data-function="voice">음성</button>
+          <button type="button" class="btn" data-function="text">텍스트</button>
+          <button type="button" class="btn" data-function="image">이미지</button>
+        </div>
+
+        <div class="machine">
+          <div class="machine-box">
+            <strong>입력</strong>
+            <div id="functionInput"></div>
+          </div>
+
+          <div class="arrow">→</div>
+
+          <div class="machine-box">
+            <strong>AI 함수</strong>
+            <div id="functionProcess"></div>
+          </div>
+
+          <div class="arrow">→</div>
+
+          <div class="machine-box">
+            <strong>출력</strong>
+            <div id="functionOutput"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card third">
+        <span class="tag">핵심</span>
+        <h3>사람과 AI를 같은 틀로 보기</h3>
+        <p>
+          강의는 사람의 감각, 사고, 표현도 입력과 출력의 네트워크로 봅니다.
+          그 관점에서 AI 역시 복잡한 함수로 이해할 수 있습니다.
+        </p>
+      </article>
+    </section>
+
+    <section id="encoding" class="section-head">
+      <h2>데이터는 AI 안에서 벡터가 된다</h2>
+      <p>이미지, 음성, 텍스트는 그대로 계산되지 않습니다. 먼저 숫자의 배열로 바뀝니다.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card two-third">
+        <span class="tag">실험 02</span>
+        <h3>데이터 인코더</h3>
+
+        <div class="tabs">
+          <button type="button" class="btn active" data-encode="image">이미지</button>
+          <button type="button" class="btn" data-encode="audio">음성</button>
+          <button type="button" class="btn" data-encode="text">텍스트</button>
+        </div>
+
+        <div class="lab" id="encoderLab"></div>
+      </article>
+
+      <article class="card third">
+        <span class="tag">정의</span>
+        <h3>벡터</h3>
+        <p>
+          강의에서는 벡터를 “한 줄짜리 숫자”로 설명합니다.
+          한 데이터가 하나의 벡터가 되면, 데이터끼리 비교할 수 있습니다.
+        </p>
+      </article>
+    </section>
+
+    <section id="training" class="section-head">
+      <h2>학습은 오차를 줄이도록 값을 수정하는 과정이다</h2>
+      <p>강의는 모델이 처음에는 틀리고, 정답과 예측의 차이를 이용해 조금씩 수정된다고 설명합니다.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card two-third">
+        <span class="tag">실험 03</span>
+        <h3>학습 루프 시뮬레이터</h3>
+        <p>수면 시간에 따라 건강 점수를 예측하는 단순한 모델을 조정합니다.</p>
+
+        <div class="model-stage">
+          <div class="model-box">
+            <h4>입력</h4>
+            <label for="sleepRange">수면 시간</label>
+            <input id="sleepRange" type="range" min="3" max="10" value="6" />
+            <div class="metrics">
+              <div class="metric">
+                <span>입력값</span>
+                <b id="sleepValue">6시간</b>
+              </div>
+            </div>
+          </div>
+
+          <div class="model-box">
+            <h4>모델 상태</h4>
+
+            <div class="metrics">
+              <div class="metric">
+                <span>예측</span>
+                <b id="predictionValue">-</b>
+              </div>
+
+              <div class="metric">
+                <span>정답</span>
+                <b id="targetValue">-</b>
+              </div>
+
+              <div class="metric">
+                <span>오차</span>
+                <b id="errorValue">-</b>
+              </div>
+            </div>
+
+            <div class="meter">
+              <div id="lossMeter"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="btn primary" id="predictBtn">예측하기</button>
+          <button type="button" class="btn blue" id="learnBtn">한 번 학습하기</button>
+          <button type="button" class="btn green" id="learnManyBtn">10번 학습하기</button>
+          <button type="button" class="btn" id="resetLearningBtn">초기화</button>
+        </div>
+
+        <div class="console" id="learningConsole">실행 전입니다.</div>
+      </article>
+
+      <article class="card third">
+        <span class="tag">해석</span>
+        <h3>행렬 안의 숫자가 바뀐다</h3>
+        <p>
+          실제 AI에서는 행렬 안의 수많은 파라미터가 수정됩니다.
+          이 실험은 그 원리를 가중치 하나로 단순화한 것입니다.
+        </p>
+      </article>
+    </section>
+
+    <section id="aicc" class="section-head">
+      <h2>AICC는 여러 AI 함수를 연결한 파이프라인이다</h2>
+      <p>강의에서는 보험 상담 사례를 통해 STT, LLM, TTS가 연결되는 구조를 설명합니다.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <span class="tag">실험 04</span>
+        <h3>상담 파이프라인 실행</h3>
+
+        <div class="pipeline" id="aiccPipeline">
+          <div class="stage">고객 음성</div>
+          <div class="stage">STT</div>
+          <div class="stage">LLM</div>
+          <div class="stage">TTS</div>
+          <div class="stage">AI 상담 음성</div>
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="btn primary" id="runAiccBtn">상담 실행</button>
+        </div>
+
+        <div class="console" id="aiccConsole">실행 전입니다.</div>
+      </article>
+    </section>
+
+    <section id="agent" class="section-head">
+      <h2>워크플로와 에이전트는 문제를 푸는 방식이 다르다</h2>
+      <p>워크플로는 정해진 절차를 따르고, 에이전트는 결과를 보고 다음 행동을 스스로 고릅니다.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card half">
+        <span class="tag">실험 05</span>
+        <h3>상황 선택</h3>
+
+        <div class="pill-row">
+          <button type="button" class="btn active" data-scenario="payment">보험료 납부</button>
+          <button type="button" class="btn" data-scenario="research">발표 자료 조사</button>
+        </div>
+
+        <div class="lab">
+          <div class="scenario active" id="scenarioText"></div>
+        </div>
+      </article>
+
+      <article class="card half">
+        <span class="tag">실험 06</span>
+        <h3>처리 방식 비교</h3>
+
+        <div class="button-row">
+          <button type="button" class="btn primary" id="runWorkflowBtn">워크플로 실행</button>
+          <button type="button" class="btn blue" id="runAgentBtn">에이전트 실행</button>
+        </div>
+
+        <div class="console" id="agentConsole">실행 전입니다.</div>
+      </article>
+    </section>
+
+    <section id="ontology" class="section-head">
+      <h2>온톨로지는 자료를 노드와 엣지로 정리하는 구조다</h2>
+      <p>강의에서는 원시 자료를 그대로 던지는 방식과, 관계를 구조화한 뒤 AI에 주는 방식을 대비합니다.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card two-third">
+        <span class="tag">실험 07</span>
+        <h3>온톨로지 빌더</h3>
+        <p>자료를 하나씩 선택하면 관련 노드와 관계가 추가됩니다.</p>
+
+        <div class="raw-grid">
+          <button type="button" class="raw" data-raw="customer">고객 문의</button>
+          <button type="button" class="raw" data-raw="contract">계약 목록</button>
+          <button type="button" class="raw" data-raw="payment">결제 로그</button>
+          <button type="button" class="raw" data-raw="department">부서 규정</button>
+          <button type="button" class="raw" data-raw="call">통화 기록</button>
+          <button type="button" class="raw" data-raw="status">상태 이력</button>
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="btn" id="resetOntologyBtn">초기화</button>
+        </div>
+      </article>
+
+      <article class="card third">
+        <span class="tag">현재 구조</span>
+        <h3>노드와 관계</h3>
+
+        <div class="ontology-grid" id="ontologyOutput">
+          <div class="raw">자료를 선택하세요.</div>
+        </div>
+      </article>
+    </section>
+
+    <section id="attitude" class="section-head">
+      <h2>AI 시대에는 의심하고 검증하는 태도가 필요하다</h2>
+      <p>강의 후반부의 핵심은 AI의 자연스러운 답변과 정확한 답변을 구분하는 것입니다.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card half">
+        <span class="tag">검증 01</span>
+        <h3>자연스러움과 정확성은 다르다</h3>
+
+        <div class="claim">
+          “AI가 자연스럽게 답했으니, 답도 정확할 것이다.”
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="btn amber" data-reveal="reveal1">검토하기</button>
+        </div>
+
+        <div class="reveal" id="reveal1">
+          강의에서는 단순한 단어 개수 세기에서도 생성형 AI가 서로 다른 답을 낼 수 있다는 사례를 제시합니다.
+        </div>
+      </article>
+
+      <article class="card half">
+        <span class="tag">검증 02</span>
+        <h3>권위도 다시 검토해야 한다</h3>
+
+        <div class="claim">
+          “책이나 유명인의 말이면 그대로 받아들여도 된다.”
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="btn amber" data-reveal="reveal2">검토하기</button>
+        </div>
+
+        <div class="reveal" id="reveal2">
+          강의는 기존의 권위와 상식을 그대로 받아들이지 않고 의심하는 태도를 언러닝이라고 설명합니다.
+        </div>
+      </article>
+    </section>
+
+    <div class="footer">
+      Lecture-text-based interactive learning material
+    </div>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const sleep = (ms) => {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    };
+
+    // ---------------------------------------------------------
+    // 1. AI function lab
+    // ---------------------------------------------------------
+    const functionCases = {
+      voice: {
+        input: "사람의 목소리",
+        process: "STT: 음성을 텍스트로 변환",
+        output: "문장 형태의 텍스트"
+      },
+
+      text: {
+        input: "텍스트",
+        process: "LLM 또는 TTS",
+        output: "새로운 텍스트 또는 음성"
+      },
+
+      image: {
+        input: "사진",
+        process: "Image Recognition",
+        output: "강아지·고양이 등 분류 결과"
+      }
+    };
+
+    function renderFunction(type) {
+      const item = functionCases[type];
+
+      $("functionInput").textContent = item.input;
+      $("functionProcess").textContent = item.process;
+      $("functionOutput").textContent = item.output;
+
+      document
+        .querySelectorAll("[data-function]")
+        .forEach((button) => {
+          button.classList.toggle(
+            "active",
+            button.dataset.function === type
+          );
+        });
+    }
+
+    document
+      .querySelectorAll("[data-function]")
+      .forEach((button) => {
+        button.onclick = () => {
+          renderFunction(button.dataset.function);
+        };
+      });
+
+    renderFunction("voice");
+
+    // ---------------------------------------------------------
+    // 2. Vector encoder
+    // ---------------------------------------------------------
+    const pixels = [
+      245, 240, 235, 210, 210, 235, 240, 245,
+      240, 220, 120, 80, 80, 120, 220, 240,
+      235, 150, 60, 210, 210, 60, 150, 235,
+      220, 90, 200, 235, 235, 200, 90, 220,
+      210, 70, 180, 80, 80, 180, 70, 210,
+      225, 120, 70, 190, 190, 70, 120, 225,
+      240, 205, 140, 110, 110, 140, 205, 240,
+      250, 240, 225, 215, 215, 225, 240, 250
+    ];
+
+    const audioValues = [
+      10, 22, 36, 58, 82, 60, 34, 18,
+      28, 52, 78, 66, 40, 25, 12, 30,
+      54, 72, 46, 20, 8, 26, 48, 62,
+      38, 15
+    ];
+
+    const tokens = [
+      "AI",
+      "는",
+      "벡터",
+      "를",
+      "입력",
+      "받고",
+      "출력",
+      "한다"
+    ];
+
+    function renderEncoder(type) {
+      const lab = $("encoderLab");
+
+      document
+        .querySelectorAll("[data-encode]")
+        .forEach((button) => {
+          button.classList.toggle(
+            "active",
+            button.dataset.encode === type
+          );
+        });
+
+      if (type === "image") {
+        lab.innerHTML = `
+          <div class="lab-title">
+            <strong>8×8 흑백 이미지 → 64차원 벡터</strong>
+
+            <button type="button" class="btn" id="encodeImageBtn">
+              숫자로 펼치기
+            </button>
+          </div>
+
+          <div class="pixel-grid">
+            ${pixels
+              .map((value) => `
+                <span
+                  class="pixel"
+                  style="background: rgb(${value}, ${value}, ${value})"
+                ></span>
+              `)
+              .join("")}
+          </div>
+
+          <div class="vector-output" id="encoderOutput">
+            픽셀 밝기값을 한 줄로 펼치면 벡터가 됩니다.
+          </div>
+        `;
+
+        $("encodeImageBtn").onclick = () => {
+          $("encoderOutput").textContent =
+            `[${pixels.join(", ")}]`;
+        };
+
+        return;
+      }
+
+      if (type === "audio") {
+        lab.innerHTML = `
+          <div class="lab-title">
+            <strong>음성 파형 → 진폭 벡터</strong>
+
+            <button type="button" class="btn" id="encodeAudioBtn">
+              샘플링하기
+            </button>
+          </div>
+
+          <div class="wave">
+            ${audioValues
+              .map((value) => `
+                <span
+                  class="wave-bar"
+                  style="height: ${value + 24}px"
+                ></span>
+              `)
+              .join("")}
+          </div>
+
+          <div class="vector-output" id="encoderOutput">
+            시간에 따라 파형의 높이를 측정합니다.
+          </div>
+        `;
+
+        $("encodeAudioBtn").onclick = () => {
+          $("encoderOutput").textContent =
+            `[${audioValues.join(", ")}]`;
+        };
+
+        return;
+      }
+
+      lab.innerHTML = `
+        <div class="lab-title">
+          <strong>텍스트 → 토큰 숫자 표현</strong>
+
+          <button type="button" class="btn" id="encodeTextBtn">
+            숫자 표현 보기
+          </button>
+        </div>
+
+        <div class="tokens">
+          ${tokens
+            .map((token) => `
+              <span class="token">${token}</span>
+            `)
+            .join("")}
+        </div>
+
+        <div class="vector-output" id="encoderOutput">
+          강의에서는 사전의 위치를 이용한 숫자화를 예시로 설명합니다.
+        </div>
+      `;
+
+      $("encodeTextBtn").onclick = () => {
+        $("encoderOutput").textContent =
+          "AI → [1, 0, 0, ...] | 벡터 → [0, 0, 1, ...]";
+      };
+    }
+
+    document
+      .querySelectorAll("[data-encode]")
+      .forEach((button) => {
+        button.onclick = () => {
+          renderEncoder(button.dataset.encode);
+        };
+      });
+
+    renderEncoder("image");
+
+    // ---------------------------------------------------------
+    // 3. Learning loop
+    // ---------------------------------------------------------
+    let weight = 4;
+    let lastError = null;
+
+    const targetScore = (sleepHours) => {
+      return 8 * sleepHours + 18;
+    };
+
+    const predictScore = (sleepHours) => {
+      return weight * sleepHours + 18;
+    };
+
+    function updateLearningDisplay() {
+      const hours = Number($("sleepRange").value);
+      const prediction = predictScore(hours);
+      const target = targetScore(hours);
+      const error = target - prediction;
+
+      $("sleepValue").textContent =
+        `${hours}시간`;
+
+      $("predictionValue").textContent =
+        prediction.toFixed(1);
+
+      $("targetValue").textContent =
+        target.toFixed(1);
+
+      $("errorValue").textContent =
+        error.toFixed(1);
+
+      $("lossMeter").style.width =
+        `${Math.min(100, Math.abs(error) * 2)}%`;
+
+      lastError = error;
+    }
+
+    $("sleepRange").addEventListener(
+      "input",
+      updateLearningDisplay
+    );
+
+    $("predictBtn").onclick = () => {
+      updateLearningDisplay();
+
+      $("learningConsole").textContent =
+        `[예측]\n` +
+        `현재 가중치: ${weight.toFixed(2)}\n` +
+        `정답과 예측의 차이: ${lastError.toFixed(2)}`;
+    };
+
+    $("learnBtn").onclick = () => {
+      updateLearningDisplay();
+
+      weight += lastError * 0.02;
+
+      updateLearningDisplay();
+
+      $("learningConsole").textContent =
+        `[학습]\n` +
+        `오차를 보고 가중치를 수정했습니다.\n` +
+        `새 가중치: ${weight.toFixed(2)}\n` +
+        `남은 오차: ${lastError.toFixed(2)}`;
+    };
+
+    $("learnManyBtn").onclick = () => {
+      for (let index = 0; index < 10; index += 1) {
+        updateLearningDisplay();
+        weight += lastError * 0.02;
+      }
+
+      updateLearningDisplay();
+
+      $("learningConsole").textContent =
+        `[반복 학습]\n` +
+        `10번의 업데이트를 수행했습니다.\n` +
+        `새 가중치: ${weight.toFixed(2)}\n` +
+        `남은 오차: ${lastError.toFixed(2)}`;
+    };
+
+    $("resetLearningBtn").onclick = () => {
+      weight = 4;
+
+      updateLearningDisplay();
+
+      $("learningConsole").textContent =
+        "초기화했습니다.";
+    };
+
+    updateLearningDisplay();
+
+    // ---------------------------------------------------------
+    // 4. AICC pipeline
+    // ---------------------------------------------------------
+    $("runAiccBtn").onclick = async () => {
+      const stages = [
+        ...document.querySelectorAll(
+          "#aiccPipeline .stage"
+        )
+      ];
+
+      const lines = [
+        "[1] 고객: 보험료를 카드로 납부하고 싶습니다.",
+        "[2] STT: 음성을 텍스트로 변환",
+        "[3] LLM: 문의 의도를 분석하고 답변 생성",
+        "[4] TTS: 답변 텍스트를 음성으로 변환",
+        "[5] AI 상담원: 결제 절차를 안내합니다."
+      ];
+
+      stages.forEach((stage) => {
+        stage.className = "stage";
+      });
+
+      $("aiccConsole").textContent = "";
+
+      for (
+        let index = 0;
+        index < stages.length;
+        index += 1
+      ) {
+        stages[index].classList.add("current");
+
+        $("aiccConsole").textContent +=
+          `${lines[index]}\n`;
+
+        await sleep(460);
+
+        stages[index].classList.remove("current");
+        stages[index].classList.add("done");
+      }
+    };
+
+    // ---------------------------------------------------------
+    // 5. Workflow vs Agent
+    // ---------------------------------------------------------
+    const scenarios = {
+      payment: {
+        description:
+          "보험료 납부처럼 절차가 명확하고 예외가 적은 업무입니다."
+      },
+
+      research: {
+        description:
+          "발표 자료 조사처럼 결과를 보고 검색 전략을 바꿔야 하는 업무입니다."
+      }
+    };
+
+    let activeScenario = "payment";
+
+    function renderScenario(type) {
+      activeScenario = type;
+
+      $("scenarioText").textContent =
+        scenarios[type].description;
+
+      document
+        .querySelectorAll("[data-scenario]")
+        .forEach((button) => {
+          button.classList.toggle(
+            "active",
+            button.dataset.scenario === type
+          );
+        });
+    }
+
+    document
+      .querySelectorAll("[data-scenario]")
+      .forEach((button) => {
+        button.onclick = () => {
+          renderScenario(button.dataset.scenario);
+        };
+      });
+
+    $("runWorkflowBtn").onclick = async () => {
+      $("agentConsole").textContent =
+        "[워크플로]\n";
+
+      const steps = [
+        "1. 입력 받기",
+        "2. 미리 정한 규칙 적용",
+        "3. 정해진 경로로 처리",
+        "4. 완료"
+      ];
+
+      for (const step of steps) {
+        $("agentConsole").textContent +=
+          `${step}\n`;
+
+        await sleep(340);
+      }
+
+      if (activeScenario === "payment") {
+        $("agentConsole").textContent +=
+          "\n이 상황에는 워크플로가 적합합니다.";
+      } else {
+        $("agentConsole").textContent +=
+          "\n조사 과정이 막히면 스스로 전략을 바꾸지 못합니다.";
+      }
+    };
+
+    $("runAgentBtn").onclick = async () => {
+      $("agentConsole").textContent =
+        "[에이전트]\n";
+
+      const steps = activeScenario === "payment"
+        ? [
+            "1. 목표 확인",
+            "2. 납부 절차 탐색",
+            "3. 결과 평가",
+            "4. 처리 가능",
+            "5. 완료"
+          ]
+        : [
+            "1. 목표 확인",
+            "2. 이메일 제목 검색",
+            "3. 결과 부족",
+            "4. 첨부파일 포함 검색으로 수정",
+            "5. 관련 자료 발견",
+            "6. 누락 여부 재검토",
+            "7. 완료"
+          ];
+
+      for (const step of steps) {
+        $("agentConsole").textContent +=
+          `${step}\n`;
+
+        await sleep(340);
+      }
+
+      if (activeScenario === "payment") {
+        $("agentConsole").textContent +=
+          "\n가능하지만, 고정 절차만으로도 충분합니다.";
+      } else {
+        $("agentConsole").textContent +=
+          "\n이 상황에는 에이전트의 반복 루프가 유용합니다.";
+      }
+    };
+
+    renderScenario("payment");
+
+    // ---------------------------------------------------------
+    // 6. Ontology builder
+    // ---------------------------------------------------------
+    const ontologyMap = {
+      customer: [
+        "노드: 고객",
+        "관계: 고객 → 문의"
+      ],
+
+      contract: [
+        "노드: 계약",
+        "관계: 고객 → 보유 → 계약"
+      ],
+
+      payment: [
+        "노드: 결제",
+        "관계: 결제 → 대상 → 계약"
+      ],
+
+      department: [
+        "노드: 부서",
+        "관계: 문의 → 연결 → 부서"
+      ],
+
+      call: [
+        "노드: 통화",
+        "관계: 고객 → 생성 → 통화"
+      ],
+
+      status: [
+        "노드: 상태",
+        "관계: 계약 → 현재상태 → 상태"
+      ]
+    };
+
+    const ontologyItems =
+      new Set();
+
+    function renderOntology() {
+      const output =
+        $("ontologyOutput");
+
+      if (ontologyItems.size === 0) {
+        output.innerHTML =
+          '<div class="raw">자료를 선택하세요.</div>';
+
+        return;
+      }
+
+      output.innerHTML =
+        [...ontologyItems]
+          .map((item) => `
+            <div class="onto">${item}</div>
+          `)
+          .join("");
+    }
+
+    document
+      .querySelectorAll("[data-raw]")
+      .forEach((button) => {
+        button.onclick = () => {
+          ontologyMap[
+            button.dataset.raw
+          ].forEach((item) => {
+            ontologyItems.add(item);
+          });
+
+          renderOntology();
+        };
+      });
+
+    $("resetOntologyBtn").onclick = () => {
+      ontologyItems.clear();
+      renderOntology();
+    };
+
+    renderOntology();
+
+    // ---------------------------------------------------------
+    // 7. Attitude reveals
+    // ---------------------------------------------------------
+    document
+      .querySelectorAll("[data-reveal]")
+      .forEach((button) => {
+        button.onclick = () => {
+          $(
+            button.dataset.reveal
+          ).classList.toggle("show");
+        };
+      });
+  </script>
+</body>
+</html>
