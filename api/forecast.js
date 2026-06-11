@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 
+
 /* =========================================================
    KU STARTUP PLANNER
    최신 공개 자료 기반 경제 전망 API
