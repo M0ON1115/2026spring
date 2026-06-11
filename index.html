@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>KU STARTUP PLANNER</title>
 
   <style>
@@ -12,7 +13,12 @@
 
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Pretendard, sans-serif;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Pretendard,
+        sans-serif;
       background: #faf7f8;
       color: #1f2937;
     }
@@ -22,6 +28,10 @@
       margin: 0 auto;
       padding: 40px 20px 80px;
     }
+
+    /* ======================================================
+       Hero
+    ====================================================== */
 
     .hero {
       margin-bottom: 28px;
@@ -64,7 +74,9 @@
       font-size: 13px;
       font-weight: 800;
       cursor: pointer;
-      transition: background 0.15s, transform 0.15s;
+      transition:
+        background 0.15s,
+        transform 0.15s;
     }
 
     .topbar-btn:hover {
@@ -127,7 +139,10 @@
       font-size: 15px;
       font-weight: 900;
       cursor: pointer;
-      transition: transform 0.12s, opacity 0.12s, background 0.12s;
+      transition:
+        transform 0.12s,
+        opacity 0.12s,
+        background 0.12s;
     }
 
     .hero-primary:hover,
@@ -146,6 +161,10 @@
       background: rgba(255, 255, 255, 0.12);
       color: white;
     }
+
+    /* ======================================================
+       Value cards
+    ====================================================== */
 
     .value-grid {
       display: grid;
@@ -175,6 +194,10 @@
       line-height: 1.65;
     }
 
+    /* ======================================================
+       Common panels
+    ====================================================== */
+
     .panel {
       margin-bottom: 24px;
       padding: 28px;
@@ -195,6 +218,10 @@
       color: #6b7280;
       line-height: 1.6;
     }
+
+    /* ======================================================
+       Forms
+    ====================================================== */
 
     .form-grid {
       display: grid;
@@ -229,7 +256,9 @@
       background: white;
       font-family: inherit;
       font-size: 15px;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition:
+        border-color 0.15s,
+        box-shadow 0.15s;
     }
 
     input:focus,
@@ -281,15 +310,19 @@
       line-height: 1.5;
     }
 
+    /* ======================================================
+       Buttons
+    ====================================================== */
+
+    button {
+      font-family: inherit;
+    }
+
     .actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
       margin-top: 24px;
-    }
-
-    button {
-      font-family: inherit;
     }
 
     .primary-btn,
@@ -300,7 +333,10 @@
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
-      transition: transform 0.12s, opacity 0.12s, background 0.12s;
+      transition:
+        transform 0.12s,
+        opacity 0.12s,
+        background 0.12s;
     }
 
     .primary-btn:hover,
@@ -324,6 +360,10 @@
       background: #f3e8eb;
       color: #862633;
     }
+
+    /* ======================================================
+       Status cards
+    ====================================================== */
 
     .status-card {
       display: flex;
@@ -378,6 +418,10 @@
         transform: rotate(360deg);
       }
     }
+
+    /* ======================================================
+       Recommendation cards
+    ====================================================== */
 
     .cards {
       display: grid;
@@ -434,6 +478,10 @@
       font-size: 12px;
       font-weight: 700;
     }
+
+    /* ======================================================
+       Analysis dashboard
+    ====================================================== */
 
     .score-dashboard {
       display: grid;
@@ -521,6 +569,10 @@
       white-space: pre-wrap;
     }
 
+    /* ======================================================
+       Business plan
+    ====================================================== */
+
     .result-box {
       margin-top: 18px;
       padding: 20px;
@@ -564,6 +616,10 @@
       background: #fbf4f5;
       color: #862633;
     }
+
+    /* ======================================================
+       Auth modal
+    ====================================================== */
 
     .modal-backdrop {
       position: fixed;
@@ -664,9 +720,120 @@
       font-weight: 900;
     }
 
+    /* ======================================================
+       Projects modal
+    ====================================================== */
+
+    .projects-modal {
+      position: relative;
+      width: min(100%, 720px);
+      max-height: min(82vh, 760px);
+      overflow-y: auto;
+      padding: 30px;
+      border-radius: 24px;
+      background: white;
+      box-shadow: 0 24px 70px rgba(17, 24, 39, 0.22);
+    }
+
+    .projects-modal h2 {
+      margin: 18px 0 8px;
+      color: #1f2937;
+      font-size: 25px;
+      letter-spacing: -0.04em;
+    }
+
+    .projects-modal-desc {
+      margin: 0 0 20px;
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .project-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .project-empty {
+      padding: 22px;
+      border: 1px dashed #d1d5db;
+      border-radius: 18px;
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .project-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 17px;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      background: white;
+    }
+
+    .project-card-main {
+      min-width: 0;
+    }
+
+    .project-card h3 {
+      margin: 0 0 7px;
+      color: #1f2937;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .project-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .project-status {
+      display: inline-flex;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: #f3e8eb;
+      color: #862633;
+      font-weight: 700;
+    }
+
+    .project-card-actions {
+      display: flex;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 7px;
+    }
+
+    .project-small-btn {
+      padding: 8px 11px;
+      border: none;
+      border-radius: 999px;
+      background: #862633;
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .project-delete-btn {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
     .hidden {
       display: none !important;
     }
+
+    /* ======================================================
+       Responsive
+    ====================================================== */
 
     @media (max-width: 900px) {
       .form-grid,
@@ -690,105 +857,204 @@
       .auth-actions {
         justify-content: flex-start;
       }
+
+      .project-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .project-card-actions {
+        justify-content: flex-start;
+      }
     }
   </style>
 </head>
 
 <body>
   <main class="app">
+
+    <!-- ====================================================
+         Hero
+    ===================================================== -->
+
     <section class="hero">
       <div class="topbar">
-        <div class="brand-text">KU STARTUP PLANNER</div>
+        <div class="brand-text">
+          KU STARTUP PLANNER
+        </div>
 
         <div class="auth-actions">
-          <span class="user-chip hidden" id="userChip"></span>
+          <span
+            class="user-chip hidden"
+            id="userChip"
+          ></span>
 
-          <button class="topbar-btn" type="button" id="loginBtn">
+          <button
+            class="topbar-btn"
+            type="button"
+            id="loginBtn"
+          >
             로그인
           </button>
 
-          <button class="topbar-btn hidden" type="button" id="logoutBtn">
+          <button
+            class="topbar-btn hidden"
+            type="button"
+            id="myProjectsBtn"
+          >
+            내 프로젝트
+          </button>
+
+          <button
+            class="topbar-btn hidden"
+            type="button"
+            id="logoutBtn"
+          >
             로그아웃
           </button>
         </div>
       </div>
 
-      <div class="school-badge">AI STARTUP WORKSPACE</div>
+      <div class="school-badge">
+        AI STARTUP WORKSPACE
+      </div>
 
-      <h1>당신의 조건에 맞는 창업 아이디어를 발견하세요</h1>
+      <h1>
+        당신의 조건에 맞는 창업 아이디어를 발견하세요
+      </h1>
 
       <p>
-        전공, 자격증, 초기 자본, 투입 가능 시간을 입력하면 AI가 지금 시작 가능한 창업 아이템을 추천하고,
+        전공, 자격증, 초기 자본, 투입 가능 시간을 입력하면
+        AI가 지금 시작 가능한 창업 아이템을 추천하고,
         선택한 아이템의 시장성·수익성·실행 가능성·리스크까지 분석해드립니다.
       </p>
 
       <div class="hero-actions">
-        <button class="hero-primary" type="button" id="heroStartBtn">
+        <button
+          class="hero-primary"
+          type="button"
+          id="heroStartBtn"
+        >
           창업 아이템 추천받기
         </button>
 
-        <button class="hero-secondary" type="button" id="heroSampleBtn">
+        <button
+          class="hero-secondary"
+          type="button"
+          id="heroSampleBtn"
+        >
           샘플로 체험하기
         </button>
       </div>
     </section>
 
-    <section class="value-grid" aria-label="서비스 핵심 기능">
+    <!-- ====================================================
+         Value cards
+    ===================================================== -->
+
+    <section
+      class="value-grid"
+      aria-label="서비스 핵심 기능"
+    >
       <div class="value-card">
         <h3>개인 맞춤 추천</h3>
-        <p>전공, 자격증, 자본, 시간을 반영해 지금 실행 가능한 창업 아이템을 제안합니다.</p>
+
+        <p>
+          전공, 자격증, 자본, 시간을 반영해
+          지금 실행 가능한 창업 아이템을 제안합니다.
+        </p>
       </div>
 
       <div class="value-card">
         <h3>시장성 분석</h3>
-        <p>선택한 아이템의 고객, 경쟁, 수익화 가능성, 리스크를 대시보드 형태로 분석합니다.</p>
+
+        <p>
+          선택한 아이템의 고객, 경쟁, 수익화 가능성,
+          리스크를 대시보드 형태로 분석합니다.
+        </p>
       </div>
 
       <div class="value-card">
         <h3>창업 계획 초안</h3>
-        <p>분석 결과를 바로 활용할 수 있는 사업 개요, MVP 계획, 리스크 대응안으로 정리합니다.</p>
+
+        <p>
+          분석 결과를 바로 활용할 수 있는 사업 개요,
+          MVP 계획, 리스크 대응안으로 정리합니다.
+        </p>
       </div>
     </section>
 
-    <section class="panel" id="inputPanel">
-      <h2>나에게 맞는 창업 조건 설정</h2>
+    <!-- ====================================================
+         Input
+    ===================================================== -->
+
+    <section
+      class="panel"
+      id="inputPanel"
+    >
+      <h2>
+        나에게 맞는 창업 조건 설정
+      </h2>
 
       <p class="panel-desc">
-        몇 가지 정보를 입력하면 AI가 당신의 조건에 맞는 창업 아이템을 찾아드립니다.
+        몇 가지 정보를 입력하면 AI가
+        당신의 조건에 맞는 창업 아이템을 찾아드립니다.
       </p>
 
       <div class="form-grid">
         <div class="form-group">
-          <label for="primaryCollege">제1전공 단과대학</label>
+          <label for="primaryCollege">
+            제1전공 단과대학
+          </label>
+
           <select id="primaryCollege"></select>
         </div>
 
         <div class="form-group">
-          <label for="primaryMajor">제1전공 학과/학부</label>
+          <label for="primaryMajor">
+            제1전공 학과/학부
+          </label>
+
           <select id="primaryMajor"></select>
         </div>
 
         <div class="form-group">
-          <label for="secondaryCollege">제2전공 단과대학</label>
+          <label for="secondaryCollege">
+            제2전공 단과대학
+          </label>
+
           <select id="secondaryCollege"></select>
 
           <p class="hint">
-            제2전공이 없거나 아직 정하지 않았다면 "해당 없음"을 선택하세요.
+            제2전공이 없거나 아직 정하지 않았다면
+            "해당 없음"을 선택하세요.
           </p>
         </div>
 
         <div class="form-group">
-          <label for="secondaryMajor">제2전공 학과/학부</label>
+          <label for="secondaryMajor">
+            제2전공 학과/학부
+          </label>
+
           <select id="secondaryMajor"></select>
         </div>
 
         <div class="form-group full">
-          <label>보유 자격증</label>
-          <div class="checklist" id="certificateChecklist"></div>
+          <label>
+            보유 자격증
+          </label>
+
+          <div
+            class="checklist"
+            id="certificateChecklist"
+          ></div>
         </div>
 
         <div class="form-group">
-          <label for="interests">관심 분야</label>
+          <label for="interests">
+            관심 분야
+          </label>
+
           <input
             id="interests"
             placeholder="예: 교육, 콘텐츠, 패션, AI, 커머스"
@@ -796,19 +1062,37 @@
         </div>
 
         <div class="form-group">
-          <label for="goal">창업 목적</label>
+          <label for="goal">
+            창업 목적
+          </label>
 
           <select id="goal">
-            <option value="수익 창출">수익 창출</option>
-            <option value="포트폴리오 제작">포트폴리오 제작</option>
-            <option value="사회문제 해결">사회문제 해결</option>
-            <option value="취업 준비">취업 준비</option>
-            <option value="부업 실험">부업 실험</option>
+            <option value="수익 창출">
+              수익 창출
+            </option>
+
+            <option value="포트폴리오 제작">
+              포트폴리오 제작
+            </option>
+
+            <option value="사회문제 해결">
+              사회문제 해결
+            </option>
+
+            <option value="취업 준비">
+              취업 준비
+            </option>
+
+            <option value="부업 실험">
+              부업 실험
+            </option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="budget">초기 자본</label>
+          <label for="budget">
+            초기 자본
+          </label>
 
           <input
             id="budget"
@@ -820,12 +1104,15 @@
           />
 
           <p class="hint">
-            숫자만 입력하세요. 단위는 만원입니다. 예: 10 입력 → 10만원
+            숫자만 입력하세요. 단위는 만원입니다.
+            예: 10 입력 → 10만원
           </p>
         </div>
 
         <div class="form-group">
-          <label for="time">투입 가능 시간</label>
+          <label for="time">
+            투입 가능 시간
+          </label>
 
           <input
             id="time"
@@ -837,25 +1124,47 @@
           />
 
           <p class="hint">
-            숫자만 입력하세요. 단위는 주당 시간입니다.
+            숫자만 입력하세요.
+            단위는 주당 시간입니다.
           </p>
         </div>
 
         <div class="form-group">
-          <label for="businessType">선호 창업 유형</label>
+          <label for="businessType">
+            선호 창업 유형
+          </label>
 
           <select id="businessType">
-            <option value="온라인 서비스">온라인 서비스</option>
-            <option value="콘텐츠 기반">콘텐츠 기반</option>
-            <option value="교육 서비스">교육 서비스</option>
-            <option value="커머스">커머스</option>
-            <option value="지역 기반 서비스">지역 기반 서비스</option>
-            <option value="상관없음">상관없음</option>
+            <option value="온라인 서비스">
+              온라인 서비스
+            </option>
+
+            <option value="콘텐츠 기반">
+              콘텐츠 기반
+            </option>
+
+            <option value="교육 서비스">
+              교육 서비스
+            </option>
+
+            <option value="커머스">
+              커머스
+            </option>
+
+            <option value="지역 기반 서비스">
+              지역 기반 서비스
+            </option>
+
+            <option value="상관없음">
+              상관없음
+            </option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="target">관심 고객층</label>
+          <label for="target">
+            관심 고객층
+          </label>
 
           <input
             id="target"
@@ -864,7 +1173,9 @@
         </div>
 
         <div class="form-group full">
-          <label for="avoid">피하고 싶은 분야 / 제약 조건</label>
+          <label for="avoid">
+            피하고 싶은 분야 / 제약 조건
+          </label>
 
           <textarea
             id="avoid"
@@ -874,86 +1185,282 @@
       </div>
 
       <div class="actions">
-        <button class="primary-btn" id="recommendBtn">
+        <button
+          class="primary-btn"
+          id="recommendBtn"
+        >
           AI에게 창업 아이템 추천받기
         </button>
 
-        <button class="secondary-btn" id="sampleBtn">
+        <button
+          class="secondary-btn"
+          id="sampleBtn"
+        >
           예시 정보 채우기
         </button>
 
-        <button class="secondary-btn" id="resetBtn">
+        <button
+          class="secondary-btn"
+          id="resetBtn"
+        >
           초기화
         </button>
       </div>
     </section>
 
-    <section class="status-card hidden" id="recommendStatusCard" aria-live="polite">
-      <span class="loader" aria-hidden="true"></span>
-      <span class="complete-icon" aria-hidden="true">✓</span>
-      <span id="recommendStatusText">창업 아이템을 생성하는 중입니다...</span>
+    <!-- ====================================================
+         Recommendation status
+    ===================================================== -->
+
+    <section
+      class="status-card hidden"
+      id="recommendStatusCard"
+      aria-live="polite"
+    >
+      <span
+        class="loader"
+        aria-hidden="true"
+      ></span>
+
+      <span
+        class="complete-icon"
+        aria-hidden="true"
+      >
+        ✓
+      </span>
+
+      <span id="recommendStatusText">
+        창업 아이템을 생성하는 중입니다...
+      </span>
     </section>
 
-    <section class="panel hidden" id="recommendationSection">
-      <h2>추천 아이템</h2>
+    <!-- ====================================================
+         Recommendations
+    ===================================================== -->
+
+    <section
+      class="panel hidden"
+      id="recommendationSection"
+    >
+      <h2>
+        추천 아이템
+      </h2>
 
       <p class="panel-desc">
-        아래 아이템 중 하나를 선택하면 시장 전망과 실행 가능성을 심층 분석합니다.
+        아래 아이템 중 하나를 선택하면
+        시장 전망과 실행 가능성을 심층 분석합니다.
       </p>
 
-      <div class="cards" id="ideaCards"></div>
-    </section>
-
-    <section class="status-card hidden" id="analysisStatusCard" aria-live="polite">
-      <span class="loader" aria-hidden="true"></span>
-      <span class="complete-icon" aria-hidden="true">✓</span>
-      <span id="analysisStatusText">선택한 아이템을 심층 분석하는 중입니다...</span>
-    </section>
-
-    <section class="panel hidden" id="analysisSection">
-      <h2>아이템 분석 대시보드</h2>
-
-      <p class="panel-desc" id="selectedIdeaText"></p>
-
-      <div class="score-dashboard" id="scoreDashboard"></div>
-
-      <div class="summary-card hidden" id="analysisSummary"></div>
-
-      <div class="analysis-grid" id="analysisGrid"></div>
-
-      <div class="result-box hidden" id="analysisBox"></div>
+      <div
+        class="cards"
+        id="ideaCards"
+      ></div>
 
       <div class="actions">
-        <button class="primary-btn" id="planBtn">
+        <button
+          class="secondary-btn hidden"
+          type="button"
+          id="saveProjectBtn"
+        >
+          프로젝트로 저장하기
+        </button>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         Analysis status
+    ===================================================== -->
+
+    <section
+      class="status-card hidden"
+      id="analysisStatusCard"
+      aria-live="polite"
+    >
+      <span
+        class="loader"
+        aria-hidden="true"
+      ></span>
+
+      <span
+        class="complete-icon"
+        aria-hidden="true"
+      >
+        ✓
+      </span>
+
+      <span id="analysisStatusText">
+        선택한 아이템을 심층 분석하는 중입니다...
+      </span>
+    </section>
+
+    <!-- ====================================================
+         Analysis dashboard
+    ===================================================== -->
+
+    <section
+      class="panel hidden"
+      id="analysisSection"
+    >
+      <h2>
+        아이템 분석 대시보드
+      </h2>
+
+      <p
+        class="panel-desc"
+        id="selectedIdeaText"
+      ></p>
+
+      <div
+        class="score-dashboard"
+        id="scoreDashboard"
+      ></div>
+
+      <div
+        class="summary-card hidden"
+        id="analysisSummary"
+      ></div>
+
+      <div
+        class="analysis-grid"
+        id="analysisGrid"
+      ></div>
+
+      <div
+        class="result-box hidden"
+        id="analysisBox"
+      ></div>
+
+      <div class="actions">
+        <button
+          class="primary-btn"
+          id="planBtn"
+        >
           창업 계획 초안 생성
         </button>
       </div>
     </section>
 
-    <section class="status-card hidden" id="planStatusCard" aria-live="polite">
-      <span class="loader" aria-hidden="true"></span>
-      <span class="complete-icon" aria-hidden="true">✓</span>
-      <span id="planStatusText">창업 계획 초안을 정리하는 중입니다...</span>
+    <!-- ====================================================
+         Plan status
+    ===================================================== -->
+
+    <section
+      class="status-card hidden"
+      id="planStatusCard"
+      aria-live="polite"
+    >
+      <span
+        class="loader"
+        aria-hidden="true"
+      ></span>
+
+      <span
+        class="complete-icon"
+        aria-hidden="true"
+      >
+        ✓
+      </span>
+
+      <span id="planStatusText">
+        창업 계획 초안을 정리하는 중입니다...
+      </span>
     </section>
 
-    <section class="panel hidden" id="planSection">
-      <h2>창업 계획 초안</h2>
+    <!-- ====================================================
+         Business plan
+    ===================================================== -->
+
+    <section
+      class="panel hidden"
+      id="planSection"
+    >
+      <h2>
+        창업 계획 초안
+      </h2>
 
       <p class="panel-desc">
-        분석 결과를 바탕으로 창업 계획의 핵심 내용을 정리했습니다.
+        분석 결과를 바탕으로
+        창업 계획의 핵심 내용을 정리했습니다.
       </p>
 
-      <div class="result-box report-box" id="planBox"></div>
+      <div
+        class="result-box report-box"
+        id="planBox"
+      ></div>
 
       <div class="actions">
-        <button class="secondary-btn" id="copyPlanBtn">
+        <button
+          class="secondary-btn"
+          id="copyPlanBtn"
+        >
           계획서 복사하기
         </button>
       </div>
     </section>
   </main>
 
-  <div class="modal-backdrop hidden" id="authModal">
+  <!-- ======================================================
+       Projects modal
+  ======================================================= -->
+
+  <div
+    class="modal-backdrop hidden"
+    id="projectsModal"
+  >
+    <section
+      class="projects-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="projectsModalTitle"
+    >
+      <button
+        class="modal-close"
+        type="button"
+        id="closeProjectsModalBtn"
+        aria-label="닫기"
+      >
+        ×
+      </button>
+
+      <div class="auth-modal-badge">
+        KU STARTUP PLANNER
+      </div>
+
+      <h2 id="projectsModalTitle">
+        내 창업 프로젝트
+      </h2>
+
+      <p class="projects-modal-desc">
+        저장한 프로젝트를 다시 열어
+        추천 아이템과 심층 분석 결과를
+        이어서 확인할 수 있습니다.
+      </p>
+
+      <div
+        class="project-list"
+        id="projectList"
+      ></div>
+
+      <div class="actions">
+        <button
+          class="secondary-btn"
+          type="button"
+          id="newProjectBtn"
+        >
+          새 프로젝트 만들기
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ======================================================
+       Auth modal
+  ======================================================= -->
+
+  <div
+    class="modal-backdrop hidden"
+    id="authModal"
+  >
     <section
       class="auth-modal"
       role="dialog"
@@ -969,26 +1476,43 @@
         ×
       </button>
 
-      <div class="auth-modal-badge">KU STARTUP PLANNER</div>
+      <div class="auth-modal-badge">
+        KU STARTUP PLANNER
+      </div>
 
-      <h2 id="authModalTitle">창업 프로젝트를 저장하고 관리하세요</h2>
+      <h2 id="authModalTitle">
+        창업 프로젝트를 저장하고 관리하세요
+      </h2>
 
       <p>
-        로그인하면 추천받은 창업 아이템과 심층 분석 결과를 하나의 프로젝트로 저장하고,
+        로그인하면 추천받은 창업 아이템과
+        심층 분석 결과를 하나의 프로젝트로 저장하고,
         이후에도 계속 관리할 수 있습니다.
       </p>
 
-      <button class="google-login-btn" type="button" id="googleLoginBtn">
-        <span class="google-icon">G</span>
+      <button
+        class="google-login-btn"
+        type="button"
+        id="googleLoginBtn"
+      >
+        <span class="google-icon">
+          G
+        </span>
+
         Google로 계속하기
       </button>
 
-      <button class="guest-btn" type="button" id="guestContinueBtn">
+      <button
+        class="guest-btn"
+        type="button"
+        id="guestContinueBtn"
+      >
         로그인 없이 체험하기
       </button>
     </section>
   </div>
 
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -997,18 +1521,25 @@
        아래 두 값만 직접 교체하세요.
     ====================================================== */
 
-    const SUPABASE_URL = "https://nsbjwvptegtbrqrczgwh.supabase.co";
+    const SUPABASE_URL =
+      "https://nsbjwvptegtbrqrczgwh.supabase.co";
+
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_tlBEKCUQojxeQiQUCohewg_Z4BMnAKJ";
 
     let supabaseClient = null;
 
     /* ======================================================
-       2. 데이터베이스
+       2. Database
     ====================================================== */
 
     const kuMajorDatabase = [
-      { college: "경영대학", majors: ["경영학과"] },
+      {
+        college: "경영대학",
+        majors: [
+          "경영학과"
+        ]
+      },
 
       {
         college: "문과대학",
@@ -1100,7 +1631,12 @@
         ]
       },
 
-      { college: "간호대학", majors: ["간호학과"] },
+      {
+        college: "간호대학",
+        majors: [
+          "간호학과"
+        ]
+      },
 
       {
         college: "정보대학",
@@ -1111,7 +1647,12 @@
         ]
       },
 
-      { college: "디자인조형학부", majors: ["디자인조형학부"] },
+      {
+        college: "디자인조형학부",
+        majors: [
+          "디자인조형학부"
+        ]
+      },
 
       {
         college: "국제대학",
@@ -1140,8 +1681,19 @@
         ]
       },
 
-      { college: "자유전공학부", majors: ["자유전공학부"] },
-      { college: "심리학부", majors: ["심리학부"] },
+      {
+        college: "자유전공학부",
+        majors: [
+          "자유전공학부"
+        ]
+      },
+
+      {
+        college: "심리학부",
+        majors: [
+          "심리학부"
+        ]
+      },
 
       {
         college: "스마트보안학부",
@@ -1151,7 +1703,12 @@
         ]
       },
 
-      { college: "스마트모빌리티학부", majors: ["스마트모빌리티학부"] }
+      {
+        college: "스마트모빌리티학부",
+        majors: [
+          "스마트모빌리티학부"
+        ]
+      }
     ];
 
     const certificateOptions = [
@@ -1179,28 +1736,59 @@
     };
 
     /* ======================================================
-       3. DOM 연결
+       3. DOM
     ====================================================== */
 
-    const heroStartBtn = document.getElementById("heroStartBtn");
-    const heroSampleBtn = document.getElementById("heroSampleBtn");
+    const heroStartBtn =
+      document.getElementById("heroStartBtn");
 
-    const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const userChip = document.getElementById("userChip");
+    const heroSampleBtn =
+      document.getElementById("heroSampleBtn");
 
-    const authModal = document.getElementById("authModal");
-    const closeAuthModalBtn = document.getElementById("closeAuthModalBtn");
-    const googleLoginBtn = document.getElementById("googleLoginBtn");
-    const guestContinueBtn = document.getElementById("guestContinueBtn");
+    const loginBtn =
+      document.getElementById("loginBtn");
 
-    const inputPanel = document.getElementById("inputPanel");
+    const logoutBtn =
+      document.getElementById("logoutBtn");
 
-    const recommendBtn = document.getElementById("recommendBtn");
-    const sampleBtn = document.getElementById("sampleBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const planBtn = document.getElementById("planBtn");
-    const copyPlanBtn = document.getElementById("copyPlanBtn");
+    const myProjectsBtn =
+      document.getElementById("myProjectsBtn");
+
+    const userChip =
+      document.getElementById("userChip");
+
+    const authModal =
+      document.getElementById("authModal");
+
+    const closeAuthModalBtn =
+      document.getElementById("closeAuthModalBtn");
+
+    const googleLoginBtn =
+      document.getElementById("googleLoginBtn");
+
+    const guestContinueBtn =
+      document.getElementById("guestContinueBtn");
+
+    const inputPanel =
+      document.getElementById("inputPanel");
+
+    const recommendBtn =
+      document.getElementById("recommendBtn");
+
+    const sampleBtn =
+      document.getElementById("sampleBtn");
+
+    const resetBtn =
+      document.getElementById("resetBtn");
+
+    const planBtn =
+      document.getElementById("planBtn");
+
+    const copyPlanBtn =
+      document.getElementById("copyPlanBtn");
+
+    const saveProjectBtn =
+      document.getElementById("saveProjectBtn");
 
     const certificateChecklist =
       document.getElementById("certificateChecklist");
@@ -1271,7 +1859,7 @@
     let currentAnalysis = null;
 
     /* ======================================================
-       4. Supabase 로그인
+       4. Supabase authentication
     ====================================================== */
 
     function isSupabaseConfigured() {
@@ -1285,14 +1873,18 @@
 
     function initializeSupabaseClient() {
       if (!isSupabaseConfigured()) {
-        console.warn("Supabase URL과 Publishable Key를 입력해야 합니다.");
+        console.warn(
+          "Supabase URL과 Publishable Key를 입력해야 합니다."
+        );
+
         return;
       }
 
-      supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
+      supabaseClient =
+        window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_PUBLISHABLE_KEY
+        );
 
       initializeAuth();
     }
@@ -1319,32 +1911,61 @@
     }
 
     function updateAuthUI(session) {
-      const user = session?.user || null;
-      const isLoggedIn = Boolean(user);
+      const user =
+        session?.user || null;
 
-      loginBtn.classList.toggle("hidden", isLoggedIn);
-      logoutBtn.classList.toggle("hidden", !isLoggedIn);
-      userChip.classList.toggle("hidden", !isLoggedIn);
+      const isLoggedIn =
+        Boolean(user);
 
-      userChip.textContent = isLoggedIn ? getUserLabel(user) : "";
+      loginBtn
+        .classList
+        .toggle("hidden", isLoggedIn);
+
+      logoutBtn
+        .classList
+        .toggle("hidden", !isLoggedIn);
+
+      myProjectsBtn
+        .classList
+        .toggle("hidden", !isLoggedIn);
+
+      userChip
+        .classList
+        .toggle("hidden", !isLoggedIn);
+
+      userChip.textContent =
+        isLoggedIn
+          ? getUserLabel(user)
+          : "";
     }
 
     async function signInWithGoogle() {
       if (!supabaseClient) {
-        alert("Supabase 설정값을 먼저 입력해주세요.");
+        alert(
+          "Supabase 설정값을 먼저 입력해주세요."
+        );
+
         return;
       }
 
-      const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: "google",
+      const {
+        error
+      } =
+        await supabaseClient
+          .auth
+          .signInWithOAuth({
+            provider: "google",
 
-        options: {
-          redirectTo: window.location.origin
-        }
-      });
+            options: {
+              redirectTo:
+                window.location.origin
+            }
+          });
 
       if (error) {
-        alert(`Google 로그인에 실패했습니다: ${error.message}`);
+        alert(
+          `Google 로그인에 실패했습니다: ${error.message}`
+        );
       }
     }
 
@@ -1353,10 +1974,18 @@
         return;
       }
 
-      const { error } = await supabaseClient.auth.signOut();
+      const {
+        error
+      } =
+        await supabaseClient
+          .auth
+          .signOut();
 
       if (error) {
-        alert(`로그아웃에 실패했습니다: ${error.message}`);
+        alert(
+          `로그아웃에 실패했습니다: ${error.message}`
+        );
+
         return;
       }
 
@@ -1369,61 +1998,111 @@
       }
 
       const {
-        data: { session },
+        data: {
+          session
+        },
+
         error
-      } = await supabaseClient.auth.getSession();
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
 
       if (error) {
-        console.error("세션 확인 오류:", error);
+        console.error(
+          "세션 확인 오류:",
+          error
+        );
       }
 
       updateAuthUI(session);
 
-      supabaseClient.auth.onAuthStateChange((_event, nextSession) => {
-        updateAuthUI(nextSession);
-      });
+      supabaseClient
+        .auth
+        .onAuthStateChange(
+          (_event, nextSession) => {
+            updateAuthUI(nextSession);
+          }
+        );
     }
 
     /* ======================================================
-       5. 공통 상태 UI
+       5. Status UI
     ====================================================== */
 
-    function showStatus(card, textElement, message, isComplete = false) {
-      textElement.textContent = message;
-      card.classList.remove("hidden");
-      card.classList.toggle("complete", isComplete);
+    function showStatus(
+      card,
+      textElement,
+      message,
+      isComplete = false
+    ) {
+      textElement.textContent =
+        message;
+
+      card.classList.remove(
+        "hidden"
+      );
+
+      card.classList.toggle(
+        "complete",
+        isComplete
+      );
     }
 
     function hideStatus(card) {
-      card.classList.add("hidden");
-      card.classList.remove("complete");
+      card.classList.add(
+        "hidden"
+      );
+
+      card.classList.remove(
+        "complete"
+      );
     }
 
     function setLoading(isLoading) {
-      recommendBtn.disabled = isLoading;
-      planBtn.disabled = isLoading;
+      recommendBtn.disabled =
+        isLoading;
+
+      planBtn.disabled =
+        isLoading;
     }
 
     /* ======================================================
-       6. 입력 UI
+       6. Input UI
     ====================================================== */
 
     function getCollegeGroup(collegeName) {
-      return kuMajorDatabase.find((group) => group.college === collegeName);
+      return kuMajorDatabase.find(
+        (group) =>
+          group.college === collegeName
+      );
     }
 
-    function appendOption(selectElement, value, label) {
-      const option = document.createElement("option");
+    function appendOption(
+      selectElement,
+      value,
+      label
+    ) {
+      const option =
+        document.createElement("option");
 
-      option.value = value;
-      option.textContent = label;
+      option.value =
+        value;
 
-      selectElement.appendChild(option);
+      option.textContent =
+        label;
+
+      selectElement.appendChild(
+        option
+      );
     }
 
     function renderCollegeOptions() {
-      primaryCollegeSelect.replaceChildren();
-      secondaryCollegeSelect.replaceChildren();
+      primaryCollegeSelect
+        .replaceChildren();
+
+      secondaryCollegeSelect
+        .replaceChildren();
 
       appendOption(
         primaryCollegeSelect,
@@ -1437,19 +2116,21 @@
         "해당 없음"
       );
 
-      kuMajorDatabase.forEach((group) => {
-        appendOption(
-          primaryCollegeSelect,
-          group.college,
-          group.college
-        );
+      kuMajorDatabase.forEach(
+        (group) => {
+          appendOption(
+            primaryCollegeSelect,
+            group.college,
+            group.college
+          );
 
-        appendOption(
-          secondaryCollegeSelect,
-          group.college,
-          group.college
-        );
-      });
+          appendOption(
+            secondaryCollegeSelect,
+            group.college,
+            group.college
+          );
+        }
+      );
     }
 
     function renderMajorOptions(
@@ -1457,20 +2138,30 @@
       majorSelect,
       includeNone
     ) {
-      const selectedCollege = collegeSelect.value;
+      const selectedCollege =
+        collegeSelect.value;
 
-      majorSelect.replaceChildren();
+      majorSelect
+        .replaceChildren();
 
-      if (!selectedCollege || selectedCollege === "해당 없음") {
+      if (
+        !selectedCollege ||
+        selectedCollege ===
+          "해당 없음"
+      ) {
         appendOption(
           majorSelect,
-          includeNone ? "해당 없음" : "",
+          includeNone
+            ? "해당 없음"
+            : "",
+
           includeNone
             ? "해당 없음"
             : "먼저 단과대학을 선택하세요"
         );
 
-        majorSelect.disabled = !includeNone;
+        majorSelect.disabled =
+          !includeNone;
 
         return;
       }
@@ -1481,15 +2172,25 @@
         "학과/학부를 선택하세요"
       );
 
-      const collegeGroup = getCollegeGroup(selectedCollege);
+      const collegeGroup =
+        getCollegeGroup(
+          selectedCollege
+        );
 
       if (collegeGroup) {
-        collegeGroup.majors.forEach((major) => {
-          appendOption(majorSelect, major, major);
-        });
+        collegeGroup.majors.forEach(
+          (major) => {
+            appendOption(
+              majorSelect,
+              major,
+              major
+            );
+          }
+        );
       }
 
-      majorSelect.disabled = false;
+      majorSelect.disabled =
+        false;
     }
 
     function initializeMajorSelectors() {
@@ -1515,7 +2216,8 @@
     ) {
       if (
         allowNone &&
-        collegeSelect.value === "해당 없음"
+        collegeSelect.value ===
+          "해당 없음"
       ) {
         return {
           college: "",
@@ -1524,43 +2226,81 @@
         };
       }
 
-      const college = collegeSelect.value;
-      const major = majorSelect.value;
+      const college =
+        collegeSelect.value;
+
+      const major =
+        majorSelect.value;
 
       return {
         college,
         major,
-        text: college && major
-          ? `${college} ${major}`
-          : ""
+
+        text:
+          college && major
+            ? `${college} ${major}`
+            : ""
       };
     }
 
     function renderCertificateChecklist() {
-      certificateChecklist.replaceChildren();
+      certificateChecklist
+        .replaceChildren();
 
-      certificateOptions.forEach((certificate, index) => {
-        const label = document.createElement("label");
-        const checkbox = document.createElement("input");
-        const span = document.createElement("span");
+      certificateOptions.forEach(
+        (certificate, index) => {
+          const label =
+            document.createElement(
+              "label"
+            );
 
-        label.className = "check-item";
+          const checkbox =
+            document.createElement(
+              "input"
+            );
 
-        checkbox.type = "checkbox";
-        checkbox.name = "certificates";
-        checkbox.value = certificate;
+          const span =
+            document.createElement(
+              "span"
+            );
 
-        if (index === certificateOptions.length - 1) {
-          checkbox.dataset.noneOption = "true";
+          label.className =
+            "check-item";
+
+          checkbox.type =
+            "checkbox";
+
+          checkbox.name =
+            "certificates";
+
+          checkbox.value =
+            certificate;
+
+          if (
+            index ===
+            certificateOptions.length - 1
+          ) {
+            checkbox.dataset.noneOption =
+              "true";
+          }
+
+          span.textContent =
+            certificate;
+
+          label.appendChild(
+            checkbox
+          );
+
+          label.appendChild(
+            span
+          );
+
+          certificateChecklist
+            .appendChild(
+              label
+            );
         }
-
-        span.textContent = certificate;
-
-        label.appendChild(checkbox);
-        label.appendChild(span);
-
-        certificateChecklist.appendChild(label);
-      });
+      );
     }
 
     function handleCertificateChange(event) {
@@ -1571,9 +2311,10 @@
 
       const allOptions =
         Array.from(
-          certificateChecklist.querySelectorAll(
-            "input[name='certificates']"
-          )
+          certificateChecklist
+            .querySelectorAll(
+              "input[name='certificates']"
+            )
         );
 
       if (!noneOption) {
@@ -1581,21 +2322,30 @@
       }
 
       if (
-        event.target === noneOption &&
+        event.target ===
+          noneOption &&
         noneOption.checked
       ) {
-        allOptions.forEach((option) => {
-          if (option !== noneOption) {
-            option.checked = false;
+        allOptions.forEach(
+          (option) => {
+            if (
+              option !==
+              noneOption
+            ) {
+              option.checked =
+                false;
+            }
           }
-        });
+        );
       }
 
       if (
-        event.target !== noneOption &&
+        event.target !==
+          noneOption &&
         event.target.checked
       ) {
-        noneOption.checked = false;
+        noneOption.checked =
+          false;
       }
     }
 
@@ -1604,21 +2354,38 @@
         document.querySelectorAll(
           "input[name='certificates']:checked"
         )
-      ).map((checkbox) => checkbox.value);
+      ).map(
+        (checkbox) =>
+          checkbox.value
+      );
     }
 
-    function formatBudgetWonText(budgetManwon) {
+    function formatBudgetWonText(
+      budgetManwon
+    ) {
       return `${(
-        Number(budgetManwon || 0) * 10000
+        Number(
+          budgetManwon || 0
+        ) * 10000
       ).toLocaleString()}원`;
     }
 
     function getUserProfile() {
       const budgetValue =
-        document.getElementById("budget").value.trim();
+        document
+          .getElementById(
+            "budget"
+          )
+          .value
+          .trim();
 
       const timeValue =
-        document.getElementById("time").value.trim();
+        document
+          .getElementById(
+            "time"
+          )
+          .value
+          .trim();
 
       const primaryMajor =
         getSelectedMajor(
@@ -1638,19 +2405,30 @@
         primaryMajor,
         secondaryMajor,
 
-        primaryMajorText: primaryMajor.text,
+        primaryMajorText:
+          primaryMajor.text,
 
         secondaryMajorText:
-          secondaryMajor.text || "해당 없음",
+          secondaryMajor.text ||
+          "해당 없음",
 
         certificates:
           getSelectedCertificates(),
 
         interests:
-          document.getElementById("interests").value.trim(),
+          document
+            .getElementById(
+              "interests"
+            )
+            .value
+            .trim(),
 
         goal:
-          document.getElementById("goal").value,
+          document
+            .getElementById(
+              "goal"
+            )
+            .value,
 
         budget:
           budgetValue,
@@ -1659,29 +2437,48 @@
           timeValue,
 
         budgetText:
-          `${Number(budgetValue || 0).toLocaleString()}만원`,
+          `${Number(
+            budgetValue || 0
+          ).toLocaleString()}만원`,
 
         budgetWonText:
-          formatBudgetWonText(budgetValue),
+          formatBudgetWonText(
+            budgetValue
+          ),
 
         timeText:
           `주 ${timeValue || 0}시간`,
 
         businessType:
-          document.getElementById("businessType").value,
+          document
+            .getElementById(
+              "businessType"
+            )
+            .value,
 
         target:
-          document.getElementById("target").value.trim(),
+          document
+            .getElementById(
+              "target"
+            )
+            .value
+            .trim(),
 
         avoid:
-          document.getElementById("avoid").value.trim()
+          document
+            .getElementById(
+              "avoid"
+            )
+            .value
+            .trim()
       };
     }
 
     function validateProfile(profile) {
       if (
         !profile.primaryMajorText ||
-        profile.certificates.length === 0 ||
+        profile.certificates.length ===
+          0 ||
         !profile.interests ||
         !profile.budget ||
         !profile.time ||
@@ -1695,8 +2492,12 @@
       }
 
       if (
-        Number(profile.budget) < 0 ||
-        Number(profile.time) < 0
+        Number(
+          profile.budget
+        ) < 0 ||
+        Number(
+          profile.time
+        ) < 0
       ) {
         alert(
           "초기 자본과 투입 가능 시간은 0 이상의 숫자만 입력할 수 있습니다."
@@ -1709,46 +2510,84 @@
     }
 
     /* ======================================================
-       7. 백엔드 API
+       7. Backend API
     ====================================================== */
 
-    async function callBackendJson(endpoint, payload) {
-      const response = await fetch(endpoint, {
-        method: "POST",
+    async function callBackendJson(
+      endpoint,
+      payload
+    ) {
+      const response =
+        await fetch(
+          endpoint,
+          {
+            method: "POST",
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
 
-        body: JSON.stringify(payload)
-      });
+            body:
+              JSON.stringify(
+                payload
+              )
+          }
+        );
 
-      const data = await response
-        .json()
-        .catch(() => ({}));
+      const data =
+        await response
+          .json()
+          .catch(
+            () => ({})
+          );
 
       if (!response.ok) {
         const message =
-          data && data.error
+          data &&
+          data.error
             ? data.error
             : "백엔드 API 요청에 실패했습니다.";
 
-        throw new Error(message);
+        throw new Error(
+          message
+        );
       }
 
       return data;
     }
 
-    function clampScore(value, fallback = 75) {
-      const score = Number(value);
+    function clampScore(
+      value,
+      fallback = 75
+    ) {
+      const score =
+        Number(value);
 
-      return Number.isFinite(score)
-        ? Math.max(0, Math.min(100, Math.round(score)))
+      return Number.isFinite(
+        score
+      )
+        ? Math.max(
+            0,
+            Math.min(
+              100,
+              Math.round(
+                score
+              )
+            )
+          )
         : fallback;
     }
 
-    function normalizeReasons(reasons, fallback) {
-      if (Array.isArray(reasons)) {
+    function normalizeReasons(
+      reasons,
+      fallback
+    ) {
+      if (
+        Array.isArray(
+          reasons
+        )
+      ) {
         return reasons
           .filter(Boolean)
           .slice(0, 4)
@@ -1756,67 +2595,86 @@
       }
 
       if (
-        typeof reasons === "string" &&
+        typeof reasons ===
+          "string" &&
         reasons.trim()
       ) {
-        return [reasons.trim()];
+        return [
+          reasons.trim()
+        ];
       }
 
-      return [fallback];
+      return [
+        fallback
+      ];
     }
 
-    function normalizeIdeas(rawIdeas) {
-      if (!Array.isArray(rawIdeas)) {
+    function normalizeIdeas(
+      rawIdeas
+    ) {
+      if (
+        !Array.isArray(
+          rawIdeas
+        )
+      ) {
         return [];
       }
 
       return rawIdeas
         .slice(0, 5)
-        .map((idea, index) => ({
-          name:
-            idea.name ||
-            `창업 아이템 ${index + 1}`,
+        .map(
+          (idea, index) => ({
+            name:
+              idea.name ||
+              `창업 아이템 ${index + 1}`,
 
-          summary:
-            idea.summary ||
-            "아이템 설명이 제공되지 않았습니다.",
+            summary:
+              idea.summary ||
+              "아이템 설명이 제공되지 않았습니다.",
 
-          customer:
-            idea.customer ||
-            "목표 고객 미정",
+            customer:
+              idea.customer ||
+              "목표 고객 미정",
 
-          problem:
-            idea.problem ||
-            "해결 문제 미정",
+            problem:
+              idea.problem ||
+              "해결 문제 미정",
 
-          revenue:
-            idea.revenue ||
-            "수익 모델 미정",
+            revenue:
+              idea.revenue ||
+              "수익 모델 미정",
 
-          reason:
-            idea.reason ||
-            "추천 이유 미정",
+            reason:
+              idea.reason ||
+              "추천 이유 미정",
 
-          reasons:
-            normalizeReasons(
-              idea.reasons,
-              idea.reason || "추천 이유 미정"
-            ),
+            reasons:
+              normalizeReasons(
+                idea.reasons,
+                idea.reason ||
+                  "추천 이유 미정"
+              ),
 
-          fitScore:
-            clampScore(idea.fitScore, 75),
+            fitScore:
+              clampScore(
+                idea.fitScore,
+                75
+              ),
 
-          difficulty:
-            idea.difficulty ||
-            "보통",
+            difficulty:
+              idea.difficulty ||
+              "보통",
 
-          cost:
-            idea.cost ||
-            "미정"
-        }));
+            cost:
+              idea.cost ||
+              "미정"
+          })
+        );
     }
 
-    function normalizeAnalysis(rawAnalysis) {
+    function normalizeAnalysis(
+      rawAnalysis
+    ) {
       const defaultScores = {
         "사용자 적합성": 75,
         "실행 가능성": 75,
@@ -1855,10 +2713,17 @@
         ...(rawAnalysis.scores || {})
       };
 
-      Object.keys(scores).forEach((key) => {
-        scores[key] =
-          clampScore(scores[key], 75);
-      });
+      Object
+        .keys(scores)
+        .forEach(
+          (key) => {
+            scores[key] =
+              clampScore(
+                scores[key],
+                75
+              );
+          }
+        );
 
       const sections = {
         ...defaultSections,
@@ -1870,10 +2735,16 @@
           Object
             .values(scores)
             .reduce(
-              (sum, value) => sum + value,
+              (
+                sum,
+                value
+              ) =>
+                sum + value,
               0
             ) /
-          Object.keys(scores).length
+            Object
+              .keys(scores)
+              .length
         );
 
       return {
@@ -1888,40 +2759,58 @@
       };
     }
 
-    async function generateIdeasWithAI(profile) {
+    async function generateIdeasWithAI(
+      profile
+    ) {
       const result =
         await callBackendJson(
           "/api/recommend",
-          { profile }
+          {
+            profile
+          }
         );
 
-      return normalizeIdeas(result.ideas);
+      return normalizeIdeas(
+        result.ideas
+      );
     }
 
-    async function analyzeIdeaWithAI(profile, idea) {
+    async function analyzeIdeaWithAI(
+      profile,
+      idea
+    ) {
       const result =
         await callBackendJson(
           "/api/analyze",
-          { profile, idea }
+          {
+            profile,
+            idea
+          }
         );
 
-      return normalizeAnalysis(result);
+      return normalizeAnalysis(
+        result
+      );
     }
 
     /* ======================================================
-       8. 샘플 Fallback
+       8. Fallback data
     ====================================================== */
 
-    function sampleIdeas(profile) {
+    function sampleIdeas(
+      profile
+    ) {
       return [
         {
-          name: "개인 맞춤형 과제 피드백 서비스",
+          name:
+            "개인 맞춤형 과제 피드백 서비스",
 
           summary:
             "대학생의 리포트, 발표문, 에세이를 AI와 사람이 함께 피드백해주는 서비스",
 
           customer:
-            profile.target || "대학생",
+            profile.target ||
+            "대학생",
 
           problem:
             "과제의 논리 구조, 문장 표현, 출처 정리에서 어려움을 겪는 학생이 많음",
@@ -1987,14 +2876,14 @@
             "아이디어는 있지만 시장성과 실행 가능성을 어떻게 검토해야 하는지 모름",
 
           revenue:
-            "무료 진단 후 유료 리포트, 학교/동아리 B2B 제공",
+            "무료 진단 후 유료 리포트, 학교·동아리 B2B 제공",
 
           reason:
             `현재 프로젝트 주제와 직접 연결되며, ${profile.goal} 목적에 적합함`,
 
           reasons: [
             "현재 구현 중인 서비스와 직접 연결됨",
-            "창업 기획 과제의 주제성이 강함",
+            "창업 기획 프로젝트의 주제성이 강함",
             "향후 B2B 또는 학교 연계로 확장 가능"
           ],
 
@@ -2005,18 +2894,58 @@
       ];
     }
 
-    function analyzeIdeaFallback(profile, idea) {
+    function calculateScore(
+      input,
+      reason,
+      base
+    ) {
+      const inputLength =
+        String(
+          input || ""
+        ).length;
+
+      const reasonLength =
+        String(
+          reason || ""
+        ).length;
+
+      const bonus =
+        Math.min(
+          8,
+          Math.floor(
+            (
+              inputLength +
+              reasonLength
+            ) / 60
+          )
+        );
+
+      return Math.min(
+        95,
+        base + bonus
+      );
+    }
+
+    function analyzeIdeaFallback(
+      profile,
+      idea
+    ) {
       const scores = {
         "사용자 적합성":
           calculateScore(
-            profile.certificates.join(" ") +
+            profile
+              .certificates
+              .join(" ") +
               profile.interests,
+
             idea.reason,
+
             88
           ),
 
         "실행 가능성":
-          idea.difficulty === "어려움"
+          idea.difficulty ===
+          "어려움"
             ? 68
             : 82,
 
@@ -2025,12 +2954,15 @@
         "차별성": 72,
 
         "확장성":
-          idea.name.includes("검증")
+          idea.name.includes(
+            "검증"
+          )
             ? 88
             : 80,
 
         "리스크 안정성":
-          idea.difficulty === "어려움"
+          idea.difficulty ===
+          "어려움"
             ? 62
             : 76
       };
@@ -2040,15 +2972,21 @@
           Object
             .values(scores)
             .reduce(
-              (sum, value) => sum + value,
+              (
+                sum,
+                value
+              ) =>
+                sum + value,
               0
             ) /
-          Object.keys(scores).length
+            Object
+              .keys(scores)
+              .length
         );
 
       const sections = {
         market:
-          `${idea.customer}는 ${idea.problem}이라는 문제를 가지고 있으므로, 문제 인식이 비교적 명확한 편입니다. 실제 지불 의사가 있는지 확인하기 위해 초기 설문, 랜딩페이지, 무료 체험 신청 등의 방식으로 수요를 검증해야 합니다.`,
+          `${idea.customer}는 ${idea.problem}이라는 문제를 가지고 있으므로 문제 인식이 비교적 명확한 편입니다. 실제 지불 의사가 있는지 확인하기 위해 초기 설문, 랜딩페이지, 무료 체험 신청 등의 방식으로 수요를 검증해야 합니다.`,
 
         customer:
           `핵심 고객은 ${idea.customer}입니다. 서비스 메시지는 막연한 편리함보다 시간 절약, 실행 부담 감소, 결과물 품질 향상에 초점을 두는 것이 좋습니다.`,
@@ -2063,7 +3001,7 @@
           "1. 핵심 기능만 담은 MVP 제작\n2. 테스트 사용자 10~20명 모집\n3. 유료화 가능성이 높은 기능 확인\n4. 반복 사용 기능 중심으로 개선",
 
         risk:
-          "가장 큰 리스크는 AI 결과의 신뢰성입니다. 평가 기준을 명확히 제시하고, 실제 고객 반응을 추가로 검증해야 합니다.",
+          "가장 큰 리스크는 AI 결과의 신뢰성입니다. 평가 기준을 명확히 제시하고 실제 고객 반응을 추가로 검증해야 합니다.",
 
         growth:
           "사용자 계정, 결과 저장, 시장 데이터 연동, 창업 계획서 PDF 출력, 팀원 매칭 기능 등으로 확장할 수 있습니다."
@@ -2080,46 +3018,45 @@
       };
     }
 
-    function calculateScore(input, reason, base) {
-      const inputLength =
-        String(input || "").length;
-
-      const reasonLength =
-        String(reason || "").length;
-
-      const bonus =
-        Math.min(
-          8,
-          Math.floor(
-            (inputLength + reasonLength) / 60
-          )
-        );
-
-      return Math.min(95, base + bonus);
-    }
-
     /* ======================================================
-       9. 결과 렌더링
+       9. Render ideas
     ====================================================== */
 
-    function createLabeledParagraph(label, value) {
+    function createLabeledParagraph(
+      label,
+      value
+    ) {
       const paragraph =
-        document.createElement("p");
+        document.createElement(
+          "p"
+        );
 
       const strong =
-        document.createElement("strong");
+        document.createElement(
+          "strong"
+        );
 
       const lineBreak =
-        document.createElement("br");
+        document.createElement(
+          "br"
+        );
 
-      strong.textContent = label;
+      strong.textContent =
+        label;
 
-      paragraph.appendChild(strong);
-      paragraph.appendChild(lineBreak);
+      paragraph.appendChild(
+        strong
+      );
+
+      paragraph.appendChild(
+        lineBreak
+      );
 
       if (value) {
         paragraph.appendChild(
-          document.createTextNode(value)
+          document.createTextNode(
+            value
+          )
         );
       }
 
@@ -2127,269 +3064,460 @@
     }
 
     function renderIdeas(ideas) {
-      ideaCards.replaceChildren();
+      ideaCards
+        .replaceChildren();
 
-      ideas.forEach((idea, index) => {
-        const card =
-          document.createElement("div");
+      ideas.forEach(
+        (idea, index) => {
+          const card =
+            document.createElement(
+              "div"
+            );
 
-        const title =
-          document.createElement("h3");
+          const title =
+            document.createElement(
+              "h3"
+            );
 
-        const tagRow =
-          document.createElement("div");
+          const tagRow =
+            document.createElement(
+              "div"
+            );
 
-        const scoreTag =
-          document.createElement("span");
+          const scoreTag =
+            document.createElement(
+              "span"
+            );
 
-        const difficultyTag =
-          document.createElement("span");
+          const difficultyTag =
+            document.createElement(
+              "span"
+            );
 
-        const costTag =
-          document.createElement("span");
+          const costTag =
+            document.createElement(
+              "span"
+            );
 
-        const reasonList =
-          document.createElement("ul");
+          const reasonList =
+            document.createElement(
+              "ul"
+            );
 
-        const button =
-          document.createElement("button");
+          const button =
+            document.createElement(
+              "button"
+            );
 
-        card.className = "card";
-        title.textContent =
-          `${index + 1}. ${idea.name}`;
+          card.className =
+            "card";
 
-        tagRow.className = "tag-row";
+          title.textContent =
+            `${index + 1}. ${idea.name}`;
 
-        scoreTag.className = "tag";
-        difficultyTag.className = "tag";
-        costTag.className = "tag";
+          tagRow.className =
+            "tag-row";
 
-        reasonList.className = "reason-list";
+          scoreTag.className =
+            "tag";
 
-        scoreTag.textContent =
-          `추천 적합도: ${idea.fitScore}점`;
+          difficultyTag.className =
+            "tag";
 
-        difficultyTag.textContent =
-          `난이도: ${idea.difficulty}`;
+          costTag.className =
+            "tag";
 
-        costTag.textContent =
-          `초기 비용: ${idea.cost}`;
+          reasonList.className =
+            "reason-list";
 
-        idea.reasons.forEach((reason) => {
-          const item =
-            document.createElement("li");
+          scoreTag.textContent =
+            `추천 적합도: ${idea.fitScore}점`;
 
-          item.textContent = reason;
+          difficultyTag.textContent =
+            `난이도: ${idea.difficulty}`;
 
-          reasonList.appendChild(item);
-        });
+          costTag.textContent =
+            `초기 비용: ${idea.cost}`;
 
-        button.className = "primary-btn";
-        button.type = "button";
-        button.textContent =
-          "이 아이템 분석하기";
+          idea.reasons.forEach(
+            (reason) => {
+              const item =
+                document.createElement(
+                  "li"
+                );
 
-        button.addEventListener(
-          "click",
-          () => selectIdea(index)
-        );
+              item.textContent =
+                reason;
 
-        tagRow.appendChild(scoreTag);
-        tagRow.appendChild(difficultyTag);
-        tagRow.appendChild(costTag);
+              reasonList.appendChild(
+                item
+              );
+            }
+          );
 
-        card.appendChild(title);
+          button.className =
+            "primary-btn";
 
-        card.appendChild(
-          createLabeledParagraph(
-            "한 줄 설명",
-            idea.summary
-          )
-        );
+          button.type =
+            "button";
 
-        card.appendChild(
-          createLabeledParagraph(
-            "목표 고객",
-            idea.customer
-          )
-        );
+          button.textContent =
+            "이 아이템 분석하기";
 
-        card.appendChild(
-          createLabeledParagraph(
-            "해결 문제",
-            idea.problem
-          )
-        );
+          button.addEventListener(
+            "click",
+            () =>
+              selectIdea(
+                index
+              )
+          );
 
-        card.appendChild(
-          createLabeledParagraph(
-            "수익 모델",
-            idea.revenue
-          )
-        );
+          tagRow.appendChild(
+            scoreTag
+          );
 
-        card.appendChild(
-          createLabeledParagraph(
-            "추천 이유",
-            idea.reason
-          )
-        );
+          tagRow.appendChild(
+            difficultyTag
+          );
 
-        card.appendChild(
-          createLabeledParagraph(
-            "핵심 근거",
-            ""
-          )
-        );
+          tagRow.appendChild(
+            costTag
+          );
 
-        card.appendChild(reasonList);
-        card.appendChild(tagRow);
-        card.appendChild(button);
+          card.appendChild(
+            title
+          );
 
-        ideaCards.appendChild(card);
-      });
+          card.appendChild(
+            createLabeledParagraph(
+              "한 줄 설명",
+              idea.summary
+            )
+          );
+
+          card.appendChild(
+            createLabeledParagraph(
+              "목표 고객",
+              idea.customer
+            )
+          );
+
+          card.appendChild(
+            createLabeledParagraph(
+              "해결 문제",
+              idea.problem
+            )
+          );
+
+          card.appendChild(
+            createLabeledParagraph(
+              "수익 모델",
+              idea.revenue
+            )
+          );
+
+          card.appendChild(
+            createLabeledParagraph(
+              "추천 이유",
+              idea.reason
+            )
+          );
+
+          card.appendChild(
+            createLabeledParagraph(
+              "핵심 근거",
+              ""
+            )
+          );
+
+          card.appendChild(
+            reasonList
+          );
+
+          card.appendChild(
+            tagRow
+          );
+
+          card.appendChild(
+            button
+          );
+
+          ideaCards.appendChild(
+            card
+          );
+        }
+      );
     }
 
-    function renderScoreDashboard(scores, average) {
-      scoreDashboard.replaceChildren();
+    /* ======================================================
+       10. Render analysis
+    ====================================================== */
+
+    function renderScoreDashboard(
+      scores,
+      average
+    ) {
+      scoreDashboard
+        .replaceChildren();
 
       Object
         .entries(scores)
-        .forEach(([key, value]) => {
-          const item =
-            document.createElement("div");
+        .forEach(
+          ([key, value]) => {
+            const item =
+              document.createElement(
+                "div"
+              );
 
-          const head =
-            document.createElement("div");
+            const head =
+              document.createElement(
+                "div"
+              );
 
-          const label =
-            document.createElement("span");
+            const label =
+              document.createElement(
+                "span"
+              );
 
-          const score =
-            document.createElement("span");
+            const score =
+              document.createElement(
+                "span"
+              );
 
-          const track =
-            document.createElement("div");
+            const track =
+              document.createElement(
+                "div"
+              );
 
-          const fill =
-            document.createElement("div");
+            const fill =
+              document.createElement(
+                "div"
+              );
 
-          item.className = "score-item";
-          head.className = "score-head";
-          score.className = "score-value";
-          track.className = "score-bar-track";
-          fill.className = "score-bar-fill";
+            item.className =
+              "score-item";
 
-          label.textContent = key;
-          score.textContent = `${value}점`;
+            head.className =
+              "score-head";
 
-          fill.style.width = `${value}%`;
+            score.className =
+              "score-value";
 
-          head.appendChild(label);
-          head.appendChild(score);
+            track.className =
+              "score-bar-track";
 
-          track.appendChild(fill);
+            fill.className =
+              "score-bar-fill";
 
-          item.appendChild(head);
-          item.appendChild(track);
+            label.textContent =
+              key;
 
-          scoreDashboard.appendChild(item);
-        });
+            score.textContent =
+              `${value}점`;
+
+            fill.style.width =
+              `${value}%`;
+
+            head.appendChild(
+              label
+            );
+
+            head.appendChild(
+              score
+            );
+
+            track.appendChild(
+              fill
+            );
+
+            item.appendChild(
+              head
+            );
+
+            item.appendChild(
+              track
+            );
+
+            scoreDashboard
+              .appendChild(
+                item
+              );
+          }
+        );
 
       const total =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       const totalHead =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       const totalLabel =
-        document.createElement("span");
+        document.createElement(
+          "span"
+        );
 
       const totalScore =
-        document.createElement("span");
+        document.createElement(
+          "span"
+        );
 
       const totalTrack =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       const totalFill =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
-      total.className = "score-item";
-      totalHead.className = "score-head";
-      totalScore.className = "score-value";
-      totalTrack.className = "score-bar-track";
-      totalFill.className = "score-bar-fill";
+      total.className =
+        "score-item";
 
-      totalLabel.textContent = "종합 점수";
-      totalScore.textContent = `${average}점`;
-      totalFill.style.width = `${average}%`;
+      totalHead.className =
+        "score-head";
 
-      totalHead.appendChild(totalLabel);
-      totalHead.appendChild(totalScore);
+      totalScore.className =
+        "score-value";
 
-      totalTrack.appendChild(totalFill);
+      totalTrack.className =
+        "score-bar-track";
 
-      total.appendChild(totalHead);
-      total.appendChild(totalTrack);
+      totalFill.className =
+        "score-bar-fill";
 
-      scoreDashboard.appendChild(total);
+      totalLabel.textContent =
+        "종합 점수";
+
+      totalScore.textContent =
+        `${average}점`;
+
+      totalFill.style.width =
+        `${average}%`;
+
+      totalHead.appendChild(
+        totalLabel
+      );
+
+      totalHead.appendChild(
+        totalScore
+      );
+
+      totalTrack.appendChild(
+        totalFill
+      );
+
+      total.appendChild(
+        totalHead
+      );
+
+      total.appendChild(
+        totalTrack
+      );
+
+      scoreDashboard.appendChild(
+        total
+      );
     }
 
-    function renderAnalysisSections(sections) {
-      analysisGrid.replaceChildren();
+    function renderAnalysisSections(
+      sections
+    ) {
+      analysisGrid
+        .replaceChildren();
 
       Object
-        .entries(sectionLabels)
-        .forEach(([key, label]) => {
-          const card =
-            document.createElement("div");
+        .entries(
+          sectionLabels
+        )
+        .forEach(
+          ([key, label]) => {
+            const card =
+              document.createElement(
+                "div"
+              );
 
-          const title =
-            document.createElement("h3");
+            const title =
+              document.createElement(
+                "h3"
+              );
 
-          const body =
-            document.createElement("p");
+            const body =
+              document.createElement(
+                "p"
+              );
 
-          card.className = "analysis-card";
+            card.className =
+              "analysis-card";
 
-          title.textContent = label;
+            title.textContent =
+              label;
 
-          body.textContent =
-            sections[key] ||
-            "내용이 제공되지 않았습니다.";
+            body.textContent =
+              sections[key] ||
+              "내용이 제공되지 않았습니다.";
 
-          card.appendChild(title);
-          card.appendChild(body);
+            card.appendChild(
+              title
+            );
 
-          analysisGrid.appendChild(card);
-        });
+            card.appendChild(
+              body
+            );
+
+            analysisGrid
+              .appendChild(
+                card
+              );
+          }
+        );
     }
 
-    function renderAnalysis(analysis) {
+    function renderAnalysis(
+      analysis
+    ) {
       renderScoreDashboard(
         analysis.scores,
         analysis.average
       );
 
-      analysisSummary.classList.remove("hidden");
-      analysisSummary.replaceChildren();
+      analysisSummary
+        .classList
+        .remove("hidden");
+
+      analysisSummary
+        .replaceChildren();
 
       const strong =
-        document.createElement("strong");
+        document.createElement(
+          "strong"
+        );
 
-      strong.textContent = "종합 평가";
+      strong.textContent =
+        "종합 평가";
 
-      analysisSummary.appendChild(strong);
+      analysisSummary
+        .appendChild(
+          strong
+        );
 
-      analysisSummary.appendChild(
-        document.createElement("br")
-      );
+      analysisSummary
+        .appendChild(
+          document.createElement(
+            "br"
+          )
+        );
 
-      analysisSummary.appendChild(
-        document.createTextNode(
-          analysis.summary
-        )
-      );
+      analysisSummary
+        .appendChild(
+          document.createTextNode(
+            analysis.summary
+          )
+        );
 
       renderAnalysisSections(
         analysis.sections || {}
@@ -2397,57 +3525,104 @@
     }
 
     /* ======================================================
-       10. 창업 계획 초안
+       11. Business plan
     ====================================================== */
 
-    function appendReportHeading(container, text) {
+    function appendReportHeading(
+      container,
+      text
+    ) {
       const heading =
-        document.createElement("h3");
+        document.createElement(
+          "h3"
+        );
 
-      heading.textContent = text;
+      heading.textContent =
+        text;
 
-      container.appendChild(heading);
+      container.appendChild(
+        heading
+      );
     }
 
-    function appendReportParagraph(container, text) {
+    function appendReportParagraph(
+      container,
+      text
+    ) {
       const paragraph =
-        document.createElement("p");
+        document.createElement(
+          "p"
+        );
 
-      paragraph.textContent = text;
+      paragraph.textContent =
+        text;
 
-      container.appendChild(paragraph);
+      container.appendChild(
+        paragraph
+      );
     }
 
-    function appendReportTable(container, rows) {
+    function appendReportTable(
+      container,
+      rows
+    ) {
       const table =
-        document.createElement("table");
+        document.createElement(
+          "table"
+        );
 
       const body =
-        document.createElement("tbody");
+        document.createElement(
+          "tbody"
+        );
 
-      table.className = "report-table";
+      table.className =
+        "report-table";
 
-      rows.forEach(([label, value]) => {
-        const row =
-          document.createElement("tr");
+      rows.forEach(
+        ([label, value]) => {
+          const row =
+            document.createElement(
+              "tr"
+            );
 
-        const header =
-          document.createElement("th");
+          const header =
+            document.createElement(
+              "th"
+            );
 
-        const cell =
-          document.createElement("td");
+          const cell =
+            document.createElement(
+              "td"
+            );
 
-        header.textContent = label;
-        cell.textContent = value;
+          header.textContent =
+            label;
 
-        row.appendChild(header);
-        row.appendChild(cell);
+          cell.textContent =
+            value;
 
-        body.appendChild(row);
-      });
+          row.appendChild(
+            header
+          );
 
-      table.appendChild(body);
-      container.appendChild(table);
+          row.appendChild(
+            cell
+          );
+
+          body.appendChild(
+            row
+          );
+        }
+      );
+
+      table.appendChild(
+        body
+      );
+
+      container.appendChild(
+        table
+      );
     }
 
     function renderBusinessPlan(
@@ -2458,61 +3633,116 @@
       const sections =
         analysis.sections || {};
 
-      planBox.replaceChildren();
+      planBox
+        .replaceChildren();
 
       appendReportHeading(
         planBox,
         "1. 사업 개요"
       );
 
-      appendReportTable(planBox, [
-        ["사업명", idea.name],
-        ["핵심 고객", idea.customer],
-        ["해결 문제", idea.problem],
-        ["수익 모델", idea.revenue],
-        ["한 줄 설명", idea.summary]
-      ]);
+      appendReportTable(
+        planBox,
+        [
+          [
+            "사업명",
+            idea.name
+          ],
+
+          [
+            "핵심 고객",
+            idea.customer
+          ],
+
+          [
+            "해결 문제",
+            idea.problem
+          ],
+
+          [
+            "수익 모델",
+            idea.revenue
+          ],
+
+          [
+            "한 줄 설명",
+            idea.summary
+          ]
+        ]
+      );
 
       appendReportHeading(
         planBox,
         "2. 창업자 적합성"
       );
 
-      appendReportTable(planBox, [
-        ["제1전공", profile.primaryMajorText],
-        ["제2전공", profile.secondaryMajorText],
-
+      appendReportTable(
+        planBox,
         [
-          "보유 자격증",
-          profile.certificates.join(", ")
-        ],
+          [
+            "제1전공",
+            profile.primaryMajorText
+          ],
 
-        ["관심 분야", profile.interests],
-        ["창업 목적", profile.goal],
+          [
+            "제2전공",
+            profile.secondaryMajorText
+          ],
 
-        [
-          "초기 자본",
-          `${profile.budgetText} (${profile.budgetWonText})`
-        ],
+          [
+            "보유 자격증",
+            profile
+              .certificates
+              .join(", ")
+          ],
 
-        ["투입 가능 시간", profile.timeText]
-      ]);
+          [
+            "관심 분야",
+            profile.interests
+          ],
+
+          [
+            "창업 목적",
+            profile.goal
+          ],
+
+          [
+            "초기 자본",
+            `${profile.budgetText} (${profile.budgetWonText})`
+          ],
+
+          [
+            "투입 가능 시간",
+            profile.timeText
+          ]
+        ]
+      );
 
       appendReportHeading(
         planBox,
         "3. 평가 점수"
       );
 
-      appendReportTable(planBox, [
-        ...Object
-          .entries(analysis.scores)
-          .map(([key, value]) => [
-            key,
-            `${value}점`
-          ]),
+      appendReportTable(
+        planBox,
+        [
+          ...Object
+            .entries(
+              analysis.scores
+            )
+            .map(
+              ([key, value]) => [
+                key,
+                `${value}점`
+              ]
+            ),
 
-        ["종합 점수", `${analysis.average}점`]
-      ]);
+          [
+            "종합 점수",
+            `${analysis.average}점`
+          ]
+        ]
+      );
 
       appendReportHeading(
         planBox,
@@ -2633,7 +3863,10 @@
 3. 평가 점수
 ${Object
   .entries(analysis.scores)
-  .map(([key, value]) => `${key}: ${value}점`)
+  .map(
+    ([key, value]) =>
+      `${key}: ${value}점`
+  )
   .join("\n")}
 종합 점수: ${analysis.average}점
 
@@ -2664,25 +3897,39 @@ ${analysis.summary || ""}
     }
 
     /* ======================================================
-       11. 사용자 액션
+       12. User actions
     ====================================================== */
 
-    async function selectIdea(index) {
+    async function selectIdea(
+      index
+    ) {
       selectedIdea =
         currentIdeas[index];
 
       selectedIdeaText.textContent =
         `선택한 아이템: ${selectedIdea.name}`;
 
-      analysisSection.classList.remove("hidden");
-      planSection.classList.add("hidden");
+      analysisSection
+        .classList
+        .remove("hidden");
 
-      hideStatus(planStatusCard);
+      planSection
+        .classList
+        .add("hidden");
 
-      scoreDashboard.replaceChildren();
-      analysisGrid.replaceChildren();
+      hideStatus(
+        planStatusCard
+      );
 
-      analysisSummary.classList.add("hidden");
+      scoreDashboard
+        .replaceChildren();
+
+      analysisGrid
+        .replaceChildren();
+
+      analysisSummary
+        .classList
+        .add("hidden");
 
       showStatus(
         analysisStatusCard,
@@ -2690,12 +3937,18 @@ ${analysis.summary || ""}
         "선택한 아이템을 심층 분석하는 중입니다..."
       );
 
-      analysisStatusCard.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
+      analysisStatusCard
+        .scrollIntoView({
+          behavior:
+            "smooth",
 
-      setLoading(true);
+          block:
+            "center"
+        });
+
+      setLoading(
+        true
+      );
 
       try {
         currentAnalysis =
@@ -2704,7 +3957,9 @@ ${analysis.summary || ""}
             selectedIdea
           );
 
-        renderAnalysis(currentAnalysis);
+        renderAnalysis(
+          currentAnalysis
+        );
 
         showStatus(
           analysisStatusCard,
@@ -2713,7 +3968,9 @@ ${analysis.summary || ""}
           true
         );
       } catch (error) {
-        console.error(error);
+        console.error(
+          error
+        );
 
         currentAnalysis =
           analyzeIdeaFallback(
@@ -2721,7 +3978,9 @@ ${analysis.summary || ""}
             selectedIdea
           );
 
-        renderAnalysis(currentAnalysis);
+        renderAnalysis(
+          currentAnalysis
+        );
 
         showStatus(
           analysisStatusCard,
@@ -2730,7 +3989,9 @@ ${analysis.summary || ""}
           true
         );
       } finally {
-        setLoading(false);
+        setLoading(
+          false
+        );
       }
     }
 
@@ -2763,34 +4024,66 @@ ${analysis.summary || ""}
         .querySelectorAll(
           "input[name='certificates']"
         )
-        .forEach((checkbox) => {
-          checkbox.checked =
-            [
-              "TOEIC/TOEFL/OPIc 등 어학 자격",
-              "컴퓨터활용능력"
-            ].includes(checkbox.value);
-        });
+        .forEach(
+          (checkbox) => {
+            checkbox.checked =
+              [
+                "TOEIC/TOEFL/OPIc 등 어학 자격",
+                "컴퓨터활용능력"
+              ].includes(
+                checkbox.value
+              );
+          }
+        );
 
-      document.getElementById("interests").value =
-        "AI, 교육, 콘텐츠, 대학생 문제 해결";
+      document
+        .getElementById(
+          "interests"
+        )
+        .value =
+          "AI, 교육, 콘텐츠, 대학생 문제 해결";
 
-      document.getElementById("goal").value =
-        "포트폴리오 제작";
+      document
+        .getElementById(
+          "goal"
+        )
+        .value =
+          "포트폴리오 제작";
 
-      document.getElementById("budget").value =
-        "10";
+      document
+        .getElementById(
+          "budget"
+        )
+        .value =
+          "10";
 
-      document.getElementById("time").value =
-        "5";
+      document
+        .getElementById(
+          "time"
+        )
+        .value =
+          "5";
 
-      document.getElementById("businessType").value =
-        "온라인 서비스";
+      document
+        .getElementById(
+          "businessType"
+        )
+        .value =
+          "온라인 서비스";
 
-      document.getElementById("target").value =
-        "대학생, 과제와 발표 준비가 많은 학생";
+      document
+        .getElementById(
+          "target"
+        )
+        .value =
+          "대학생, 과제와 발표 준비가 많은 학생";
 
-      document.getElementById("avoid").value =
-        "재고 관리가 필요한 사업과 오프라인 매장 운영은 피하고 싶음";
+      document
+        .getElementById(
+          "avoid"
+        )
+        .value =
+          "재고 관리가 필요한 사업과 오프라인 매장 운영은 피하고 싶음";
     }
 
     function resetApp() {
@@ -2798,11 +4091,15 @@ ${analysis.summary || ""}
         .querySelectorAll(
           "input[type='text'], input[type='number'], input:not([type]), textarea"
         )
-        .forEach((element) => {
-          element.value = "";
-        });
+        .forEach(
+          (element) => {
+            element.value =
+              "";
+          }
+        );
 
-      primaryCollegeSelect.value = "";
+      primaryCollegeSelect.value =
+        "";
 
       renderMajorOptions(
         primaryCollegeSelect,
@@ -2823,290 +4120,420 @@ ${analysis.summary || ""}
         .querySelectorAll(
           "input[name='certificates']"
         )
-        .forEach((checkbox) => {
-          checkbox.checked = false;
-        });
+        .forEach(
+          (checkbox) => {
+            checkbox.checked =
+              false;
+          }
+        );
 
-      recommendationSection.classList.add("hidden");
-      analysisSection.classList.add("hidden");
-      planSection.classList.add("hidden");
+      recommendationSection
+        .classList
+        .add("hidden");
 
-      hideStatus(recommendStatusCard);
-      hideStatus(analysisStatusCard);
-      hideStatus(planStatusCard);
+      analysisSection
+        .classList
+        .add("hidden");
 
-      currentProfile = null;
-      currentIdeas = [];
-      selectedIdea = null;
-      currentAnalysis = null;
+      planSection
+        .classList
+        .add("hidden");
+
+      hideStatus(
+        recommendStatusCard
+      );
+
+      hideStatus(
+        analysisStatusCard
+      );
+
+      hideStatus(
+        planStatusCard
+      );
+
+      saveProjectBtn
+        .classList
+        .add("hidden");
+
+      currentProfile =
+        null;
+
+      currentIdeas =
+        [];
+
+      selectedIdea =
+        null;
+
+      currentAnalysis =
+        null;
     }
 
     /* ======================================================
-       12. 이벤트 연결
+       13. Events
     ====================================================== */
 
-    recommendBtn.addEventListener(
-      "click",
-      async () => {
-        const profile =
-          getUserProfile();
+    recommendBtn
+      .addEventListener(
+        "click",
 
-        if (!validateProfile(profile)) {
-          return;
-        }
+        async () => {
+          const profile =
+            getUserProfile();
 
-        currentProfile = profile;
-
-        analysisSection.classList.add("hidden");
-        planSection.classList.add("hidden");
-
-        hideStatus(analysisStatusCard);
-        hideStatus(planStatusCard);
-
-        showStatus(
-          recommendStatusCard,
-          recommendStatusText,
-          "입력 정보를 바탕으로 창업 아이템을 생성하는 중입니다..."
-        );
-
-        setLoading(true);
-
-        try {
-          currentIdeas =
-            await generateIdeasWithAI(profile);
-
-          if (currentIdeas.length === 0) {
-            throw new Error(
-              "AI가 추천 아이템을 반환하지 않았습니다."
-            );
+          if (
+            !validateProfile(
+              profile
+            )
+          ) {
+            return;
           }
 
-          renderIdeas(currentIdeas);
+          currentProfile =
+            profile;
 
-          recommendationSection
+          analysisSection
             .classList
-            .remove("hidden");
+            .add("hidden");
+
+          planSection
+            .classList
+            .add("hidden");
+
+          hideStatus(
+            analysisStatusCard
+          );
+
+          hideStatus(
+            planStatusCard
+          );
 
           showStatus(
             recommendStatusCard,
             recommendStatusText,
-            "추천 아이템 생성 완료!",
+            "입력 정보를 바탕으로 창업 아이템을 생성하는 중입니다..."
+          );
+
+          setLoading(
             true
           );
-        } catch (error) {
-          console.error(error);
 
-          currentIdeas =
-            sampleIdeas(profile);
+          try {
+            currentIdeas =
+              await generateIdeasWithAI(
+                profile
+              );
 
-          renderIdeas(currentIdeas);
+            if (
+              currentIdeas.length ===
+              0
+            ) {
+              throw new Error(
+                "AI가 추천 아이템을 반환하지 않았습니다."
+              );
+            }
 
-          recommendationSection
-            .classList
-            .remove("hidden");
+            renderIdeas(
+              currentIdeas
+            );
 
-          showStatus(
-            recommendStatusCard,
-            recommendStatusText,
-            "추천 아이템 생성 완료! 기본 샘플 추천으로 대체했습니다.",
-            true
-          );
-        } finally {
-          setLoading(false);
+            recommendationSection
+              .classList
+              .remove("hidden");
 
-          recommendationSection
-            .scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
+            saveProjectBtn
+              .classList
+              .remove("hidden");
+
+            showStatus(
+              recommendStatusCard,
+              recommendStatusText,
+              "추천 아이템 생성 완료!",
+              true
+            );
+          } catch (error) {
+            console.error(
+              error
+            );
+
+            currentIdeas =
+              sampleIdeas(
+                profile
+              );
+
+            renderIdeas(
+              currentIdeas
+            );
+
+            recommendationSection
+              .classList
+              .remove("hidden");
+
+            saveProjectBtn
+              .classList
+              .remove("hidden");
+
+            showStatus(
+              recommendStatusCard,
+              recommendStatusText,
+              "추천 아이템 생성 완료! 기본 샘플 추천으로 대체했습니다.",
+              true
+            );
+          } finally {
+            setLoading(
+              false
+            );
+
+            recommendationSection
+              .scrollIntoView({
+                behavior:
+                  "smooth",
+
+                block:
+                  "start"
+              });
+          }
         }
-      }
-    );
+      );
 
-    planBtn.addEventListener(
-      "click",
-      () => {
-        if (
-          !currentProfile ||
-          !selectedIdea ||
-          !currentAnalysis
-        ) {
-          alert(
-            "먼저 아이템을 선택하고 분석을 진행해야 합니다."
-          );
+    planBtn
+      .addEventListener(
+        "click",
 
-          return;
-        }
+        () => {
+          if (
+            !currentProfile ||
+            !selectedIdea ||
+            !currentAnalysis
+          ) {
+            alert(
+              "먼저 아이템을 선택하고 분석을 진행해야 합니다."
+            );
 
-        showStatus(
-          planStatusCard,
-          planStatusText,
-          "창업 계획 초안을 정리하는 중입니다..."
-        );
-
-        window.setTimeout(() => {
-          renderBusinessPlan(
-            currentProfile,
-            selectedIdea,
-            currentAnalysis
-          );
-
-          planSection.classList.remove("hidden");
+            return;
+          }
 
           showStatus(
             planStatusCard,
             planStatusText,
-            "창업 계획 초안 생성 완료!",
+            "창업 계획 초안을 정리하는 중입니다..."
+          );
+
+          window.setTimeout(
+            () => {
+              renderBusinessPlan(
+                currentProfile,
+                selectedIdea,
+                currentAnalysis
+              );
+
+              planSection
+                .classList
+                .remove("hidden");
+
+              showStatus(
+                planStatusCard,
+                planStatusText,
+                "창업 계획 초안 생성 완료!",
+                true
+              );
+
+              planSection
+                .scrollIntoView({
+                  behavior:
+                    "smooth",
+
+                  block:
+                    "start"
+                });
+            },
+
+            250
+          );
+        }
+      );
+
+    copyPlanBtn
+      .addEventListener(
+        "click",
+
+        async () => {
+          if (
+            !currentProfile ||
+            !selectedIdea ||
+            !currentAnalysis
+          ) {
+            return;
+          }
+
+          const text =
+            generateBusinessPlanText(
+              currentProfile,
+              selectedIdea,
+              currentAnalysis
+            );
+
+          try {
+            await navigator
+              .clipboard
+              .writeText(
+                text
+              );
+
+            alert(
+              "창업 계획 초안이 복사되었습니다."
+            );
+          } catch (error) {
+            alert(
+              "복사에 실패했습니다. 직접 드래그해서 복사해주세요."
+            );
+          }
+        }
+      );
+
+    heroStartBtn
+      .addEventListener(
+        "click",
+
+        () => {
+          inputPanel
+            .scrollIntoView({
+              behavior:
+                "smooth",
+
+              block:
+                "start"
+            });
+        }
+      );
+
+    heroSampleBtn
+      .addEventListener(
+        "click",
+
+        () => {
+          fillSampleProfile();
+
+          inputPanel
+            .scrollIntoView({
+              behavior:
+                "smooth",
+
+              block:
+                "start"
+            });
+        }
+      );
+
+    sampleBtn
+      .addEventListener(
+        "click",
+        fillSampleProfile
+      );
+
+    resetBtn
+      .addEventListener(
+        "click",
+        resetApp
+      );
+
+    loginBtn
+      .addEventListener(
+        "click",
+        openAuthModal
+      );
+
+    logoutBtn
+      .addEventListener(
+        "click",
+        signOut
+      );
+
+    closeAuthModalBtn
+      .addEventListener(
+        "click",
+        closeAuthModal
+      );
+
+    googleLoginBtn
+      .addEventListener(
+        "click",
+        signInWithGoogle
+      );
+
+    guestContinueBtn
+      .addEventListener(
+        "click",
+
+        () => {
+          closeAuthModal();
+
+          inputPanel
+            .scrollIntoView({
+              behavior:
+                "smooth",
+
+              block:
+                "start"
+            });
+        }
+      );
+
+    authModal
+      .addEventListener(
+        "click",
+
+        (event) => {
+          if (
+            event.target ===
+            authModal
+          ) {
+            closeAuthModal();
+          }
+        }
+      );
+
+    certificateChecklist
+      .addEventListener(
+        "change",
+        handleCertificateChange
+      );
+
+    primaryCollegeSelect
+      .addEventListener(
+        "change",
+
+        () => {
+          renderMajorOptions(
+            primaryCollegeSelect,
+            primaryMajorSelect,
+            false
+          );
+        }
+      );
+
+    secondaryCollegeSelect
+      .addEventListener(
+        "change",
+
+        () => {
+          renderMajorOptions(
+            secondaryCollegeSelect,
+            secondaryMajorSelect,
             true
           );
-
-          planSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-        }, 250);
-      }
-    );
-
-    copyPlanBtn.addEventListener(
-      "click",
-      async () => {
-        if (
-          !currentProfile ||
-          !selectedIdea ||
-          !currentAnalysis
-        ) {
-          return;
         }
-
-        const text =
-          generateBusinessPlanText(
-            currentProfile,
-            selectedIdea,
-            currentAnalysis
-          );
-
-        try {
-          await navigator.clipboard.writeText(text);
-
-          alert(
-            "창업 계획 초안이 복사되었습니다."
-          );
-        } catch (error) {
-          alert(
-            "복사에 실패했습니다. 직접 드래그해서 복사해주세요."
-          );
-        }
-      }
-    );
-
-    heroStartBtn.addEventListener(
-      "click",
-      () => {
-        inputPanel.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
-    );
-
-    heroSampleBtn.addEventListener(
-      "click",
-      () => {
-        fillSampleProfile();
-
-        inputPanel.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
-    );
-
-    sampleBtn.addEventListener(
-      "click",
-      fillSampleProfile
-    );
-
-    resetBtn.addEventListener(
-      "click",
-      resetApp
-    );
-
-    loginBtn.addEventListener(
-      "click",
-      openAuthModal
-    );
-
-    logoutBtn.addEventListener(
-      "click",
-      signOut
-    );
-
-    closeAuthModalBtn.addEventListener(
-      "click",
-      closeAuthModal
-    );
-
-    googleLoginBtn.addEventListener(
-      "click",
-      signInWithGoogle
-    );
-
-    guestContinueBtn.addEventListener(
-      "click",
-      () => {
-        closeAuthModal();
-
-        inputPanel.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
-    );
-
-    authModal.addEventListener(
-      "click",
-      (event) => {
-        if (event.target === authModal) {
-          closeAuthModal();
-        }
-      }
-    );
-
-    certificateChecklist.addEventListener(
-      "change",
-      handleCertificateChange
-    );
-
-    primaryCollegeSelect.addEventListener(
-      "change",
-      () => {
-        renderMajorOptions(
-          primaryCollegeSelect,
-          primaryMajorSelect,
-          false
-        );
-      }
-    );
-
-    secondaryCollegeSelect.addEventListener(
-      "change",
-      () => {
-        renderMajorOptions(
-          secondaryCollegeSelect,
-          secondaryMajorSelect,
-          true
-        );
-      }
-    );
+      );
 
     /* ======================================================
-       13. 초기화
+       14. Initialize
     ====================================================== */
 
     initializeMajorSelectors();
     renderCertificateChecklist();
     initializeSupabaseClient();
   </script>
+
+  <!-- 프로젝트 저장 / 불러오기 -->
+  <script src="/js/projects.js"></script>
 </body>
 </html>
