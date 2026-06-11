@@ -839,23 +839,40 @@
           "저장된 아이템 분석을 불러왔습니다!",
           true
         );
+
+        renderBusinessPlan(
+          currentProfile,
+          selectedIdea,
+          currentAnalysis
+        );
+
+        planSection
+          .classList
+          .remove("hidden");
+
+        showStatus(
+          planStatusCard,
+          planStatusText,
+          "저장된 창업 계획 초안을 불러왔습니다!",
+          true
+        );
       } else {
         analysisSection
+          .classList
+          .add("hidden");
+
+        planSection
           .classList
           .add("hidden");
 
         hideStatus(
           analysisStatusCard
         );
+
+        hideStatus(
+          planStatusCard
+        );
       }
-
-      planSection
-        .classList
-        .add("hidden");
-
-      hideStatus(
-        planStatusCard
-      );
 
       closeProjectsModal();
 
