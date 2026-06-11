@@ -1,66 +1,112 @@
 /* =========================================================
    KU STARTUP PLANNER
-   프로젝트 저장 · 불러오기 · 상태 동기화 · 대시보드
+   프로젝트 저장 · 조회 · 상태 동기화
+   이벤트 기반 구조
 ========================================================= */
 
 (() => {
-  const projectSaveButton =
-    document.getElementById("saveProjectBtn");
+  const get =
+    (id) =>
+      document
+        .getElementById(
+          id
+        );
 
-  const projectListButton =
-    document.getElementById("myProjectsBtn");
+  const saveProjectBtn =
+    get(
+      "saveProjectBtn"
+    );
+
+  const myProjectsBtn =
+    get(
+      "myProjectsBtn"
+    );
 
   const projectsModal =
-    document.getElementById("projectsModal");
+    get(
+      "projectsModal"
+    );
 
-  const closeProjectsModalButton =
-    document.getElementById("closeProjectsModalBtn");
+  const closeProjectsModalBtn =
+    get(
+      "closeProjectsModalBtn"
+    );
 
-  const newProjectButton =
-    document.getElementById("newProjectBtn");
+  const newProjectBtn =
+    get(
+      "newProjectBtn"
+    );
 
   const projectList =
-    document.getElementById("projectList");
+    get(
+      "projectList"
+    );
 
   let currentProjectId =
     null;
 
   /* =======================================================
-     1. 초기 검증
+     1. Utility
   ======================================================= */
 
-  function validateProjectElements() {
-    const requiredElements = [
-      ["saveProjectBtn", projectSaveButton],
-      ["myProjectsBtn", projectListButton],
-      ["projectsModal", projectsModal],
-      ["closeProjectsModalBtn", closeProjectsModalButton],
-      ["newProjectBtn", newProjectButton],
-      ["projectList", projectList]
-    ];
-
-    const missingElements =
-      requiredElements
-        .filter(([, element]) => !element)
-        .map(([id]) => id);
+  function createElement(
+    tag,
+    className,
+    text
+  ) {
+    const element =
+      document.createElement(
+        tag
+      );
 
     if (
-      missingElements.length >
-      0
+      className
     ) {
-      throw new Error(
-        `프로젝트 관리 UI 요소를 찾지 못했습니다: ${missingElements.join(", ")}`
-      );
+      element.className =
+        className;
     }
+
+    if (
+      typeof text ===
+        "string"
+    ) {
+      element.textContent =
+        text;
+    }
+
+    return element;
   }
 
-  validateProjectElements();
+  async function getUser() {
+    const {
+      data: {
+        user
+      },
 
-  /* =======================================================
-     2. 프로젝트 상태 계산
-  ======================================================= */
+      error
+    } =
+      await supabaseClient
+        .auth
+        .getUser();
 
-  function getCurrentForecast() {
+    if (
+      error
+    ) {
+      console.error(
+        "사용자 확인 오류:",
+        error
+      );
+
+      return null;
+    }
+
+    return (
+      user ||
+      null
+    );
+  }
+
+  function getForecast() {
     return (
       window
         .KUForecastManager
@@ -69,27 +115,33 @@
     );
   }
 
-  function deriveProjectStatus({
-    selectedIdea = null,
-    analysis = null,
-    forecast = null
-  } = {}) {
-    if (forecast) {
+  function deriveStatus({
+    selectedIdea,
+    analysis,
+    forecast
+  }) {
+    if (
+      forecast
+    ) {
       return "forecasted";
     }
 
-    if (analysis) {
+    if (
+      analysis
+    ) {
       return "analyzed";
     }
 
-    if (selectedIdea) {
+    if (
+      selectedIdea
+    ) {
       return "selected";
     }
 
     return "recommended";
   }
 
-  function getProjectStatusLabel(
+  function statusLabel(
     status
   ) {
     const labels = {
@@ -110,32 +162,45 @@
     };
 
     return (
-      labels[status] ||
+      labels[
+        status
+      ] ||
       "진행 중"
     );
   }
 
-  function getProjectProgress(
+  function progressValue(
     status
   ) {
-    const progressMap = {
-      draft: 10,
-      recommended: 25,
-      selected: 40,
-      analyzed: 60,
-      forecasted: 75
+    const values = {
+      draft:
+        10,
+
+      recommended:
+        25,
+
+      selected:
+        40,
+
+      analyzed:
+        60,
+
+      forecasted:
+        75
     };
 
     return (
-      progressMap[status] ||
+      values[
+        status
+      ] ||
       10
     );
   }
 
-  function getProjectNextAction(
-    project
+  function nextAction(
+    status
   ) {
-    const actionMap = {
+    const actions = {
       draft:
         "사용자 조건을 입력하고 창업 아이템 추천을 받아보세요.",
 
@@ -143,7 +208,7 @@
         "추천 아이템 중 하나를 선택하고 심층 분석을 진행해보세요.",
 
       selected:
-        "선택한 아이템의 시장성과 수익 모델을 심층 분석해보세요.",
+        "선택한 아이템의 심층 분석을 완료해보세요.",
 
       analyzed:
         "최신 공개 자료 기반 경제 전망 분석을 진행해보세요.",
@@ -153,14 +218,14 @@
     };
 
     return (
-      actionMap[
-        project.status
+      actions[
+        status
       ] ||
       "다음 단계를 확인해주세요."
     );
   }
 
-  function calculateAverageScore(
+  function averageScore(
     scores
   ) {
     const values =
@@ -169,9 +234,12 @@
           scores ||
           {}
         )
-        .map(Number)
+        .map(
+          Number
+        )
         .filter(
-          Number.isFinite
+          Number
+            .isFinite
         );
 
     if (
@@ -182,15 +250,16 @@
     }
 
     return Math.round(
-      values.reduce(
-        (
-          sum,
-          value
-        ) =>
-          sum +
-          value,
-        0
-      ) /
+      values
+        .reduce(
+          (
+            sum,
+            value
+          ) =>
+            sum +
+            value,
+          0
+        ) /
       values.length
     );
   }
@@ -198,7 +267,9 @@
   function formatDate(
     value
   ) {
-    if (!value) {
+    if (
+      !value
+    ) {
       return "기록 없음";
     }
 
@@ -208,9 +279,11 @@
       );
 
     if (
-      Number.isNaN(
-        date.getTime()
-      )
+      Number
+        .isNaN(
+          date
+            .getTime()
+        )
     ) {
       return "기록 없음";
     }
@@ -234,71 +307,52 @@
       );
   }
 
-  /* =======================================================
-     3. 공통 유틸리티
-  ======================================================= */
-
-  async function getAuthenticatedUser() {
-    if (!supabaseClient) {
-      return null;
-    }
-
-    const {
-      data: {
-        user
-      },
-
-      error
-    } =
-      await supabaseClient
-        .auth
-        .getUser();
-
-    if (error) {
-      console.error(
-        "사용자 확인 오류:",
-        error
-      );
-
-      return null;
-    }
-
-    return (
-      user ||
-      null
-    );
-  }
-
-  function createProjectTitle(
-    profile
+  function projectTitle(
+    state
   ) {
     if (
-      selectedIdea
+      state
+        .selectedIdea
         ?.name
     ) {
-      return selectedIdea
+      return state
+        .selectedIdea
         .name;
     }
 
-    const firstInterest =
-      profile
+    const keyword =
+      state
+        .profile
         ?.interests
         ?.split(",")
-        ?.map(
-          (
-            value
-          ) =>
-            value
-              .trim()
-        )
-        ?.filter(
-          Boolean
-        )
-        ?.[0];
+        ?.[0]
+        ?.trim();
 
-    return firstInterest
-      ? `${firstInterest} 창업 프로젝트`
+    return keyword
+      ? `${keyword} 창업 프로젝트`
       : "새 창업 프로젝트";
+  }
+
+  function updateSaveButton({
+    saved = false,
+    loading = false
+  } = {}) {
+    saveProjectBtn
+      .classList
+      .remove(
+        "hidden"
+      );
+
+    saveProjectBtn.disabled =
+      saved ||
+      loading;
+
+    saveProjectBtn.textContent =
+      loading
+        ? "프로젝트를 저장하는 중입니다..."
+        : saved
+          ? "프로젝트 저장 완료 ✓"
+          : "프로젝트로 저장하기";
   }
 
   function openProjectsModal() {
@@ -317,43 +371,11 @@
       );
   }
 
-  function updateSaveButton({
-    saved = false,
-    loading = false
-  } = {}) {
-    projectSaveButton
-      .classList
-      .remove(
-        "hidden"
-      );
-
-    projectSaveButton.disabled =
-      saved ||
-      loading;
-
-    if (loading) {
-      projectSaveButton.textContent =
-        "프로젝트를 저장하는 중입니다...";
-
-      return;
-    }
-
-    if (saved) {
-      projectSaveButton.textContent =
-        "프로젝트 저장 완료 ✓";
-
-      return;
-    }
-
-    projectSaveButton.textContent =
-      "프로젝트로 저장하기";
-  }
-
   /* =======================================================
-     4. Supabase 저장용 데이터 변환
+     2. Payload
   ======================================================= */
 
-  function makeAnalysisInsertPayload(
+  function analysisPayload(
     projectId,
     analysis
   ) {
@@ -363,22 +385,22 @@
 
       scores:
         analysis
-          .scores ||
+          ?.scores ||
         {},
 
       sections:
         analysis
-          .sections ||
+          ?.sections ||
         {},
 
       summary:
         analysis
-          .summary ||
+          ?.summary ||
         ""
     };
   }
 
-  function makeForecastInsertPayload(
+  function forecastPayload(
     projectId,
     forecast
   ) {
@@ -388,127 +410,124 @@
 
       economic_factors:
         forecast
-          .economicFactors ||
+          ?.economicFactors ||
         forecast
-          .economic_factors ||
+          ?.economic_factors ||
         [],
 
       outlook:
         forecast
-          .outlook ||
+          ?.outlook ||
         {},
 
       scenarios:
         forecast
-          .scenarios ||
+          ?.scenarios ||
         {},
 
       actions:
         forecast
-          .actions ||
+          ?.actions ||
         [],
 
       trend_summary:
         forecast
-          .trendSummary ||
+          ?.trendSummary ||
         forecast
-          .trend_summary ||
+          ?.trend_summary ||
         "",
 
       sources:
         forecast
-          .sources ||
+          ?.sources ||
         [],
 
       data_snapshot:
         forecast
-          .dataSnapshot ||
+          ?.dataSnapshot ||
         forecast
-          .data_snapshot ||
+          ?.data_snapshot ||
         {},
 
       fetched_at:
         forecast
-          .fetchedAt ||
+          ?.fetchedAt ||
         forecast
-          .fetched_at ||
+          ?.fetched_at ||
         new Date()
           .toISOString(),
 
       model_used:
         typeof (
           forecast
-            .modelUsed ||
+            ?.modelUsed ||
           forecast
-            .model_used
+            ?.model_used
         ) ===
-        "string"
+          "string"
           ? (
               forecast
-                .modelUsed ||
+                ?.modelUsed ||
               forecast
-                .model_used
+                ?.model_used
             )
-          : JSON.stringify(
-              forecast
-                .modelUsed ||
-              forecast
-                .model_used ||
-              {}
-            )
+          : JSON
+              .stringify(
+                forecast
+                  ?.modelUsed ||
+                forecast
+                  ?.model_used ||
+                {}
+              )
     };
   }
 
   /* =======================================================
-     5. 프로젝트 메타데이터 동기화
+     3. Metadata sync
   ======================================================= */
 
-  async function synchronizeProjectMetadata(
+  async function syncMetadata(
     projectId,
-    {
-      selectedIdea:
-        syncedSelectedIdea =
-          selectedIdea,
-
-      analysis:
-        syncedAnalysis =
-          currentAnalysis,
-
-      forecast:
-        syncedForecast =
-          getCurrentForecast()
-    } = {}
+    state,
+    forecast =
+      getForecast()
   ) {
-    if (!projectId) {
+    if (
+      !projectId
+    ) {
       return;
     }
 
     const status =
-      deriveProjectStatus({
+      deriveStatus({
         selectedIdea:
-          syncedSelectedIdea,
+          state
+            ?.selectedIdea,
 
         analysis:
-          syncedAnalysis,
+          state
+            ?.analysis,
 
-        forecast:
-          syncedForecast
+        forecast
       });
 
     const payload = {
       status,
 
       selected_idea:
-        syncedSelectedIdea ||
+        state
+          ?.selectedIdea ||
         null
     };
 
     if (
-      syncedSelectedIdea
+      state
+        ?.selectedIdea
         ?.name
     ) {
       payload.title =
-        syncedSelectedIdea
+        state
+          .selectedIdea
           .name;
     }
 
@@ -527,21 +546,27 @@
           projectId
         );
 
-    if (error) {
+    if (
+      error
+    ) {
       throw error;
     }
   }
 
   /* =======================================================
-     6. 프로젝트 최초 저장
+     4. Initial save
   ======================================================= */
 
   async function saveCurrentProject() {
     const user =
-      await getAuthenticatedUser();
+      await getUser();
 
-    if (!user) {
-      openAuthModal();
+    if (
+      !user
+    ) {
+      window
+        .KUApp
+        .openAuthModal();
 
       alert(
         "프로젝트를 저장하려면 먼저 로그인해야 합니다."
@@ -550,9 +575,18 @@
       return;
     }
 
+    const state =
+      window
+        .KUApp
+        .getState();
+
     if (
-      !currentProfile ||
-      currentIdeas.length ===
+      !state
+        .profile ||
+
+      state
+        .ideas
+        .length ===
         0
     ) {
       alert(
@@ -565,29 +599,15 @@
     if (
       currentProjectId
     ) {
-      try {
-        await synchronizeProjectMetadata(
-          currentProjectId
-        );
+      await syncMetadata(
+        currentProjectId,
+        state
+      );
 
-        updateSaveButton({
-          saved:
-            true
-        });
-
-        alert(
-          "현재 프로젝트의 진행 상태를 동기화했습니다."
-        );
-      } catch (error) {
-        console.error(
-          "프로젝트 상태 동기화 오류:",
-          error
-        );
-
-        alert(
-          `프로젝트 상태 동기화에 실패했습니다: ${error.message}`
-        );
-      }
+      updateSaveButton({
+        saved:
+          true
+      });
 
       return;
     }
@@ -601,16 +621,20 @@
       null;
 
     try {
-      const activeForecast =
-        getCurrentForecast();
+      const forecast =
+        getForecast();
 
-      const initialStatus =
-        deriveProjectStatus({
-          selectedIdea,
+      const status =
+        deriveStatus({
+          selectedIdea:
+            state
+              .selectedIdea,
+
           analysis:
-            currentAnalysis,
-          forecast:
-            activeForecast
+            state
+              .analysis,
+
+          forecast
         });
 
       const {
@@ -629,18 +653,19 @@
               user.id,
 
             title:
-              createProjectTitle(
-                currentProfile
+              projectTitle(
+                state
               ),
 
-            status:
-              initialStatus,
+            status,
 
             profile:
-              currentProfile,
+              state
+                .profile,
 
             selected_idea:
-              selectedIdea ||
+              state
+                .selectedIdea ||
               null
           })
           .select()
@@ -668,7 +693,8 @@
               createdProjectId,
 
             ideas:
-              currentIdeas
+              state
+                .ideas
           });
 
       if (
@@ -678,7 +704,8 @@
       }
 
       if (
-        currentAnalysis
+        state
+          .analysis
       ) {
         const {
           error:
@@ -689,9 +716,10 @@
               "analyses"
             )
             .insert(
-              makeAnalysisInsertPayload(
+              analysisPayload(
                 createdProjectId,
-                currentAnalysis
+                state
+                  .analysis
               )
             );
 
@@ -703,7 +731,7 @@
       }
 
       if (
-        activeForecast
+        forecast
       ) {
         const {
           error:
@@ -714,9 +742,9 @@
               "forecasts"
             )
             .insert(
-              makeForecastInsertPayload(
+              forecastPayload(
                 createdProjectId,
-                activeForecast
+                forecast
               )
             );
 
@@ -736,15 +764,17 @@
       });
 
       alert(
-        initialStatus ===
+        status ===
           "forecasted"
-          ? "프로젝트, 심층 분석, 경제 전망 결과를 저장했습니다."
-          : initialStatus ===
+          ? "프로젝트, 심층 분석, 경제 전망을 저장했습니다."
+          : status ===
               "analyzed"
             ? "프로젝트와 심층 분석 결과를 저장했습니다."
             : "프로젝트를 저장했습니다."
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       console.error(
         "프로젝트 저장 오류:",
         error
@@ -773,81 +803,116 @@
   }
 
   /* =======================================================
-     7. 저장된 프로젝트의 분석 자동 저장
+     5. Event-based autosave
   ======================================================= */
 
-  async function saveAnalysisToCurrentProject() {
-    if (
-      !currentProjectId ||
-      !selectedIdea ||
-      !currentAnalysis
-    ) {
-      return;
-    }
+  document
+    .addEventListener(
+      "ku:recommendations-completed",
+      () => {
+        currentProjectId =
+          null;
 
-    try {
-      await synchronizeProjectMetadata(
-        currentProjectId,
-        {
-          selectedIdea,
-          analysis:
-            currentAnalysis,
-          forecast:
-            getCurrentForecast()
+        updateSaveButton();
+      }
+    );
+
+  document
+    .addEventListener(
+      "ku:analysis-completed",
+      async (
+        event
+      ) => {
+        if (
+          !currentProjectId
+        ) {
+          return;
         }
-      );
 
-      const {
-        error
-      } =
-        await supabaseClient
-          .from(
-            "analyses"
-          )
-          .insert(
-            makeAnalysisInsertPayload(
-              currentProjectId,
-              currentAnalysis
-            )
+        try {
+          const state =
+            window
+              .KUApp
+              .getState();
+
+          await syncMetadata(
+            currentProjectId,
+            state
           );
 
-      if (error) {
-        throw error;
+          const {
+            error
+          } =
+            await supabaseClient
+              .from(
+                "analyses"
+              )
+              .insert(
+                analysisPayload(
+                  currentProjectId,
+                  event
+                    .detail
+                    .analysis
+                )
+              );
+
+          if (
+            error
+          ) {
+            throw error;
+          }
+
+          console.info(
+            "심층 분석 결과 자동 저장 완료"
+          );
+        } catch (
+          error
+        ) {
+          console.error(
+            "심층 분석 자동 저장 오류:",
+            error
+          );
+        }
       }
+    );
 
-      console.info(
-        "심층 분석 결과를 자동 저장했습니다."
-      );
-    } catch (error) {
-      console.error(
-        "심층 분석 자동 저장 오류:",
-        error
-      );
-    }
-  }
+  document
+    .addEventListener(
+      "ku:forecast-completed",
+      async () => {
+        if (
+          !currentProjectId
+        ) {
+          return;
+        }
 
-  const originalSelectIdea =
-    selectIdea;
-
-  selectIdea =
-    async function selectIdeaWithProjectSave(
-      index
-    ) {
-      await originalSelectIdea(
-        index
-      );
-
-      await saveAnalysisToCurrentProject();
-    };
+        try {
+          await syncMetadata(
+            currentProjectId,
+            window
+              .KUApp
+              .getState(),
+            getForecast()
+          );
+        } catch (
+          error
+        ) {
+          console.error(
+            "경제 전망 상태 동기화 오류:",
+            error
+          );
+        }
+      }
+    );
 
   /* =======================================================
-     8. 최신 행 조회
+     6. Fetch
   ======================================================= */
 
-  async function fetchLatestMap(
-    tableName,
+  async function latestMap(
+    table,
     projectIds,
-    selectFields
+    fields
   ) {
     if (
       projectIds.length ===
@@ -862,10 +927,10 @@
     } =
       await supabaseClient
         .from(
-          tableName
+          table
         )
         .select(
-          `project_id, ${selectFields}, created_at`
+          `project_id, ${fields}, created_at`
         )
         .in(
           "project_id",
@@ -879,124 +944,55 @@
           }
         );
 
-    if (error) {
+    if (
+      error
+    ) {
       throw error;
     }
 
-    const map =
+    const result =
       {};
 
     (
       data ||
       []
-    ).forEach(
-      (
-        row
-      ) => {
-        if (
-          !map[
-            row.project_id
-          ]
-        ) {
-          map[
-            row.project_id
-          ] =
-            row;
+    )
+      .forEach(
+        (
+          row
+        ) => {
+          if (
+            !result[
+              row
+                .project_id
+            ]
+          ) {
+            result[
+              row
+                .project_id
+            ] =
+              row;
+          }
         }
-      }
-    );
-
-    return map;
-  }
-
-  /* =======================================================
-     9. 기존 잘못된 상태 자동 보정
-  ======================================================= */
-
-  async function repairProjectStatus(
-    project
-  ) {
-    const correctedStatus =
-      deriveProjectStatus({
-        selectedIdea:
-          project
-            .selected_idea,
-
-        analysis:
-          project
-            .latest_analysis,
-
-        forecast:
-          project
-            .latest_forecast
-      });
-
-    if (
-      correctedStatus ===
-      project.status
-    ) {
-      return {
-        ...project,
-        status:
-          correctedStatus
-      };
-    }
-
-    try {
-      await supabaseClient
-        .from(
-          "projects"
-        )
-        .update({
-          status:
-            correctedStatus
-        })
-        .eq(
-          "id",
-          project.id
-        );
-
-      console.info(
-        `프로젝트 상태 자동 보정: ${project.status} → ${correctedStatus}`
       );
-    } catch (error) {
-      console.warn(
-        "프로젝트 상태 자동 보정 실패:",
-        error
-      );
-    }
 
-    return {
-      ...project,
-      status:
-        correctedStatus
-    };
+    return result;
   }
-
-  /* =======================================================
-     10. 프로젝트 목록 조회
-  ======================================================= */
 
   async function fetchProjects() {
-    const user =
-      await getAuthenticatedUser();
-
-    if (!user) {
-      return [];
-    }
-
     const {
       data:
         projects,
 
-      error:
-        projectError
+      error
     } =
       await supabaseClient
         .from(
           "projects"
         )
-        .select("*")
+        .select(
+          "*"
+        )
         .order(
           "updated_at",
           {
@@ -1006,16 +1002,16 @@
         );
 
     if (
-      projectError
+      error
     ) {
-      throw projectError;
+      throw error;
     }
 
     const safeProjects =
       projects ||
       [];
 
-    const projectIds =
+    const ids =
       safeProjects
         .map(
           (
@@ -1025,77 +1021,94 @@
         );
 
     const [
-      latestAnalyses,
-      latestForecasts
+      analyses,
+      forecasts
     ] =
-      await Promise.all([
-        fetchLatestMap(
-          "analyses",
-          projectIds,
-          "scores, sections, summary"
-        ),
+      await Promise
+        .all([
+          latestMap(
+            "analyses",
+            ids,
+            "scores, sections, summary"
+          ),
 
-        fetchLatestMap(
-          "forecasts",
-          projectIds,
-          "fetched_at, trend_summary"
-        )
-      ]);
+          latestMap(
+            "forecasts",
+            ids,
+            "fetched_at, trend_summary"
+          )
+        ]);
 
-    const projectsWithRelations =
+    const result =
+      [];
+
+    for (
+      const project of
       safeProjects
-        .map(
-          (
+    ) {
+      const latestAnalysis =
+        analyses[
+          project.id
+        ] ||
+        null;
+
+      const latestForecast =
+        forecasts[
+          project.id
+        ] ||
+        null;
+
+      const repairedStatus =
+        deriveStatus({
+          selectedIdea:
             project
-          ) => ({
-            ...project,
+              .selected_idea,
 
-            latest_analysis:
-              latestAnalyses[
-                project.id
-              ] ||
-              null,
+          analysis:
+            latestAnalysis,
 
-            latest_forecast:
-              latestForecasts[
-                project.id
-              ] ||
-              null
+          forecast:
+            latestForecast
+        });
+
+      if (
+        repairedStatus !==
+        project.status
+      ) {
+        await supabaseClient
+          .from(
+            "projects"
+          )
+          .update({
+            status:
+              repairedStatus
           })
-        );
+          .eq(
+            "id",
+            project.id
+          );
+      }
 
-    return Promise.all(
-      projectsWithRelations
-        .map(
-          repairProjectStatus
-        )
-    );
+      result.push({
+        ...project,
+
+        status:
+          repairedStatus,
+
+        latest_analysis:
+          latestAnalysis,
+
+        latest_forecast:
+          latestForecast
+      });
+    }
+
+    return result;
   }
 
   /* =======================================================
-     11. 프로젝트 목록 렌더링
+     7. Render dashboard
   ======================================================= */
-
-  function renderEmptyProjectList() {
-    projectList
-      .replaceChildren();
-
-    const empty =
-      document.createElement(
-        "div"
-      );
-
-    empty.className =
-      "project-empty";
-
-    empty.textContent =
-      "아직 저장한 프로젝트가 없습니다.";
-
-    projectList
-      .appendChild(
-        empty
-      );
-  }
 
   function renderProjectList(
     projects
@@ -1107,398 +1120,333 @@
       projects.length ===
       0
     ) {
-      renderEmptyProjectList();
+      projectList
+        .appendChild(
+          createElement(
+            "div",
+            "project-empty",
+            "아직 저장한 프로젝트가 없습니다."
+          )
+        );
 
       return;
     }
 
-    projects.forEach(
-      (
-        project
-      ) => {
-        const score =
-          calculateAverageScore(
-            project
-              .latest_analysis
-              ?.scores
-          );
-
-        const progress =
-          getProjectProgress(
-            project.status
-          );
-
-        const card =
-          document.createElement(
-            "article"
-          );
-
-        card.className =
-          "project-card";
-
-        const top =
-          document.createElement(
-            "div"
-          );
-
-        top.className =
-          "project-card-top";
-
-        const main =
-          document.createElement(
-            "div"
-          );
-
-        main.className =
-          "project-card-main";
-
-        const title =
-          document.createElement(
-            "h3"
-          );
-
-        title.textContent =
-          project.title;
-
-        const selectedIdeaText =
-          document.createElement(
-            "p"
-          );
-
-        selectedIdeaText.className =
-          "project-selected-idea";
-
-        const selectedIdeaLabel =
-          document.createElement(
-            "strong"
-          );
-
-        selectedIdeaLabel.textContent =
-          "선택 아이템: ";
-
-        selectedIdeaText
-          .appendChild(
-            selectedIdeaLabel
-          );
-
-        selectedIdeaText
-          .appendChild(
-            document.createTextNode(
+    projects
+      .forEach(
+        (
+          project
+        ) => {
+          const progress =
+            progressValue(
               project
-                .selected_idea
-                ?.name ||
-              "아직 선택하지 않음"
+                .status
+            );
+
+          const score =
+            averageScore(
+              project
+                .latest_analysis
+                ?.scores
+            );
+
+          const card =
+            createElement(
+              "article",
+              "project-card"
+            );
+
+          const top =
+            createElement(
+              "div",
+              "project-card-top"
+            );
+
+          const main =
+            createElement(
+              "div"
+            );
+
+          main.appendChild(
+            createElement(
+              "h3",
+              "",
+              project
+                .title
             )
           );
 
-        const meta =
-          document.createElement(
-            "div"
-          );
+          const ideaText =
+            createElement(
+              "p",
+              "project-selected-idea"
+            );
 
-        meta.className =
-          "project-meta";
-
-        const status =
-          document.createElement(
-            "span"
-          );
-
-        status.className =
-          "project-status";
-
-        status.textContent =
-          getProjectStatusLabel(
-            project.status
-          );
-
-        const scoreChip =
-          document.createElement(
-            "span"
-          );
-
-        scoreChip.className =
-          "project-score";
-
-        scoreChip.textContent =
-          score ===
-          null
-            ? "종합 점수: 분석 전"
-            : `종합 점수: ${score}점`;
-
-        meta.appendChild(
-          status
-        );
-
-        meta.appendChild(
-          scoreChip
-        );
-
-        main.appendChild(
-          title
-        );
-
-        main.appendChild(
-          selectedIdeaText
-        );
-
-        main.appendChild(
-          meta
-        );
-
-        const actions =
-          document.createElement(
-            "div"
-          );
-
-        actions.className =
-          "project-card-actions";
-
-        const openButton =
-          document.createElement(
-            "button"
-          );
-
-        openButton.type =
-          "button";
-
-        openButton.className =
-          "project-small-btn";
-
-        openButton.textContent =
-          "이어하기";
-
-        openButton
-          .addEventListener(
-            "click",
-            () =>
-              loadProject(
-                project.id
+          ideaText
+            .appendChild(
+              createElement(
+                "strong",
+                "",
+                "선택 아이템: "
               )
+            );
+
+          ideaText
+            .appendChild(
+              document
+                .createTextNode(
+                  project
+                    .selected_idea
+                    ?.name ||
+                  "아직 선택하지 않음"
+                )
+            );
+
+          main.appendChild(
+            ideaText
           );
 
-        const deleteButton =
-          document.createElement(
-            "button"
-          );
+          const meta =
+            createElement(
+              "div",
+              "project-meta"
+            );
 
-        deleteButton.type =
-          "button";
-
-        deleteButton.className =
-          "project-small-btn project-delete-btn";
-
-        deleteButton.textContent =
-          "삭제";
-
-        deleteButton
-          .addEventListener(
-            "click",
-            () =>
-              deleteProject(
-                project.id
+          meta.appendChild(
+            createElement(
+              "span",
+              "project-status",
+              statusLabel(
+                project
+                  .status
               )
+            )
           );
 
-        actions.appendChild(
+          meta.appendChild(
+            createElement(
+              "span",
+              "project-score",
+              score ===
+                null
+                ? "종합 점수: 분석 전"
+                : `종합 점수: ${score}점`
+            )
+          );
+
+          main.appendChild(
+            meta
+          );
+
+          const actions =
+            createElement(
+              "div",
+              "project-card-actions"
+            );
+
+          const openButton =
+            createElement(
+              "button",
+              "project-small-btn",
+              "이어하기"
+            );
+
+          openButton.type =
+            "button";
+
           openButton
-        );
+            .addEventListener(
+              "click",
+              () =>
+                loadProject(
+                  project.id
+                )
+            );
 
-        actions.appendChild(
+          const deleteButton =
+            createElement(
+              "button",
+              "project-small-btn project-delete-btn",
+              "삭제"
+            );
+
+          deleteButton.type =
+            "button";
+
           deleteButton
-        );
+            .addEventListener(
+              "click",
+              () =>
+                deleteProject(
+                  project.id
+                )
+            );
 
-        top.appendChild(
-          main
-        );
-
-        top.appendChild(
-          actions
-        );
-
-        const progressWrap =
-          document.createElement(
-            "div"
+          actions.appendChild(
+            openButton
           );
 
-        progressWrap.className =
-          "project-progress-wrap";
-
-        const progressHead =
-          document.createElement(
-            "div"
+          actions.appendChild(
+            deleteButton
           );
 
-        progressHead.className =
-          "project-progress-head";
-
-        const progressLabel =
-          document.createElement(
-            "span"
+          top.appendChild(
+            main
           );
 
-        progressLabel.textContent =
-          "프로젝트 진행률";
-
-        const progressValue =
-          document.createElement(
-            "span"
+          top.appendChild(
+            actions
           );
 
-        progressValue.textContent =
-          `${progress}%`;
-
-        progressHead.appendChild(
-          progressLabel
-        );
-
-        progressHead.appendChild(
-          progressValue
-        );
-
-        const progressTrack =
-          document.createElement(
-            "div"
+          card.appendChild(
+            top
           );
 
-        progressTrack.className =
-          "project-progress-track";
+          const progressWrap =
+            createElement(
+              "div",
+              "project-progress-wrap"
+            );
 
-        const progressFill =
-          document.createElement(
-            "div"
-          );
+          const progressHead =
+            createElement(
+              "div",
+              "project-progress-head"
+            );
 
-        progressFill.className =
-          "project-progress-fill";
-
-        progressFill.style.width =
-          `${progress}%`;
-
-        progressTrack.appendChild(
-          progressFill
-        );
-
-        progressWrap.appendChild(
           progressHead
-        );
+            .appendChild(
+              createElement(
+                "span",
+                "",
+                "프로젝트 진행률"
+              )
+            );
 
-        progressWrap.appendChild(
-          progressTrack
-        );
+          progressHead
+            .appendChild(
+              createElement(
+                "span",
+                "",
+                `${progress}%`
+              )
+            );
 
-        const nextAction =
-          document.createElement(
-            "div"
+          const track =
+            createElement(
+              "div",
+              "project-progress-track"
+            );
+
+          const fill =
+            createElement(
+              "div",
+              "project-progress-fill"
+            );
+
+          fill.style.width =
+            `${progress}%`;
+
+          track.appendChild(
+            fill
           );
 
-        nextAction.className =
-          "project-next-action";
-
-        const nextActionLabel =
-          document.createElement(
-            "strong"
-          );
-
-        nextActionLabel.textContent =
-          "다음 추천 행동: ";
-
-        nextAction.appendChild(
-          nextActionLabel
-        );
-
-        nextAction.appendChild(
-          document.createTextNode(
-            getProjectNextAction(
-              project
-            )
-          )
-        );
-
-        const dates =
-          document.createElement(
-            "div"
-          );
-
-        dates.className =
-          "project-dates";
-
-        const updatedDate =
-          document.createElement(
-            "span"
-          );
-
-        updatedDate.textContent =
-          `최근 수정: ${formatDate(
-            project.updated_at
-          )}`;
-
-        const analysisDate =
-          document.createElement(
-            "span"
-          );
-
-        analysisDate.textContent =
-          `마지막 분석: ${formatDate(
-            project
-              .latest_analysis
-              ?.created_at
-          )}`;
-
-        const forecastDate =
-          document.createElement(
-            "span"
-          );
-
-        forecastDate.textContent =
-          `마지막 경제 전망: ${formatDate(
-            project
-              .latest_forecast
-              ?.fetched_at
-          )}`;
-
-        dates.appendChild(
-          updatedDate
-        );
-
-        dates.appendChild(
-          analysisDate
-        );
-
-        dates.appendChild(
-          forecastDate
-        );
-
-        card.appendChild(
-          top
-        );
-
-        card.appendChild(
           progressWrap
-        );
+            .appendChild(
+              progressHead
+            );
 
-        card.appendChild(
-          nextAction
-        );
+          progressWrap
+            .appendChild(
+              track
+            );
 
-        card.appendChild(
-          dates
-        );
-
-        projectList
-          .appendChild(
-            card
+          card.appendChild(
+            progressWrap
           );
-      }
-    );
+
+          const next =
+            createElement(
+              "div",
+              "project-next-action"
+            );
+
+          next
+            .appendChild(
+              createElement(
+                "strong",
+                "",
+                "다음 추천 행동: "
+              )
+            );
+
+          next
+            .appendChild(
+              document
+                .createTextNode(
+                  nextAction(
+                    project
+                      .status
+                  )
+                )
+            );
+
+          card.appendChild(
+            next
+          );
+
+          const dates =
+            createElement(
+              "div",
+              "project-dates"
+            );
+
+          dates.appendChild(
+            createElement(
+              "span",
+              "",
+              `최근 수정: ${formatDate(project.updated_at)}`
+            )
+          );
+
+          dates.appendChild(
+            createElement(
+              "span",
+              "",
+              `마지막 분석: ${formatDate(project.latest_analysis?.created_at)}`
+            )
+          );
+
+          dates.appendChild(
+            createElement(
+              "span",
+              "",
+              `마지막 경제 전망: ${formatDate(project.latest_forecast?.fetched_at)}`
+            )
+          );
+
+          card.appendChild(
+            dates
+          );
+
+          projectList
+            .appendChild(
+              card
+            );
+        }
+      );
   }
 
   async function showMyProjects() {
     const user =
-      await getAuthenticatedUser();
+      await getUser();
 
-    if (!user) {
-      openAuthModal();
+    if (
+      !user
+    ) {
+      window
+        .KUApp
+        .openAuthModal();
 
       return;
     }
@@ -1506,179 +1454,39 @@
     openProjectsModal();
 
     projectList
-      .replaceChildren();
-
-    const loading =
-      document.createElement(
-        "div"
-      );
-
-    loading.className =
-      "project-empty";
-
-    loading.textContent =
-      "프로젝트 대시보드를 불러오는 중입니다...";
-
-    projectList
-      .appendChild(
-        loading
+      .replaceChildren(
+        createElement(
+          "div",
+          "project-empty",
+          "프로젝트 대시보드를 불러오는 중입니다..."
+        )
       );
 
     try {
-      const projects =
-        await fetchProjects();
-
       renderProjectList(
-        projects
+        await fetchProjects()
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       console.error(
-        "프로젝트 목록 조회 오류:",
+        "프로젝트 조회 오류:",
         error
       );
 
       projectList
-        .replaceChildren();
-
-      const errorBox =
-        document.createElement(
-          "div"
-        );
-
-      errorBox.className =
-        "project-empty";
-
-      errorBox.textContent =
-        `프로젝트 목록을 불러오지 못했습니다: ${error.message}`;
-
-      projectList
-        .appendChild(
-          errorBox
+        .replaceChildren(
+          createElement(
+            "div",
+            "project-empty",
+            `프로젝트 목록을 불러오지 못했습니다: ${error.message}`
+          )
         );
     }
   }
 
   /* =======================================================
-     12. 입력 폼 복원
-  ======================================================= */
-
-  function applyProfileToForm(
-    profile
-  ) {
-    if (!profile) {
-      return;
-    }
-
-    primaryCollegeSelect.value =
-      profile
-        .primaryMajor
-        ?.college ||
-      "";
-
-    renderMajorOptions(
-      primaryCollegeSelect,
-      primaryMajorSelect,
-      false
-    );
-
-    primaryMajorSelect.value =
-      profile
-        .primaryMajor
-        ?.major ||
-      "";
-
-    secondaryCollegeSelect.value =
-      profile
-        .secondaryMajor
-        ?.college ||
-      "해당 없음";
-
-    renderMajorOptions(
-      secondaryCollegeSelect,
-      secondaryMajorSelect,
-      true
-    );
-
-    secondaryMajorSelect.value =
-      profile
-        .secondaryMajor
-        ?.major ||
-      "해당 없음";
-
-    document
-      .querySelectorAll(
-        "input[name='certificates']"
-      )
-      .forEach(
-        (
-          checkbox
-        ) => {
-          checkbox.checked =
-            profile
-              .certificates
-              ?.includes(
-                checkbox.value
-              ) ||
-            false;
-        }
-      );
-
-    const values = {
-      interests:
-        profile.interests ||
-        "",
-
-      goal:
-        profile.goal ||
-        "수익 창출",
-
-      budget:
-        profile.budget ||
-        "",
-
-      time:
-        profile.time ||
-        "",
-
-      businessType:
-        profile.businessType ||
-        "온라인 서비스",
-
-      target:
-        profile.target ||
-        "",
-
-      avoid:
-        profile.avoid ||
-        ""
-    };
-
-    Object
-      .entries(
-        values
-      )
-      .forEach(
-        ([
-          id,
-          value
-        ]) => {
-          const element =
-            document.getElementById(
-              id
-            );
-
-          if (
-            element
-          ) {
-            element.value =
-              value;
-          }
-        }
-      );
-  }
-
-  /* =======================================================
-     13. 프로젝트 불러오기
+     8. Load project
   ======================================================= */
 
   async function loadProject(
@@ -1691,99 +1499,123 @@
         analysisResponse,
         forecastResponse
       ] =
-        await Promise.all([
-          supabaseClient
-            .from(
-              "projects"
-            )
-            .select("*")
-            .eq(
-              "id",
-              projectId
-            )
-            .single(),
+        await Promise
+          .all([
+            supabaseClient
+              .from(
+                "projects"
+              )
+              .select(
+                "*"
+              )
+              .eq(
+                "id",
+                projectId
+              )
+              .single(),
 
-          supabaseClient
-            .from(
-              "recommendations"
-            )
-            .select("*")
-            .eq(
-              "project_id",
-              projectId
-            )
-            .order(
-              "created_at",
-              {
-                ascending:
-                  false
-              }
-            )
-            .limit(1),
+            supabaseClient
+              .from(
+                "recommendations"
+              )
+              .select(
+                "*"
+              )
+              .eq(
+                "project_id",
+                projectId
+              )
+              .order(
+                "created_at",
+                {
+                  ascending:
+                    false
+                }
+              )
+              .limit(
+                1
+              ),
 
-          supabaseClient
-            .from(
-              "analyses"
-            )
-            .select("*")
-            .eq(
-              "project_id",
-              projectId
-            )
-            .order(
-              "created_at",
-              {
-                ascending:
-                  false
-              }
-            )
-            .limit(1),
+            supabaseClient
+              .from(
+                "analyses"
+              )
+              .select(
+                "*"
+              )
+              .eq(
+                "project_id",
+                projectId
+              )
+              .order(
+                "created_at",
+                {
+                  ascending:
+                    false
+                }
+              )
+              .limit(
+                1
+              ),
 
-          supabaseClient
-            .from(
-              "forecasts"
-            )
-            .select("*")
-            .eq(
-              "project_id",
-              projectId
-            )
-            .order(
-              "created_at",
-              {
-                ascending:
-                  false
-              }
-            )
-            .limit(1)
-        ]);
+            supabaseClient
+              .from(
+                "forecasts"
+              )
+              .select(
+                "*"
+              )
+              .eq(
+                "project_id",
+                projectId
+              )
+              .order(
+                "created_at",
+                {
+                  ascending:
+                    false
+                }
+              )
+              .limit(
+                1
+              )
+          ]);
 
       if (
-        projectResponse.error
+        projectResponse
+          .error
       ) {
-        throw projectResponse.error;
+        throw projectResponse
+          .error;
       }
 
       if (
-        recommendationResponse.error
+        recommendationResponse
+          .error
       ) {
-        throw recommendationResponse.error;
+        throw recommendationResponse
+          .error;
       }
 
       if (
-        analysisResponse.error
+        analysisResponse
+          .error
       ) {
-        throw analysisResponse.error;
+        throw analysisResponse
+          .error;
       }
 
       if (
-        forecastResponse.error
+        forecastResponse
+          .error
       ) {
-        throw forecastResponse.error;
+        throw forecastResponse
+          .error;
       }
 
       const project =
-        projectResponse.data;
+        projectResponse
+          .data;
 
       const recommendation =
         recommendationResponse
@@ -1803,151 +1635,53 @@
       currentProjectId =
         project.id;
 
-      currentProfile =
-        project.profile;
+      window
+        .KUApp
+        .loadProjectState({
+          profile:
+            project
+              .profile,
 
-      currentIdeas =
-        normalizeIdeas(
-          recommendation
-            ?.ideas ||
-          []
-        );
+          ideas:
+            recommendation
+              ?.ideas ||
+            [],
 
-      selectedIdea =
-        project
-          .selected_idea ||
-        null;
+          selectedIdea:
+            project
+              .selected_idea ||
+            null,
 
-      currentAnalysis =
-        analysis
-          ? normalizeAnalysis(
-              analysis
-            )
-          : null;
-
-      applyProfileToForm(
-        currentProfile
-      );
-
-      renderIdeas(
-        currentIdeas
-      );
-
-      recommendationSection
-        .classList
-        .remove(
-          "hidden"
-        );
+          analysis:
+            analysis ||
+            null
+        });
 
       updateSaveButton({
         saved:
           true
       });
 
-      if (
-        selectedIdea &&
-        currentAnalysis
-      ) {
-        selectedIdeaText.textContent =
-          `선택한 아이템: ${selectedIdea.name}`;
+      document.dispatchEvent(
+        new CustomEvent(
+          "ku:project-loaded",
+          {
+            detail: {
+              projectId:
+                project.id,
 
-        renderAnalysis(
-          currentAnalysis
-        );
-
-        analysisSection
-          .classList
-          .remove(
-            "hidden"
-          );
-
-        renderBusinessPlan(
-          currentProfile,
-          selectedIdea,
-          currentAnalysis
-        );
-
-        planSection
-          .classList
-          .remove(
-            "hidden"
-          );
-
-        showStatus(
-          analysisStatusCard,
-          analysisStatusText,
-          "저장된 아이템 분석을 불러왔습니다!",
-          true
-        );
-
-        showStatus(
-          planStatusCard,
-          planStatusText,
-          "저장된 창업 계획 초안을 불러왔습니다!",
-          true
-        );
-      } else {
-        analysisSection
-          .classList
-          .add(
-            "hidden"
-          );
-
-        planSection
-          .classList
-          .add(
-            "hidden"
-          );
-
-        hideStatus(
-          analysisStatusCard
-        );
-
-        hideStatus(
-          planStatusCard
-        );
-      }
-
-      if (
-        window
-          .KUForecastManager
-      ) {
-        if (
-          forecast
-        ) {
-          window
-            .KUForecastManager
-            .restoreForecast(
-              forecast
-            );
-        } else {
-          window
-            .KUForecastManager
-            .clearForecastUI();
-        }
-      }
-
-      await synchronizeProjectMetadata(
-        currentProjectId,
-        {
-          selectedIdea,
-          analysis:
-            currentAnalysis,
-          forecast
-        }
+              forecast:
+                forecast ||
+              null
+            }
+          }
+        )
       );
 
       closeProjectsModal();
-
-      recommendationSection
-        .scrollIntoView({
-          behavior:
-            "smooth",
-
-          block:
-            "start"
-        });
-    } catch (error) {
+    } catch (
+      error
+    ) {
       console.error(
         "프로젝트 불러오기 오류:",
         error
@@ -1960,133 +1694,116 @@
   }
 
   /* =======================================================
-     14. 프로젝트 삭제
+     9. Delete project
   ======================================================= */
 
   async function deleteProject(
     projectId
   ) {
-    const confirmed =
-      window.confirm(
-        "프로젝트를 삭제하시겠습니까?"
-      );
-
-    if (!confirmed) {
+    if (
+      !window
+        .confirm(
+          "프로젝트를 삭제하시겠습니까?"
+        )
+    ) {
       return;
     }
 
-    try {
-      const {
-        error
-      } =
-        await supabaseClient
-          .from(
-            "projects"
-          )
-          .delete()
-          .eq(
-            "id",
-            projectId
-          );
+    const {
+      error
+    } =
+      await supabaseClient
+        .from(
+          "projects"
+        )
+        .delete()
+        .eq(
+          "id",
+          projectId
+        );
 
-      if (error) {
-        throw error;
-      }
-
-      if (
-        currentProjectId ===
-        projectId
-      ) {
-        currentProjectId =
-          null;
-      }
-
-      await showMyProjects();
-    } catch (error) {
-      console.error(
-        "프로젝트 삭제 오류:",
-        error
-      );
-
+    if (
+      error
+    ) {
       alert(
         `프로젝트 삭제에 실패했습니다: ${error.message}`
       );
+
+      return;
     }
+
+    if (
+      currentProjectId ===
+      projectId
+    ) {
+      currentProjectId =
+        null;
+    }
+
+    await showMyProjects();
   }
 
   /* =======================================================
-     15. 기존 기능 확장
+     10. Public API
   ======================================================= */
 
-  const originalRenderIdeas =
-    renderIdeas;
+  window.KUProjectManager = {
+    getCurrentProjectId() {
+      return currentProjectId;
+    },
 
-  renderIdeas =
-    function renderIdeasWithSaveButton(
-      ideas
-    ) {
-      originalRenderIdeas(
-        ideas
-      );
-
-      projectSaveButton
-        .classList
-        .remove(
-          "hidden"
-        );
-
-      if (
-        currentProjectId
-      ) {
-        updateSaveButton({
-          saved:
-            true
-        });
-      } else {
-        updateSaveButton();
-      }
-    };
-
-  const originalResetApp =
-    resetApp;
-
-  resetApp =
-    function resetAppWithProjectReset() {
+    clearCurrentProject() {
       currentProjectId =
         null;
+    },
 
-      originalResetApp();
-    };
+    async syncCurrentProject() {
+      if (
+        !currentProjectId
+      ) {
+        return;
+      }
+
+      await syncMetadata(
+        currentProjectId,
+        window
+          .KUApp
+          .getState()
+      );
+    }
+  };
 
   /* =======================================================
-     16. 이벤트 연결
+     11. Events
   ======================================================= */
 
-  projectSaveButton
+  saveProjectBtn
     .addEventListener(
       "click",
       saveCurrentProject
     );
 
-  projectListButton
+  myProjectsBtn
     .addEventListener(
       "click",
       showMyProjects
     );
 
-  closeProjectsModalButton
+  closeProjectsModalBtn
     .addEventListener(
       "click",
       closeProjectsModal
     );
 
-  newProjectButton
+  newProjectBtn
     .addEventListener(
       "click",
       () => {
         closeProjectsModal();
 
-        resetApp();
+        window
+          .KUApp
+          .resetApp();
       }
     );
 
@@ -2106,117 +1823,55 @@
     );
 
   /* =======================================================
-     17. 외부 기능 연결
+     12. Self tests
   ======================================================= */
 
-  window.KUProjectManager = {
-    getCurrentProjectId() {
-      return currentProjectId;
-    },
+  console.assert(
+    deriveStatus({
+      selectedIdea:
+        null,
 
-    clearCurrentProject() {
-      currentProjectId =
-        null;
-    },
+      analysis:
+        null,
 
-    async synchronizeCurrentProject() {
-      if (
-        !currentProjectId
-      ) {
-        return;
-      }
+      forecast:
+        null
+    }) ===
+      "recommended",
 
-      await synchronizeProjectMetadata(
-        currentProjectId
-      );
-    }
-  };
+    "추천 상태 테스트 실패"
+  );
 
-  /* =======================================================
-     18. 자체 테스트
-  ======================================================= */
+  console.assert(
+    deriveStatus({
+      selectedIdea: {
+        name:
+          "테스트"
+      },
 
-  function runProjectManagerSelfTests() {
-    console.assert(
-      deriveProjectStatus({
-        selectedIdea:
-          null,
+      analysis: {
+        summary:
+          "분석"
+      },
 
-        analysis:
-          null,
+      forecast:
+        null
+    }) ===
+      "analyzed",
 
-        forecast:
-          null
-      }) ===
-        "recommended",
+    "심층 분석 상태 테스트 실패"
+  );
 
-      "추천 상태 계산 테스트 실패"
-    );
+  console.assert(
+    progressValue(
+      "forecasted"
+    ) ===
+      75,
 
-    console.assert(
-      deriveProjectStatus({
-        selectedIdea: {
-          name:
-            "테스트 아이템"
-        },
-
-        analysis: {
-          summary:
-            "테스트 분석"
-        },
-
-        forecast:
-          null
-      }) ===
-        "analyzed",
-
-      "심층 분석 상태 계산 테스트 실패"
-    );
-
-    console.assert(
-      deriveProjectStatus({
-        selectedIdea: {
-          name:
-            "테스트 아이템"
-        },
-
-        analysis: {
-          summary:
-            "테스트 분석"
-        },
-
-        forecast: {
-          trendSummary:
-            "테스트 전망"
-        }
-      }) ===
-        "forecasted",
-
-      "경제 전망 상태 계산 테스트 실패"
-    );
-
-    console.assert(
-      getProjectProgress(
-        "analyzed"
-      ) ===
-        60,
-
-      "심층 분석 진행률 테스트 실패"
-    );
-
-    console.assert(
-      getProjectProgress(
-        "forecasted"
-      ) ===
-        75,
-
-      "경제 전망 진행률 테스트 실패"
-    );
-  }
-
-  runProjectManagerSelfTests();
+    "경제 전망 진행률 테스트 실패"
+  );
 
   console.info(
-    "KU STARTUP PLANNER 프로젝트 상태 동기화 기능 연결 완료"
+    "KU STARTUP PLANNER 프로젝트 관리 기능 연결 완료"
   );
 })();
