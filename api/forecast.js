@@ -1,100 +1,66 @@
 import OpenAI from "openai";
 
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
 /* =========================================================
    KU STARTUP PLANNER
-   최신 공개 자료 기반 경제 전망 API
-
-   구조
-   1. GPT-5.5 웹 리서치
-   2. GPT-4.1-mini JSON 구조화
-   3. 실제 웹 검색 응답에서 출처 URL 추출
-
-   목표
-   - 최신성 유지
-   - 자료 품질과 속도의 균형
-   - max_output_tokens 자동 재시도
+   최신 공개 자료 기반 경제 환경 전망 API
 ========================================================= */
 
-const client =
-  new OpenAI({
-    apiKey:
-      process.env.OPENAI_API_KEY
-  });
-
-const RESEARCH_MODEL =
-  process.env.OPENAI_FORECAST_RESEARCH_MODEL ||
+const FORECAST_SEARCH_MODEL =
+  process.env.OPENAI_FORECAST_SEARCH_MODEL ||
   "gpt-5.5";
 
-const STRUCTURE_MODEL =
+const FORECAST_STRUCTURE_MODEL =
   process.env.OPENAI_FORECAST_STRUCTURE_MODEL ||
   "gpt-4.1-mini";
 
-const RESEARCH_INITIAL_MAX_TOKENS =
-  8000;
-
-const RESEARCH_RETRY_MAX_TOKENS =
-  12000;
-
-const STRUCTURE_INITIAL_MAX_TOKENS =
-  4600;
-
-const STRUCTURE_RETRY_MAX_TOKENS =
-  6800;
-
-/* =========================================================
-   1. Structured Output Schema
-========================================================= */
-
 const forecastSchema = {
-  type:
-    "object",
-
-  additionalProperties:
-    false,
+  type: "object",
+  additionalProperties: false,
 
   properties: {
     trendSummary: {
-      type:
-        "string"
+      type: "string"
     },
 
     economicFactors: {
-      type:
-        "array",
-
-      minItems:
-        4,
-
-      maxItems:
-        6,
+      type: "array",
+      minItems: 4,
+      maxItems: 7,
 
       items: {
-        type:
-          "object",
-
-        additionalProperties:
-          false,
+        type: "object",
+        additionalProperties: false,
 
         properties: {
           name: {
-            type:
-              "string"
+            type: "string"
           },
 
           impact: {
-            type:
-              "string"
+            type: "string",
+            enum: [
+              "높음",
+              "중간",
+              "낮음"
+            ]
           },
 
           direction: {
-            type:
-              "string"
+            type: "string",
+            enum: [
+              "긍정",
+              "부정",
+              "혼합",
+              "불확실"
+            ]
           },
 
           reason: {
-            type:
-              "string"
+            type: "string"
           }
         },
 
@@ -108,26 +74,20 @@ const forecastSchema = {
     },
 
     outlook: {
-      type:
-        "object",
-
-      additionalProperties:
-        false,
+      type: "object",
+      additionalProperties: false,
 
       properties: {
         shortTerm: {
-          type:
-            "string"
+          type: "string"
         },
 
         midTerm: {
-          type:
-            "string"
+          type: "string"
         },
 
         longTerm: {
-          type:
-            "string"
+          type: "string"
         }
       },
 
@@ -139,29 +99,21 @@ const forecastSchema = {
     },
 
     scenarios: {
-      type:
-        "object",
-
-      additionalProperties:
-        false,
+      type: "object",
+      additionalProperties: false,
 
       properties: {
         optimistic: {
-          type:
-            "object",
-
-          additionalProperties:
-            false,
+          type: "object",
+          additionalProperties: false,
 
           properties: {
             situation: {
-              type:
-                "string"
+              type: "string"
             },
 
             strategy: {
-              type:
-                "string"
+              type: "string"
             }
           },
 
@@ -172,21 +124,16 @@ const forecastSchema = {
         },
 
         baseline: {
-          type:
-            "object",
-
-          additionalProperties:
-            false,
+          type: "object",
+          additionalProperties: false,
 
           properties: {
             situation: {
-              type:
-                "string"
+              type: "string"
             },
 
             strategy: {
-              type:
-                "string"
+              type: "string"
             }
           },
 
@@ -197,21 +144,16 @@ const forecastSchema = {
         },
 
         pessimistic: {
-          type:
-            "object",
-
-          additionalProperties:
-            false,
+          type: "object",
+          additionalProperties: false,
 
           properties: {
             situation: {
-              type:
-                "string"
+              type: "string"
             },
 
             strategy: {
-              type:
-                "string"
+              type: "string"
             }
           },
 
@@ -230,42 +172,27 @@ const forecastSchema = {
     },
 
     actions: {
-      type:
-        "array",
-
-      minItems:
-        4,
-
-      maxItems:
-        6,
+      type: "array",
+      minItems: 4,
+      maxItems: 7,
 
       items: {
-        type:
-          "string"
+        type: "string"
       }
     },
 
     dataSnapshot: {
-      type:
-        "object",
-
-      additionalProperties:
-        false,
+      type: "object",
+      additionalProperties: false,
 
       properties: {
         observations: {
-          type:
-            "array",
-
-          minItems:
-            3,
-
-          maxItems:
-            8,
+          type: "array",
+          minItems: 3,
+          maxItems: 8,
 
           items: {
-            type:
-              "string"
+            type: "string"
           }
         }
       },
@@ -287,200 +214,166 @@ const forecastSchema = {
 };
 
 /* =========================================================
-   2. Common Utilities
+   1. 공통 유틸리티
 ========================================================= */
 
-function isNonEmptyString(
-  value
-) {
+function isNonEmptyString(value) {
   return (
-    typeof value ===
-      "string" &&
-    value
-      .trim()
-      .length >
-      0
+    typeof value === "string" &&
+    value.trim().length > 0
   );
 }
 
-function safeText(
-  value,
-  fallback =
-    "정보 없음"
-) {
-  return isNonEmptyString(
-    value
-  )
-    ? value
-        .trim()
+function getSafeText(value, fallback = "정보 없음") {
+  return isNonEmptyString(value)
+    ? value.trim()
     : fallback;
 }
 
-function safeArray(
-  value
-) {
-  return Array
-    .isArray(
-      value
-    )
+function getSafeArray(value) {
+  return Array.isArray(value)
     ? value
     : [];
 }
 
-function parseRequestBody(
-  req
-) {
+function extractOutputText(response) {
   if (
-    req.body &&
-    typeof req.body ===
-      "object"
+    typeof response?.output_text === "string" &&
+    response.output_text.trim()
   ) {
-    return req.body;
+    return response.output_text.trim();
   }
 
-  if (
-    typeof req.body ===
-      "string"
-  ) {
-    try {
-      return JSON
-        .parse(
-          req.body
-        );
-    } catch {
-      return {};
-    }
-  }
-
-  return {};
-}
-
-function getIncompleteReason(
-  response
-) {
-  return (
-    response
-      ?.incomplete_details
-      ?.reason ||
-    ""
-  );
-}
-
-function extractOutputText(
-  response
-) {
-  if (
-    typeof response
-      ?.output_text ===
-      "string" &&
-    response
-      .output_text
-      .trim()
-  ) {
-    return response
-      .output_text
-      .trim();
-  }
-
-  const fragments =
-    [];
+  const textParts = [];
 
   for (
     const outputItem of
-    safeArray(
-      response
-        ?.output
-    )
+    getSafeArray(response?.output)
   ) {
     if (
-      outputItem
-        ?.type !==
-      "message"
+      outputItem?.type !== "message"
     ) {
       continue;
     }
 
     for (
       const contentItem of
-      safeArray(
-        outputItem
-          ?.content
-      )
+      getSafeArray(outputItem?.content)
     ) {
       if (
-        contentItem
-          ?.type ===
-          "output_text" &&
-        isNonEmptyString(
-          contentItem
-            ?.text
-        )
+        contentItem?.type === "output_text" &&
+        isNonEmptyString(contentItem.text)
       ) {
-        fragments
-          .push(
-            contentItem
-              .text
-              .trim()
-          );
+        textParts.push(
+          contentItem.text.trim()
+        );
       }
     }
   }
 
-  if (
-    fragments
-      .length ===
-    0
-  ) {
+  if (textParts.length === 0) {
     throw new Error(
-      "AI 응답에서 경제 전망 결과를 찾지 못했습니다."
+      "AI 응답에서 분석 텍스트를 찾지 못했습니다."
     );
   }
 
-  return fragments
-    .join(
-      "\n\n"
-    );
+  return textParts.join("\n\n");
 }
 
-function parseStructuredResult(
-  response
-) {
-  if (
-    response
-      ?.status ===
-    "incomplete"
+function extractUrlCitations(response) {
+  const citationMap =
+    new Map();
+
+  for (
+    const outputItem of
+    getSafeArray(response?.output)
   ) {
+    if (
+      outputItem?.type !== "message"
+    ) {
+      continue;
+    }
+
+    for (
+      const contentItem of
+      getSafeArray(outputItem?.content)
+    ) {
+      for (
+        const annotation of
+        getSafeArray(contentItem?.annotations)
+      ) {
+        if (
+          annotation?.type !== "url_citation"
+        ) {
+          continue;
+        }
+
+        const url =
+          annotation.url ||
+          annotation.url_citation?.url;
+
+        const title =
+          annotation.title ||
+          annotation.url_citation?.title ||
+          "참고 자료";
+
+        if (
+          !isNonEmptyString(url)
+        ) {
+          continue;
+        }
+
+        citationMap.set(
+          url,
+          {
+            title:
+              getSafeText(
+                title,
+                "참고 자료"
+              ),
+
+            url:
+              url.trim()
+          }
+        );
+      }
+    }
+  }
+
+  return Array.from(
+    citationMap.values()
+  );
+}
+
+function parseStructuredOutput(response) {
+  if (
+    response?.status === "incomplete"
+  ) {
+    const reason =
+      response
+        ?.incomplete_details
+        ?.reason ||
+      "unknown";
+
     throw new Error(
-      `경제 전망 구조화 응답이 중간에 종료되었습니다. 사유: ${
-        getIncompleteReason(
-          response
-        ) ||
-        "알 수 없음"
-      }`
+      `전망 구조화 응답이 중간에 종료되었습니다. reason: ${reason}`
     );
   }
 
   const text =
-    extractOutputText(
-      response
-    );
+    extractOutputText(response);
 
   try {
-    return JSON
-      .parse(
-        text
-      );
-  } catch (
-    error
-  ) {
+    return JSON.parse(text);
+  } catch (error) {
     throw new Error(
-      `경제 전망 JSON 파싱에 실패했습니다: ${error.message}`
+      `전망 구조화 JSON 파싱에 실패했습니다: ${error.message}`
     );
   }
 }
 
 /* =========================================================
-   3. Startup Context
+   2. 사용자·아이템 컨텍스트
 ========================================================= */
 
 function makeStartupContext(
@@ -491,283 +384,62 @@ function makeStartupContext(
   const scoreLines =
     Object
       .entries(
-        analysis
-          ?.scores ||
-        {}
+        analysis?.scores || {}
       )
       .map(
-        ([
-          label,
-          value
-        ]) =>
-          `- ${label}: ${value}점`
+        ([key, value]) =>
+          `- ${key}: ${value}점`
       )
-      .join(
-        "\n"
-      );
+      .join("\n");
 
   return `
 [사용자 조건]
-- 제1전공: ${safeText(profile?.primaryMajorText)}
-- 제2전공: ${safeText(profile?.secondaryMajorText, "해당 없음")}
-- 자격증: ${safeArray(profile?.certificates).join(", ") || "없음"}
-- 관심 분야: ${safeText(profile?.interests)}
-- 창업 목적: ${safeText(profile?.goal)}
-- 초기 자본: ${safeText(profile?.budgetText)}
-- 투입 가능 시간: ${safeText(profile?.timeText)}
-- 선호 창업 유형: ${safeText(profile?.businessType)}
-- 관심 고객층: ${safeText(profile?.target)}
-- 제약 조건: ${safeText(profile?.avoid, "없음")}
+- 제1전공: ${getSafeText(profile?.primaryMajorText)}
+- 제2전공: ${getSafeText(profile?.secondaryMajorText, "해당 없음")}
+- 자격증: ${getSafeArray(profile?.certificates).join(", ") || "없음"}
+- 관심 분야: ${getSafeText(profile?.interests)}
+- 창업 목적: ${getSafeText(profile?.goal)}
+- 초기 자본: ${getSafeText(profile?.budgetText)}
+- 투입 가능 시간: ${getSafeText(profile?.timeText)}
+- 선호 창업 유형: ${getSafeText(profile?.businessType)}
+- 관심 고객층: ${getSafeText(profile?.target)}
+- 제약 조건: ${getSafeText(profile?.avoid, "없음")}
 
 [선택한 창업 아이템]
-- 아이템명: ${safeText(idea?.name)}
-- 한 줄 설명: ${safeText(idea?.summary)}
-- 핵심 고객: ${safeText(idea?.customer)}
-- 해결 문제: ${safeText(idea?.problem)}
-- 수익 모델: ${safeText(idea?.revenue)}
-- 추천 이유: ${safeText(idea?.reason)}
-- 난이도: ${safeText(idea?.difficulty)}
-- 예상 초기 비용: ${safeText(idea?.cost)}
+- 아이템명: ${getSafeText(idea?.name)}
+- 한 줄 설명: ${getSafeText(idea?.summary)}
+- 목표 고객: ${getSafeText(idea?.customer)}
+- 해결 문제: ${getSafeText(idea?.problem)}
+- 수익 모델: ${getSafeText(idea?.revenue)}
+- 추천 이유: ${getSafeText(idea?.reason)}
+- 난이도: ${getSafeText(idea?.difficulty)}
+- 예상 초기 비용: ${getSafeText(idea?.cost)}
 
-[기존 기본 분석 점수]
+[기존 심층 분석 점수]
 ${scoreLines || "- 기존 점수 없음"}
   `.trim();
 }
 
 /* =========================================================
-   4. Extract Real Web Sources
+   3. 최신 공개 자료 검색
 ========================================================= */
 
-function extractCitationSources(
-  response
-) {
-  const sourceMap =
-    new Map();
-
-  for (
-    const outputItem of
-    safeArray(
-      response
-        ?.output
-    )
-  ) {
-    if (
-      outputItem
-        ?.type !==
-      "message"
-    ) {
-      continue;
-    }
-
-    for (
-      const contentItem of
-      safeArray(
-        outputItem
-          ?.content
-      )
-    ) {
-      for (
-        const annotation of
-        safeArray(
-          contentItem
-            ?.annotations
-        )
-      ) {
-        if (
-          annotation
-            ?.type !==
-          "url_citation"
-        ) {
-          continue;
-        }
-
-        const citation =
-          annotation
-            ?.url_citation ||
-          annotation;
-
-        const url =
-          safeText(
-            citation
-              ?.url,
-            ""
-          );
-
-        if (!url) {
-          continue;
-        }
-
-        sourceMap
-          .set(
-            url,
-            {
-              title:
-                safeText(
-                  citation
-                    ?.title,
-                  "참고 자료"
-                ),
-
-              url,
-
-              publishedAt:
-                "원문에서 확인",
-
-              whyRelevant:
-                "최신 경제 동향 조사에 활용한 자료"
-            }
-          );
-      }
-    }
-  }
-
-  return Array
-    .from(
-      sourceMap
-        .values()
-    );
-}
-
-function extractSearchCallSources(
-  response
-) {
-  const sourceMap =
-    new Map();
-
-  for (
-    const outputItem of
-    safeArray(
-      response
-        ?.output
-    )
-  ) {
-    if (
-      outputItem
-        ?.type !==
-      "web_search_call"
-    ) {
-      continue;
-    }
-
-    for (
-      const source of
-      safeArray(
-        outputItem
-          ?.action
-          ?.sources
-      )
-    ) {
-      const url =
-        safeText(
-          source
-            ?.url,
-          ""
-        );
-
-      if (!url) {
-        continue;
-      }
-
-      sourceMap
-        .set(
-          url,
-          {
-            title:
-              safeText(
-                source
-                  ?.title,
-                "참고 자료"
-              ),
-
-            url,
-
-            publishedAt:
-              "원문에서 확인",
-
-            whyRelevant:
-              "웹 검색 과정에서 확인한 관련 자료"
-          }
-        );
-    }
-  }
-
-  return Array
-    .from(
-      sourceMap
-        .values()
-    );
-}
-
-function mergeSources(
-  ...sourceGroups
-) {
-  const sourceMap =
-    new Map();
-
-  sourceGroups
-    .flat()
-    .forEach(
-      (
-        source
-      ) => {
-        const url =
-          safeText(
-            source
-              ?.url,
-            ""
-          );
-
-        if (
-          !url ||
-          sourceMap
-            .has(
-              url
-            )
-        ) {
-          return;
-        }
-
-        sourceMap
-          .set(
-            url,
-            source
-          );
-      }
-    );
-
-  return Array
-    .from(
-      sourceMap
-        .values()
-    )
-    .slice(
-      0,
-      8
-    );
-}
-
-/* =========================================================
-   5. Stage 1: Web Research
-========================================================= */
-
-async function requestResearch(
+async function researchLatestTrends(
   profile,
   idea,
-  analysis,
-  maxOutputTokens
+  analysis
 ) {
-  const startupContext =
+  const context =
     makeStartupContext(
       profile,
       idea,
       analysis
     );
 
-  return client
-    .responses
-    .create({
+  const response =
+    await client.responses.create({
       model:
-        RESEARCH_MODEL,
+        FORECAST_SEARCH_MODEL,
 
       tools: [
         {
@@ -779,101 +451,42 @@ async function requestResearch(
       tool_choice:
         "required",
 
-      include: [
-        "web_search_call.action.sources"
-      ],
-
-      instructions: `
-당신은 한국 시장을 중심으로 초기 창업 아이템의 외부 환경을 조사하는 리서치 애널리스트입니다.
-
-반드시 웹 검색을 실행하세요.
-
-[자료 선택 원칙]
-1. 최근 기사, 정부·공공기관 자료, 기업 공식 발표, 산업 보고서를 우선적으로 활용하세요.
-2. 최근 90일 이내 자료를 우선적으로 확인하세요.
-3. 최신 자료가 부족하면 최근 1년 이내 자료를 보완적으로 활용하세요.
-4. 한국 시장과 한국 소비자의 상황을 우선적으로 분석하세요.
-5. 확인되지 않은 통계 수치나 URL을 임의로 만들지 마세요.
-6. 사실과 해석을 구분하세요.
-7. 출처가 약한 자료는 핵심 근거로 사용하지 마세요.
-8. 핵심 판단에는 인라인 citation을 남기세요.
-
-[분량 원칙]
-1. 조사 결과는 충분히 구체적으로 작성하되 과도하게 장황하게 쓰지 마세요.
-2. 핵심 변수는 4~6개로 제한하세요.
-3. 같은 내용을 반복하지 마세요.
-      `.trim(),
-
       input: `
-다음 창업 아이템의 최신 경제 환경과 향후 사업 전망을 조사하세요.
+당신은 한국 시장을 중심으로 창업 아이템의 외부 환경을 분석하는 리서치 애널리스트입니다.
 
-${startupContext}
+아래 창업 아이템에 대해 분석 시점에 확인 가능한 최신 공개 자료를 웹에서 검색하세요.
 
-[조사 영역]
-- 최근 산업 동향
-- 고객층의 소비 행태와 지불 여력
+${context}
+
+[검색 원칙]
+1. 반드시 웹 검색을 실행하세요.
+2. 최근 기사, 공공기관 자료, 기업 공식 발표, 산업 보고서를 우선적으로 확인하세요.
+3. 가능하면 최근 90일 이내 자료를 우선적으로 반영하세요.
+4. 최근 90일 이내 자료가 부족하면 최근 1년 이내 자료를 보완적으로 활용하세요.
+5. 시장 규모를 단정하지 말고, 확인 가능한 자료와 불확실성을 구분하세요.
+6. 한국 시장과 한국 소비자의 상황을 우선적으로 분석하세요.
+7. 선택 아이템과 직접 관련된 산업 동향뿐 아니라 고객층의 소비 여력, 비용 부담, 규제, 기술 변화, 경쟁 환경도 확인하세요.
+8. 출처가 불명확한 수치나 과장된 홍보 문구는 핵심 근거로 사용하지 마세요.
+
+[조사해야 할 내용]
+- 선택 아이템과 관련된 최근 산업 동향
+- 고객층의 소비 행태 또는 지불 여력 변화
 - 관련 기술 변화
-- 정책·규제 변화
-- 경쟁 서비스와 대체재
-- 비용 구조 변화
-- 주요 사업 기회
-- 단기·중기·장기 리스크
+- 관련 정책 또는 규제 변화
+- 경쟁 서비스 또는 대체재 변화
+- 사업 기회와 주요 리스크
+- 단기, 중기, 장기 전망에 영향을 줄 핵심 변수
+
+[작성 형식]
+- 한국어로 작성하세요.
+- 조사 결과를 충분히 구체적으로 작성하세요.
+- 각 판단의 근거가 되는 출처를 인라인 citation으로 남기세요.
+- 사실, 해석, 불확실성을 구분하세요.
       `.trim(),
 
       max_output_tokens:
-        maxOutputTokens
+        5000
     });
-}
-
-async function researchLatestTrends(
-  profile,
-  idea,
-  analysis
-) {
-  let response =
-    await requestResearch(
-      profile,
-      idea,
-      analysis,
-      RESEARCH_INITIAL_MAX_TOKENS
-    );
-
-  if (
-    response
-      ?.status ===
-      "incomplete" &&
-    getIncompleteReason(
-      response
-    ) ===
-      "max_output_tokens"
-  ) {
-    console.warn(
-      "웹 리서치 응답이 토큰 한도에 도달했습니다. 한도를 늘려 한 번 다시 요청합니다."
-    );
-
-    response =
-      await requestResearch(
-        profile,
-        idea,
-        analysis,
-        RESEARCH_RETRY_MAX_TOKENS
-      );
-  }
-
-  if (
-    response
-      ?.status ===
-    "incomplete"
-  ) {
-    throw new Error(
-      `웹 리서치 응답이 중간에 종료되었습니다. 사유: ${
-        getIncompleteReason(
-          response
-        ) ||
-        "알 수 없음"
-      }`
-    );
-  }
 
   return {
     researchText:
@@ -882,31 +495,24 @@ async function researchLatestTrends(
       ),
 
     sources:
-      mergeSources(
-        extractCitationSources(
-          response
-        ),
-
-        extractSearchCallSources(
-          response
-        )
+      extractUrlCitations(
+        response
       )
   };
 }
 
 /* =========================================================
-   6. Stage 2: Structured Synthesis
+   4. 검색 결과 구조화
 ========================================================= */
 
-async function requestStructuredForecast(
+async function structureForecast(
   profile,
   idea,
   analysis,
   researchText,
-  sources,
-  maxOutputTokens
+  sources
 ) {
-  const startupContext =
+  const context =
     makeStartupContext(
       profile,
       idea,
@@ -916,59 +522,52 @@ async function requestStructuredForecast(
   const sourceText =
     sources
       .map(
-        (
-          source,
-          index
-        ) =>
-          `${index + 1}. ${source.title}\n${source.url}`
+        (source, index) =>
+          `${index + 1}. ${source.title}\n   ${source.url}`
       )
-      .join(
-        "\n\n"
-      );
+      .join("\n");
 
-  return client
-    .responses
-    .create({
+  const response =
+    await client.responses.create({
       model:
-        STRUCTURE_MODEL,
+        FORECAST_STRUCTURE_MODEL,
 
       instructions: `
-당신은 창업 아이템의 경제 전망을 정리하는 전략 분석가입니다.
+당신은 창업 아이템의 경제 환경 전망을 작성하는 분석가입니다.
 
-반드시 제공된 최신 웹 조사 결과만을 근거로 작성하세요.
-
-[작성 원칙]
-1. 모든 문장은 한국어로 작성하세요.
-2. 확인되지 않은 통계나 사실을 임의로 만들지 마세요.
-3. 사실과 전망을 구분하세요.
-4. 핵심 경제·산업 변수는 서로 다른 관점에서 선정하세요.
-5. 영향도와 방향을 기계적으로 반복하지 마세요.
-6. 영향도는 변수의 성격에 맞는 자연스러운 표현으로 작성하세요.
-7. 방향은 긍정, 부정, 양면적, 불확실 등의 의미가 명확히 드러나도록 작성하세요.
-8. 출력은 지정된 JSON Schema를 정확히 따라야 합니다.
+반드시 제공된 최신 웹 조사 결과만을 근거로 판단하세요.
+확인되지 않은 수치를 임의로 만들지 마세요.
+모든 문장은 한국어로 작성하세요.
+출력은 반드시 지정된 JSON Schema를 따라야 합니다.
+각 문장은 간결하지만 구체적으로 작성하세요.
       `.trim(),
 
       input: `
 [창업 아이템 컨텍스트]
-${startupContext}
+${context}
 
 [최신 웹 조사 결과]
 ${researchText}
 
-[실제 검색 과정에서 확보한 출처]
-${sourceText || "표시 가능한 출처 없음"}
+[검색 과정에서 확보한 출처]
+${sourceText || "출처 목록 없음"}
 
 [작성 요청]
 다음 내용을 구조화하세요.
 
-1. 최근 동향 요약
-2. 핵심 경제·산업 변수 4~6개
+1. 최근 시장 동향 요약
+2. 핵심 경제·산업 변수 4~7개
 3. 단기 전망: 향후 6개월
 4. 중기 전망: 향후 1~2년
 5. 장기 전망: 향후 3년 이상
 6. 낙관적·기준·비관적 시나리오
-7. 지금 실행할 대응 행동 4~6개
-8. 핵심 관찰 내용 3~8개
+7. 지금 실행할 대응 행동 4~7개
+8. 분석 당시 핵심 관찰 내용 3~8개
+
+[주의]
+- 최신 조사 결과에서 직접 확인되지 않은 내용을 확정적으로 쓰지 마세요.
+- 정량 수치를 사용할 때는 조사 결과에 포함된 수치만 사용하세요.
+- 전망은 예측이므로 불확실성을 명확히 표현하세요.
       `.trim(),
 
       text: {
@@ -988,139 +587,143 @@ ${sourceText || "표시 가능한 출처 없음"}
       },
 
       max_output_tokens:
-        maxOutputTokens
+        3800
     });
-}
 
-async function structureForecast(
-  profile,
-  idea,
-  analysis,
-  researchText,
-  sources
-) {
-  let response =
-    await requestStructuredForecast(
-      profile,
-      idea,
-      analysis,
-      researchText,
-      sources,
-      STRUCTURE_INITIAL_MAX_TOKENS
-    );
-
-  if (
-    response
-      ?.status ===
-      "incomplete" &&
-    getIncompleteReason(
-      response
-    ) ===
-      "max_output_tokens"
-  ) {
-    console.warn(
-      "경제 전망 구조화 응답이 토큰 한도에 도달했습니다. 한도를 늘려 한 번 다시 요청합니다."
-    );
-
-    response =
-      await requestStructuredForecast(
-        profile,
-        idea,
-        analysis,
-        researchText,
-        sources,
-        STRUCTURE_RETRY_MAX_TOKENS
-      );
-  }
-
-  return parseStructuredResult(
+  return parseStructuredOutput(
     response
   );
 }
 
 /* =========================================================
-   7. Final Forecast
+   5. 데이터 정규화
 ========================================================= */
 
-async function createForecast(
-  profile,
-  idea,
-  analysis
+function normalizeForecast(
+  structuredForecast,
+  sources,
+  fetchedAt
 ) {
-  const {
-    researchText,
-    sources
-  } =
-    await researchLatestTrends(
-      profile,
-      idea,
-      analysis
-    );
-
-  const structured =
-    await structureForecast(
-      profile,
-      idea,
-      analysis,
-      researchText,
-      sources
-    );
-
   return {
     trendSummary:
-      safeText(
-        structured
-          ?.trendSummary
+      getSafeText(
+        structuredForecast?.trendSummary
       ),
 
     economicFactors:
-      safeArray(
-        structured
-          ?.economicFactors
+      getSafeArray(
+        structuredForecast?.economicFactors
       ),
 
-    outlook:
-      structured
-        ?.outlook ||
-      {},
+    outlook: {
+      shortTerm:
+        getSafeText(
+          structuredForecast
+            ?.outlook
+            ?.shortTerm
+        ),
 
-    scenarios:
-      structured
-        ?.scenarios ||
-      {},
+      midTerm:
+        getSafeText(
+          structuredForecast
+            ?.outlook
+            ?.midTerm
+        ),
+
+      longTerm:
+        getSafeText(
+          structuredForecast
+            ?.outlook
+            ?.longTerm
+        )
+    },
+
+    scenarios: {
+      optimistic: {
+        situation:
+          getSafeText(
+            structuredForecast
+              ?.scenarios
+              ?.optimistic
+              ?.situation
+          ),
+
+        strategy:
+          getSafeText(
+            structuredForecast
+              ?.scenarios
+              ?.optimistic
+              ?.strategy
+          )
+      },
+
+      baseline: {
+        situation:
+          getSafeText(
+            structuredForecast
+              ?.scenarios
+              ?.baseline
+              ?.situation
+          ),
+
+        strategy:
+          getSafeText(
+            structuredForecast
+              ?.scenarios
+              ?.baseline
+              ?.strategy
+          )
+      },
+
+      pessimistic: {
+        situation:
+          getSafeText(
+            structuredForecast
+              ?.scenarios
+              ?.pessimistic
+              ?.situation
+          ),
+
+        strategy:
+          getSafeText(
+            structuredForecast
+              ?.scenarios
+              ?.pessimistic
+              ?.strategy
+          )
+      }
+    },
 
     actions:
-      safeArray(
-        structured
-          ?.actions
+      getSafeArray(
+        structuredForecast?.actions
       ),
 
     dataSnapshot:
-      structured
-        ?.dataSnapshot ||
-      {
-        observations:
-          []
-      },
+      structuredForecast
+        ?.dataSnapshot || {
+          observations: []
+        },
 
-    sources,
+    sources:
+      getSafeArray(
+        sources
+      ),
 
-    fetchedAt:
-      new Date()
-        .toISOString(),
+    fetchedAt,
 
     modelUsed: {
-      research:
-        RESEARCH_MODEL,
+      search:
+        FORECAST_SEARCH_MODEL,
 
       structure:
-        STRUCTURE_MODEL
+        FORECAST_STRUCTURE_MODEL
     }
   };
 }
 
 /* =========================================================
-   8. Vercel Handler
+   6. Vercel API Handler
 ========================================================= */
 
 export default async function handler(
@@ -1128,13 +731,10 @@ export default async function handler(
   res
 ) {
   if (
-    req.method !==
-    "POST"
+    req.method !== "POST"
   ) {
     return res
-      .status(
-        405
-      )
+      .status(405)
       .json({
         error:
           "POST 요청만 허용됩니다."
@@ -1147,55 +747,74 @@ export default async function handler(
       idea,
       analysis
     } =
-      parseRequestBody(
-        req
-      );
+      req.body || {};
 
     if (
       !profile ||
-      !idea ||
-      !analysis
+      !idea
     ) {
       return res
-        .status(
-          400
-        )
+        .status(400)
         .json({
           error:
-            "profile, idea, analysis 데이터가 모두 필요합니다."
+            "profile 또는 idea 데이터가 없습니다."
         });
     }
 
-    const forecast =
-      await createForecast(
+    const fetchedAt =
+      new Date()
+        .toISOString();
+
+    const {
+      researchText,
+      sources
+    } =
+      await researchLatestTrends(
         profile,
         idea,
         analysis
       );
 
-    return res
-      .status(
-        200
-      )
-      .json(
-        forecast
+    if (
+      sources.length === 0
+    ) {
+      console.warn(
+        "웹 검색 인용 출처를 찾지 못했습니다."
       );
-  } catch (
-    error
-  ) {
+    }
+
+    const structuredForecast =
+      await structureForecast(
+        profile,
+        idea,
+        analysis,
+        researchText,
+        sources
+      );
+
+    const normalizedForecast =
+      normalizeForecast(
+        structuredForecast,
+        sources,
+        fetchedAt
+      );
+
+    return res
+      .status(200)
+      .json(
+        normalizedForecast
+      );
+  } catch (error) {
     console.error(
       "forecast error:",
       error
     );
 
     return res
-      .status(
-        500
-      )
+      .status(500)
       .json({
         error:
-          error
-            ?.message ||
+          error.message ||
           "최신 경제 전망 분석 중 오류가 발생했습니다."
       });
   }
