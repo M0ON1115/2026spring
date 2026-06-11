@@ -69,6 +69,167 @@
       }
     }
 
+    function decodeHtmlEntities(
+      value
+    ) {
+      const textarea =
+        document.createElement(
+          "textarea"
+        );
+
+      textarea.innerHTML =
+        String(
+          value ||
+          ""
+        );
+
+      return textarea.value;
+    }
+
+    function cleanSourceTitle(
+      source,
+      index
+    ) {
+      let fallback =
+        `참고 자료 ${index + 1}`;
+
+      if (
+        safeUrl(
+          source
+            ?.url
+        )
+      ) {
+        fallback =
+          new URL(
+            source.url
+          )
+            .hostname
+            .replace(
+              /^www\./,
+              ""
+            );
+      }
+
+      let title =
+        decodeHtmlEntities(
+          source
+            ?.title ||
+          ""
+        )
+          .replace(
+            /\s+/g,
+            " "
+          )
+          .trim();
+
+      title =
+        title
+          .replace(
+            /^(?:\s*[|·•‣▪■◆◇▶▷►▸▹]+\s*)+/g,
+            ""
+          )
+          .replace(
+            /(?:\s*[|·•‣▪■◆◇▶▷►▸▹]+\s*)+$/g,
+            ""
+          )
+          .replace(
+            /\s*[|·•‣▪■◆◇▶▷►▸▹]+\s*/g,
+            " · "
+          )
+          .replace(
+            /(?:\s*·\s*){2,}/g,
+            " · "
+          )
+          .trim();
+
+      const segments =
+        title
+          .split(
+            " · "
+          )
+          .map(
+            (
+              segment
+            ) =>
+              segment.trim()
+          )
+          .filter(
+            Boolean
+          );
+
+      if (
+        segments.length >=
+        4
+      ) {
+        title =
+          segments
+            .slice(
+              0,
+              2
+            )
+            .join(
+              " · "
+            );
+      }
+
+      const meaningfulCharacters =
+        (
+          title.match(
+            /[0-9A-Za-z가-힣]/g
+          ) ||
+          []
+        )
+          .length;
+
+      if (
+        meaningfulCharacters <
+        4
+      ) {
+        return fallback;
+      }
+
+      const maxLength =
+        96;
+
+      if (
+        title.length >
+        maxLength
+      ) {
+        title =
+          `${title.slice(0, maxLength).trim()}…`;
+      }
+
+      return title;
+    }
+
+    function cleanImpactText(
+      impact
+    ) {
+      return String(
+        impact ||
+        "영향 설명 없음"
+      )
+        .replace(
+          /^(?:영향도|영향)\s*:\s*/i,
+          ""
+        )
+        .trim();
+    }
+
+    function cleanDirectionText(
+      direction
+    ) {
+      return String(
+        direction ||
+        "설명 없음"
+      )
+        .replace(
+          /^방향\s*:\s*/i,
+          ""
+        )
+        .trim();
+    }
+
     function formatDirectionSymbol(
       factor
     ) {
@@ -233,7 +394,9 @@
             createElement(
               "span",
               "impact-tag",
-              factor.impact || "영향 설명 없음"
+              cleanImpactText(
+                factor.impact
+              )
             )
           );
 
@@ -241,7 +404,7 @@
             createElement(
               "span",
               "direction-tag",
-              `방향: ${formatDirectionSymbol(factor)} ${factor.direction || "설명 없음"}`
+              `방향: ${formatDirectionSymbol(factor)} ${cleanDirectionText(factor.direction)}`
             )
           );
 
@@ -363,49 +526,96 @@
         }
       );
 
-      forecast.sources.forEach(
-        (source, index) => {
-          const item =
-            createElement(
-              "li",
-              "forecast-source-item"
-            );
+      const visibleSources =
+        [];
 
-          if (
+      const seenSources =
+        new Set();
+
+      forecast.sources.forEach(
+        (source) => {
+          const sourceKey =
             safeUrl(
               source.url
             )
+              ? source.url
+              : String(
+                  source.title ||
+                  ""
+                );
+
+          if (
+            seenSources.has(
+              sourceKey
+            )
           ) {
-            const link =
-              createElement(
-                "a",
-                "",
-                `${index + 1}. ${source.title}`
-              );
-
-            link.href =
-              source.url;
-
-            link.target =
-              "_blank";
-
-            link.rel =
-              "noopener noreferrer";
-
-            item.appendChild(link);
-          } else {
-            item.appendChild(
-              document.createTextNode(
-                `${index + 1}. ${source.title}`
-              )
-            );
+            return;
           }
 
-          get("forecastSources").appendChild(
-            item
+          seenSources.add(
+            sourceKey
+          );
+
+          visibleSources.push(
+            source
           );
         }
       );
+
+      visibleSources
+        .slice(
+          0,
+          6
+        )
+        .forEach(
+          (source, index) => {
+            const item =
+              createElement(
+                "li",
+                "forecast-source-item"
+              );
+
+            const sourceTitle =
+              cleanSourceTitle(
+                source,
+                index
+              );
+
+            if (
+              safeUrl(
+                source.url
+              )
+            ) {
+              const link =
+                createElement(
+                  "a",
+                  "",
+                  `${index + 1}. ${sourceTitle}`
+                );
+
+              link.href =
+                source.url;
+
+              link.target =
+                "_blank";
+
+              link.rel =
+                "noopener noreferrer";
+
+              item.appendChild(link);
+            } else {
+              item.appendChild(
+                document.createTextNode(
+                  `${index + 1}. ${sourceTitle}`
+                )
+              );
+            }
+
+            get("forecastSources").appendChild(
+              item
+            );
+          }
+        );
 
       get("forecastSection").classList.remove(
         "hidden"
