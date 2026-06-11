@@ -3315,7 +3315,248 @@
       );
     }
 
-    async function analyzeForecast() {
+    const FORECAST_JOB_STORAGE_KEY =
+      "kuStartupPlannerForecastJob";
+
+    const FORECAST_CACHE_DURATION_MS =
+      24 *
+      60 *
+      60 *
+      1000;
+
+    const FORECAST_POLL_INTERVAL_MS =
+      4000;
+
+    const FORECAST_JOB_EXPIRATION_MS =
+      10 *
+      60 *
+      1000;
+
+    function sleep(
+      milliseconds
+    ) {
+      return new Promise(
+        (
+          resolve
+        ) => {
+          window.setTimeout(
+            resolve,
+            milliseconds
+          );
+        }
+      );
+    }
+
+    function getForecastJobSignature() {
+      return JSON.stringify({
+        name:
+          state
+            .selectedIdea
+            ?.name ||
+          "",
+
+        summary:
+          state
+            .selectedIdea
+            ?.summary ||
+          "",
+
+        customer:
+          state
+            .selectedIdea
+            ?.customer ||
+          "",
+
+        revenue:
+          state
+            .selectedIdea
+            ?.revenue ||
+          ""
+      });
+    }
+
+    function saveStoredForecastJob(
+      job
+    ) {
+      window
+        .localStorage
+        .setItem(
+          FORECAST_JOB_STORAGE_KEY,
+          JSON.stringify(
+            job
+          )
+        );
+    }
+
+    function loadStoredForecastJob() {
+      try {
+        const raw =
+          window
+            .localStorage
+            .getItem(
+              FORECAST_JOB_STORAGE_KEY
+            );
+
+        if (!raw) {
+          return null;
+        }
+
+        const job =
+          JSON.parse(
+            raw
+          );
+
+        if (
+          !job
+            ?.responseId ||
+          !job
+            ?.startedAt ||
+          !job
+            ?.signature
+        ) {
+          return null;
+        }
+
+        if (
+          Date.now() -
+          Number(
+            job.startedAt
+          ) >
+          FORECAST_JOB_EXPIRATION_MS
+        ) {
+          clearStoredForecastJob();
+
+          return null;
+        }
+
+        return job;
+      } catch {
+        return null;
+      }
+    }
+
+    function clearStoredForecastJob() {
+      window
+        .localStorage
+        .removeItem(
+          FORECAST_JOB_STORAGE_KEY
+        );
+    }
+
+    function isForecastFresh(
+      forecast
+    ) {
+      if (
+        !forecast
+          ?.fetchedAt
+      ) {
+        return false;
+      }
+
+      const fetchedAt =
+        new Date(
+          forecast
+            .fetchedAt
+        )
+          .getTime();
+
+      if (
+        Number
+          .isNaN(
+            fetchedAt
+          )
+      ) {
+        return false;
+      }
+
+      return (
+        Date.now() -
+        fetchedAt
+      ) <
+        FORECAST_CACHE_DURATION_MS;
+    }
+
+    function setForecastPollingMessage(
+      status
+    ) {
+      if (
+        status ===
+        "queued"
+      ) {
+        get(
+          "forecastStatusText"
+        ).textContent =
+          "경제 전망 분석 요청이 접수되었습니다. 조사 순서를 기다리는 중입니다...";
+
+        return;
+      }
+
+      get(
+        "forecastStatusText"
+      ).textContent =
+        "최신 공개 자료를 검색하고 핵심 근거를 선별하는 중입니다...";
+    }
+
+    async function pollForecastJob(
+      job
+    ) {
+      while (
+        Date.now() -
+        Number(
+          job.startedAt
+        ) <
+        FORECAST_JOB_EXPIRATION_MS
+      ) {
+        const result =
+          await callApi(
+            "/api/forecast/status",
+            {
+              responseId:
+                job.responseId
+            }
+          );
+
+        if (
+          result.status ===
+            "queued" ||
+          result.status ===
+            "in_progress"
+        ) {
+          setForecastPollingMessage(
+            result.status
+          );
+
+          await sleep(
+            FORECAST_POLL_INTERVAL_MS
+          );
+
+          continue;
+        }
+
+        if (
+          result.status ===
+            "completed" &&
+          result.forecast
+        ) {
+          return result
+            .forecast;
+        }
+
+        throw new Error(
+          result.error ||
+          "경제 전망 분석 작업이 정상적으로 완료되지 않았습니다."
+        );
+      }
+
+      throw new Error(
+        "경제 전망 분석이 예상보다 오래 걸리고 있습니다. 잠시 후 다시 버튼을 누르면 진행 중인 작업을 이어서 확인합니다."
+      );
+    }
+
+    async function analyzeForecast({
+      forceRefresh =
+        false
+    } = {}) {
       if (
         !state.profile ||
         !state.selectedIdea ||
@@ -3328,23 +3569,55 @@
         return;
       }
 
+      if (
+        !forceRefresh &&
+        isForecastFresh(
+          state.forecast
+        )
+      ) {
+        renderForecast();
+
+        showStatus(
+          "forecastStatusCard",
+          "forecastStatusText",
+          "24시간 이내에 생성된 최신 경제 전망을 불러왔습니다.",
+          true
+        );
+
+        return;
+      }
+
       console.info(
-        "최신 경제 동향 분석 버튼 클릭 감지"
+        "최신 경제 동향 background 분석 시작"
       );
 
-      get("forecastBtn").disabled =
+      get(
+        "forecastBtn"
+      ).disabled =
         true;
 
-      get("refreshForecastBtn").disabled =
+      get(
+        "refreshForecastBtn"
+      ).disabled =
         true;
 
       startForecastLoading();
 
       try {
-        state.forecast =
-          normalizeForecast(
+        const signature =
+          getForecastJobSignature();
+
+        let job =
+          loadStoredForecastJob();
+
+        if (
+          !job ||
+          job.signature !==
+            signature
+        ) {
+          const startResult =
             await callApi(
-              "/api/forecast",
+              "/api/forecast/start",
               {
                 profile:
                   state.profile,
@@ -3355,8 +3628,32 @@
                 analysis:
                   state.analysis
               }
+            );
+
+          job = {
+            responseId:
+              startResult
+                .responseId,
+
+            startedAt:
+              Date.now(),
+
+            signature
+          };
+
+          saveStoredForecastJob(
+            job
+          );
+        }
+
+        state.forecast =
+          normalizeForecast(
+            await pollForecastJob(
+              job
             )
           );
+
+        clearStoredForecastJob();
 
         renderForecast();
 
@@ -3380,7 +3677,7 @@
         );
 
         console.error(
-          "경제 전망 분석 오류:",
+          "경제 전망 background 분석 오류:",
           error
         );
 
@@ -3388,10 +3685,14 @@
           `경제 전망 분석에 실패했습니다: ${error.message}`
         );
       } finally {
-        get("forecastBtn").disabled =
+        get(
+          "forecastBtn"
+        ).disabled =
           false;
 
-        get("refreshForecastBtn").disabled =
+        get(
+          "refreshForecastBtn"
+        ).disabled =
           false;
       }
     }
@@ -4726,12 +5027,22 @@
 
     get("forecastBtn").addEventListener(
       "click",
-      analyzeForecast
+      () => {
+        analyzeForecast({
+          forceRefresh:
+            false
+        });
+      }
     );
 
     get("refreshForecastBtn").addEventListener(
       "click",
-      analyzeForecast
+      () => {
+        analyzeForecast({
+          forceRefresh:
+            true
+        });
+      }
     );
 
     get("saveProjectBtn").addEventListener(
