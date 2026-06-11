@@ -232,8 +232,16 @@
           meta.appendChild(
             createElement(
               "span",
+              "impact-tag",
+              factor.impact || "영향 설명 없음"
+            )
+          );
+
+          meta.appendChild(
+            createElement(
+              "span",
               "direction-tag",
-              `방향: ${formatDirectionSymbol(factor)}`
+              `방향: ${formatDirectionSymbol(factor)} ${factor.direction || "설명 없음"}`
             )
           );
 
