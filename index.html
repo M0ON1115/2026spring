@@ -2,9 +2,15 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>KU STARTUP PLANNER</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    KU STARTUP PLANNER
+  </title>
 
   <style>
     * {
@@ -13,14 +19,14 @@
 
     body {
       margin: 0;
+      background: #faf7f8;
+      color: #1f2937;
       font-family:
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
         Pretendard,
         sans-serif;
-      background: #faf7f8;
-      color: #1f2937;
     }
 
     button,
@@ -28,6 +34,10 @@
     select,
     textarea {
       font-family: inherit;
+    }
+
+    button {
+      cursor: pointer;
     }
 
     .hidden {
@@ -40,17 +50,29 @@
       padding: 40px 20px 80px;
     }
 
-    /* ======================================================
+    /* =====================================================
        Hero
-    ====================================================== */
+    ===================================================== */
 
     .hero {
-      margin-bottom: 28px;
-      padding: 34px 36px 48px;
+      margin-bottom: 26px;
+      padding: 34px 36px 46px;
       border-radius: 28px;
-      background: linear-gradient(135deg, #862633, #5f1b25);
+      background:
+        linear-gradient(
+          135deg,
+          #862633,
+          #5f1b25
+        );
       color: white;
-      box-shadow: 0 20px 45px rgba(134, 38, 51, 0.24);
+      box-shadow:
+        0 20px 45px
+        rgba(
+          134,
+          38,
+          51,
+          0.24
+        );
     }
 
     .topbar {
@@ -62,7 +84,13 @@
     }
 
     .brand-text {
-      color: rgba(255, 255, 255, 0.9);
+      color:
+        rgba(
+          255,
+          255,
+          255,
+          0.9
+        );
       font-size: 13px;
       font-weight: 900;
       letter-spacing: 0.12em;
@@ -72,37 +100,56 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 9px;
       flex-wrap: wrap;
+      gap: 9px;
     }
 
     .topbar-btn {
       padding: 9px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.32);
+      border: 1px solid
+        rgba(
+          255,
+          255,
+          255,
+          0.32
+        );
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.12);
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          0.12
+        );
       color: white;
       font-size: 13px;
       font-weight: 800;
-      cursor: pointer;
-      transition:
-        background 0.15s,
-        transform 0.15s;
     }
 
     .topbar-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-1px);
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          0.2
+        );
     }
 
     .user-chip {
       display: inline-flex;
       align-items: center;
       max-width: 240px;
-      padding: 8px 12px;
       overflow: hidden;
+      padding: 8px 12px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.16);
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          0.16
+        );
       color: white;
       font-size: 13px;
       font-weight: 700;
@@ -114,7 +161,13 @@
       display: inline-flex;
       margin-bottom: 16px;
       padding: 7px 12px;
-      border: 1px solid rgba(255, 255, 255, 0.34);
+      border: 1px solid
+        rgba(
+          255,
+          255,
+          255,
+          0.34
+        );
       border-radius: 999px;
       color: #f9e8ec;
       font-size: 12px;
@@ -136,29 +189,29 @@
       line-height: 1.7;
     }
 
-    .hero-actions {
+    .hero-actions,
+    .actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
+    }
+
+    .hero-actions {
       margin-top: 28px;
     }
 
+    .actions {
+      margin-top: 22px;
+    }
+
     .hero-primary,
-    .hero-secondary {
+    .hero-secondary,
+    .primary-btn,
+    .secondary-btn {
       padding: 13px 20px;
       border-radius: 999px;
       font-size: 15px;
-      font-weight: 900;
-      cursor: pointer;
-      transition:
-        transform 0.12s,
-        opacity 0.12s,
-        background 0.12s;
-    }
-
-    .hero-primary:hover,
-    .hero-secondary:hover {
-      transform: translateY(-1px);
+      font-weight: 800;
     }
 
     .hero-primary {
@@ -168,17 +221,48 @@
     }
 
     .hero-secondary {
-      border: 1px solid rgba(255, 255, 255, 0.32);
-      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid
+        rgba(
+          255,
+          255,
+          255,
+          0.32
+        );
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          0.12
+        );
       color: white;
     }
 
-    /* ======================================================
-       Common
-    ====================================================== */
+    .primary-btn {
+      border: none;
+      background: #862633;
+      color: white;
+    }
+
+    .secondary-btn {
+      border: none;
+      background: #f3e8eb;
+      color: #862633;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* =====================================================
+       Common layout
+    ===================================================== */
 
     .value-grid,
+    .form-grid,
     .cards,
+    .score-dashboard,
     .analysis-grid,
     .forecast-factor-grid,
     .forecast-outlook-grid,
@@ -188,19 +272,99 @@
     }
 
     .value-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns:
+        repeat(
+          3,
+          minmax(
+            0,
+            1fr
+          )
+        );
       margin-bottom: 24px;
     }
 
-    .value-card,
+    .form-grid {
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(
+            0,
+            1fr
+          )
+        );
+    }
+
+    .cards {
+      grid-template-columns:
+        repeat(
+          3,
+          minmax(
+            0,
+            1fr
+          )
+        );
+      margin-top: 20px;
+    }
+
+    .score-dashboard,
+    .analysis-grid,
+    .forecast-factor-grid {
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(
+            0,
+            1fr
+          )
+        );
+    }
+
+    .forecast-outlook-grid,
+    .forecast-scenario-grid {
+      grid-template-columns:
+        repeat(
+          3,
+          minmax(
+            0,
+            1fr
+          )
+        );
+    }
+
     .panel,
-    .status-card,
+    .value-card,
     .card,
+    .status-card,
     .analysis-card,
     .forecast-card {
       border: 1px solid #e5e7eb;
       background: white;
-      box-shadow: 0 8px 22px rgba(134, 38, 51, 0.05);
+      box-shadow:
+        0 8px 22px
+        rgba(
+          134,
+          38,
+          51,
+          0.05
+        );
+    }
+
+    .panel {
+      margin-bottom: 24px;
+      padding: 28px;
+      border-radius: 24px;
+    }
+
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    .panel-desc {
+      margin: 0 0 22px;
+      color: #6b7280;
+      line-height: 1.65;
     }
 
     .value-card {
@@ -221,40 +385,9 @@
       line-height: 1.65;
     }
 
-    .panel {
-      margin-bottom: 24px;
-      padding: 28px;
-      border-radius: 24px;
-    }
-
-    .panel h2 {
-      margin: 0 0 8px;
-      font-size: 24px;
-      letter-spacing: -0.03em;
-    }
-
-    .panel-desc {
-      margin: 0 0 24px;
-      color: #6b7280;
-      line-height: 1.6;
-    }
-
-    .section-heading {
-      margin: 28px 0 12px;
-      color: #862633;
-      font-size: 19px;
-      letter-spacing: -0.025em;
-    }
-
-    /* ======================================================
+    /* =====================================================
        Form
-    ====================================================== */
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-    }
+    ===================================================== */
 
     .form-group {
       display: flex;
@@ -282,16 +415,20 @@
       outline: none;
       background: white;
       font-size: 15px;
-      transition:
-        border-color 0.15s,
-        box-shadow 0.15s;
     }
 
     input:focus,
     select:focus,
     textarea:focus {
       border-color: #862633;
-      box-shadow: 0 0 0 3px rgba(134, 38, 51, 0.12);
+      box-shadow:
+        0 0 0 3px
+        rgba(
+          134,
+          38,
+          51,
+          0.12
+        );
     }
 
     textarea {
@@ -299,14 +436,27 @@
       resize: vertical;
     }
 
+    .hint {
+      margin: 3px 0 0;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
     .checklist {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns:
+        repeat(
+          3,
+          minmax(
+            0,
+            1fr
+          )
+        );
       gap: 10px;
       padding: 14px;
       border: 1px solid #d1d5db;
       border-radius: 16px;
-      background: white;
     }
 
     .check-item {
@@ -319,8 +469,6 @@
       background: #f9fafb;
       color: #374151;
       font-size: 14px;
-      cursor: pointer;
-      user-select: none;
     }
 
     .check-item input {
@@ -329,71 +477,17 @@
       accent-color: #862633;
     }
 
-    .hint {
-      margin: 4px 0 0;
-      color: #6b7280;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    /* ======================================================
-       Buttons
-    ====================================================== */
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 24px;
-    }
-
-    .primary-btn,
-    .secondary-btn {
-      padding: 13px 20px;
-      border: none;
-      border-radius: 999px;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      transition:
-        transform 0.12s,
-        opacity 0.12s,
-        background 0.12s;
-    }
-
-    .primary-btn:hover,
-    .secondary-btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .primary-btn:disabled,
-    .secondary-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .primary-btn {
-      background: #862633;
-      color: white;
-    }
-
-    .secondary-btn {
-      background: #f3e8eb;
-      color: #862633;
-    }
-
-    /* ======================================================
-       Status
-    ====================================================== */
+    /* =====================================================
+       Status cards
+    ===================================================== */
 
     .status-card {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 24px;
-      padding: 18px 20px;
-      border-radius: 20px;
+      margin-bottom: 18px;
+      padding: 17px 19px;
+      border-radius: 18px;
       color: #862633;
       font-size: 14px;
       font-weight: 700;
@@ -407,7 +501,11 @@
       border: 3px solid #e7c5cb;
       border-top-color: #862633;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation:
+        spin
+        0.8s
+        linear
+        infinite;
     }
 
     .complete-icon {
@@ -424,28 +522,28 @@
       font-weight: 900;
     }
 
-    .status-card.complete .loader {
+    .status-card.complete
+    .loader {
       display: none;
     }
 
-    .status-card:not(.complete) .complete-icon {
+    .status-card:not(.complete)
+    .complete-icon {
       display: none;
     }
 
     @keyframes spin {
       to {
-        transform: rotate(360deg);
+        transform:
+          rotate(
+            360deg
+          );
       }
     }
 
-    /* ======================================================
-       Recommendations
-    ====================================================== */
-
-    .cards {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin-top: 20px;
-    }
+    /* =====================================================
+       Recommendation cards
+    ===================================================== */
 
     .card {
       display: flex;
@@ -465,7 +563,7 @@
       margin: 0;
       color: #4b5563;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
     .reason-list {
@@ -493,16 +591,48 @@
       font-weight: 700;
     }
 
-    /* ======================================================
-       Analysis
-    ====================================================== */
+    /* =====================================================
+       Workspace tabs
+    ===================================================== */
 
-    .score-dashboard {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 18px;
+    .workspace-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e5e7eb;
     }
+
+    .workspace-tab {
+      padding: 11px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      background: #f9fafb;
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .workspace-tab.active {
+      border-color: #862633;
+      background: #862633;
+      color: white;
+    }
+
+    .workspace-tab:disabled {
+      opacity: 0.45;
+    }
+
+    .tab-badge {
+      margin-left: 5px;
+      font-size: 12px;
+      opacity: 0.86;
+    }
+
+    /* =====================================================
+       Basic analysis tab
+    ===================================================== */
 
     .score-item {
       padding: 15px;
@@ -538,40 +668,41 @@
       height: 100%;
       border-radius: 999px;
       background: #862633;
-      transition: width 0.4s ease;
     }
 
     .summary-card {
       margin-top: 18px;
       padding: 18px;
       border: 1px solid #e7c5cb;
-      border-radius: 20px;
+      border-radius: 18px;
       background: #fbf4f5;
       color: #4b5563;
       line-height: 1.7;
     }
 
-    .summary-card strong {
-      color: #862633;
-    }
-
     .analysis-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      margin-top: 20px;
+      margin-top: 18px;
     }
 
     .analysis-card {
       padding: 18px;
-      border-radius: 20px;
+      border-radius: 18px;
     }
 
-    .analysis-card h3 {
-      margin: 0 0 10px;
+    .analysis-card h3,
+    .forecast-card h4,
+    .section-heading {
       color: #862633;
-      font-size: 17px;
     }
 
-    .analysis-card p {
+    .analysis-card h3,
+    .forecast-card h4 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .analysis-card p,
+    .forecast-card p {
       margin: 0;
       color: #4b5563;
       font-size: 14px;
@@ -579,20 +710,55 @@
       white-space: pre-wrap;
     }
 
-    /* ======================================================
-       Forecast
-    ====================================================== */
+    .result-box {
+      margin-top: 18px;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      background: #f9fafb;
+      line-height: 1.75;
+    }
+
+    .report-box h3 {
+      margin: 22px 0 8px;
+      color: #862633;
+      font-size: 18px;
+    }
+
+    .report-box p {
+      margin: 0 0 12px;
+      color: #374151;
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+
+    /* =====================================================
+       Forecast tab
+    ===================================================== */
+
+    .forecast-intro {
+      margin-bottom: 18px;
+      padding: 17px;
+      border: 1px solid #e7c5cb;
+      border-radius: 16px;
+      background: #fbf4f5;
+      color: #4b5563;
+      font-size: 14px;
+      line-height: 1.7;
+    }
 
     .forecast-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
-    .forecast-meta-chip {
+    .forecast-meta-chip,
+    .impact-tag,
+    .direction-tag {
       display: inline-flex;
-      padding: 7px 10px;
+      padding: 6px 9px;
       border-radius: 999px;
       background: #f3e8eb;
       color: #862633;
@@ -611,13 +777,9 @@
       white-space: pre-wrap;
     }
 
-    .forecast-factor-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .forecast-outlook-grid,
-    .forecast-scenario-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .section-heading {
+      margin: 26px 0 12px;
+      font-size: 18px;
     }
 
     .forecast-card {
@@ -625,36 +787,11 @@
       border-radius: 18px;
     }
 
-    .forecast-card h4 {
-      margin: 0 0 9px;
-      color: #862633;
-      font-size: 16px;
-    }
-
-    .forecast-card p {
-      margin: 0;
-      color: #4b5563;
-      font-size: 14px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-    }
-
     .forecast-card-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 7px;
       margin-bottom: 9px;
-    }
-
-    .impact-tag,
-    .direction-tag {
-      display: inline-flex;
-      padding: 5px 8px;
-      border-radius: 999px;
-      background: #f3e8eb;
-      color: #862633;
-      font-size: 12px;
-      font-weight: 800;
     }
 
     .forecast-action-list,
@@ -674,7 +811,7 @@
       background: white;
       color: #4b5563;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
     .forecast-action-item::before {
@@ -695,57 +832,17 @@
       text-decoration: underline;
     }
 
-    /* ======================================================
-       Business plan
-    ====================================================== */
-
-    .result-box {
-      margin-top: 18px;
-      padding: 20px;
-      border: 1px solid #e5e7eb;
-      border-radius: 20px;
-      background: #f9fafb;
-      line-height: 1.75;
-      white-space: pre-wrap;
+    .forecast-source-note {
+      display: block;
+      margin-top: 5px;
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.55;
     }
 
-    .report-box h3 {
-      margin: 22px 0 8px;
-      color: #862633;
-      font-size: 18px;
-    }
-
-    .report-box p {
-      margin: 0 0 12px;
-      color: #374151;
-      line-height: 1.75;
-    }
-
-    .report-table {
-      width: 100%;
-      margin: 14px 0 18px;
-      border-collapse: collapse;
-      background: white;
-    }
-
-    .report-table th,
-    .report-table td {
-      padding: 10px 12px;
-      border: 1px solid #e5e7eb;
-      text-align: left;
-      vertical-align: top;
-      font-size: 14px;
-    }
-
-    .report-table th {
-      width: 160px;
-      background: #fbf4f5;
-      color: #862633;
-    }
-
-    /* ======================================================
+    /* =====================================================
        Modal
-    ====================================================== */
+    ===================================================== */
 
     .modal-backdrop {
       position: fixed;
@@ -755,23 +852,56 @@
       align-items: center;
       justify-content: center;
       padding: 22px;
-      background: rgba(17, 24, 39, 0.58);
+      background:
+        rgba(
+          17,
+          24,
+          39,
+          0.58
+        );
     }
 
     .auth-modal,
     .projects-modal {
       position: relative;
-      width: min(100%, 460px);
+      width: min(
+        100%,
+        460px
+      );
       padding: 30px;
       border-radius: 24px;
       background: white;
-      box-shadow: 0 24px 70px rgba(17, 24, 39, 0.22);
+      box-shadow:
+        0 24px 70px
+        rgba(
+          17,
+          24,
+          39,
+          0.22
+        );
     }
 
     .projects-modal {
-      width: min(100%, 760px);
-      max-height: min(82vh, 760px);
+      width: min(
+        100%,
+        760px
+      );
+      max-height: 82vh;
       overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: #f3f4f6;
+      color: #4b5563;
+      font-size: 22px;
     }
 
     .auth-modal-badge {
@@ -788,33 +918,15 @@
     .auth-modal h2,
     .projects-modal h2 {
       margin: 18px 0 10px;
-      color: #1f2937;
       font-size: 24px;
       letter-spacing: -0.04em;
     }
 
     .auth-modal p,
     .projects-modal-desc {
-      margin: 0 0 22px;
       color: #6b7280;
       font-size: 14px;
       line-height: 1.7;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 14px;
-      right: 16px;
-      width: 34px;
-      height: 34px;
-      padding: 0;
-      border: none;
-      border-radius: 50%;
-      background: #f3f4f6;
-      color: #4b5563;
-      font-size: 22px;
-      line-height: 1;
-      cursor: pointer;
     }
 
     .google-login-btn,
@@ -828,7 +940,6 @@
       border: none;
       border-radius: 14px;
       font-weight: 800;
-      cursor: pointer;
     }
 
     .google-login-btn {
@@ -855,9 +966,9 @@
       font-weight: 900;
     }
 
-    /* ======================================================
+    /* =====================================================
        Project dashboard
-    ====================================================== */
+    ===================================================== */
 
     .project-list {
       display: grid;
@@ -875,40 +986,29 @@
     }
 
     .project-card {
-      padding: 19px;
+      padding: 18px;
       border: 1px solid #e5e7eb;
-      border-radius: 20px;
+      border-radius: 19px;
       background: white;
-      box-shadow: 0 7px 20px rgba(134, 38, 51, 0.045);
     }
 
     .project-card-top {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 18px;
-    }
-
-    .project-card-main {
-      min-width: 0;
-      flex: 1;
+      gap: 16px;
     }
 
     .project-card h3 {
-      margin: 0 0 9px;
-      color: #1f2937;
+      margin: 0 0 8px;
       font-size: 17px;
     }
 
     .project-selected-idea {
-      margin: 0 0 11px;
+      margin: 0 0 10px;
       color: #4b5563;
       font-size: 13px;
       line-height: 1.6;
-    }
-
-    .project-selected-idea strong {
-      color: #862633;
     }
 
     .project-meta,
@@ -918,12 +1018,6 @@
       gap: 7px;
       color: #6b7280;
       font-size: 12px;
-    }
-
-    .project-dates {
-      gap: 8px 16px;
-      margin-top: 11px;
-      color: #9ca3af;
     }
 
     .project-status,
@@ -943,9 +1037,7 @@
 
     .project-card-actions {
       display: flex;
-      flex: 0 0 auto;
       flex-wrap: wrap;
-      justify-content: flex-end;
       gap: 7px;
     }
 
@@ -957,7 +1049,6 @@
       color: white;
       font-size: 12px;
       font-weight: 800;
-      cursor: pointer;
     }
 
     .project-delete-btn {
@@ -966,12 +1057,11 @@
     }
 
     .project-progress-wrap {
-      margin-top: 16px;
+      margin-top: 15px;
     }
 
     .project-progress-head {
       display: flex;
-      align-items: center;
       justify-content: space-between;
       gap: 12px;
       margin-bottom: 8px;
@@ -985,7 +1075,7 @@
     }
 
     .project-next-action {
-      margin-top: 14px;
+      margin-top: 13px;
       padding: 12px 14px;
       border-radius: 14px;
       background: #fbf4f5;
@@ -994,15 +1084,20 @@
       line-height: 1.6;
     }
 
-    .project-next-action strong {
-      color: #862633;
+    .project-dates {
+      gap: 8px 16px;
+      margin-top: 11px;
+      color: #9ca3af;
     }
 
-    /* ======================================================
+    /* =====================================================
        Responsive
-    ====================================================== */
+    ===================================================== */
 
-    @media (max-width: 900px) {
+    @media (
+      max-width:
+        900px
+    ) {
       .value-grid,
       .form-grid,
       .checklist,
@@ -1012,7 +1107,8 @@
       .forecast-factor-grid,
       .forecast-outlook-grid,
       .forecast-scenario-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+          1fr;
       }
 
       .hero h1 {
@@ -1025,8 +1121,7 @@
         flex-direction: column;
       }
 
-      .auth-actions,
-      .project-card-actions {
+      .auth-actions {
         justify-content: flex-start;
       }
     }
@@ -1082,10 +1177,9 @@
       </h1>
 
       <p>
-        전공, 자격증, 초기 자본, 투입 가능 시간을 입력하면
-        AI가 지금 시작 가능한 창업 아이템을 추천합니다.
-        선택한 아이템은 심층 분석과 최신 공개 자료 기반 경제 전망을 거쳐
-        하나의 창업 프로젝트로 관리할 수 있습니다.
+        사용자의 조건을 바탕으로 창업 아이템을 추천하고,
+        심층 분석과 최신 공개 자료 기반 경제 전망을 제공합니다.
+        분석 결과는 하나의 프로젝트로 저장해 이어서 관리할 수 있습니다.
       </p>
 
       <div class="hero-actions">
@@ -1107,44 +1201,52 @@
       </div>
     </section>
 
-    <section
-      class="value-grid"
-      aria-label="서비스 핵심 기능"
-    >
-      <div class="value-card">
-        <h3>개인 맞춤 추천</h3>
+    <section class="value-grid">
+      <article class="value-card">
+        <h3>
+          개인 맞춤 추천
+        </h3>
+
         <p>
           전공, 자격증, 자본, 시간을 반영해
           지금 실행 가능한 창업 아이템을 제안합니다.
         </p>
-      </div>
+      </article>
 
-      <div class="value-card">
-        <h3>심층 분석</h3>
+      <article class="value-card">
+        <h3>
+          심층 분석
+        </h3>
+
         <p>
-          선택 아이템의 고객, 경쟁, 수익 모델,
+          선택한 아이템의 고객, 경쟁, 수익 모델,
           실행 가능성, 리스크를 분석합니다.
         </p>
-      </div>
+      </article>
 
-      <div class="value-card">
-        <h3>최신 경제 전망</h3>
+      <article class="value-card">
+        <h3>
+          최신 경제 전망
+        </h3>
+
         <p>
           분석 시점에 확인 가능한 최신 공개 자료를 검색해
-          외부 환경과 향후 전망을 정리합니다.
+          외부 환경과 대응 전략을 정리합니다.
         </p>
-      </div>
+      </article>
     </section>
 
     <section
       class="panel"
       id="inputPanel"
     >
-      <h2>나에게 맞는 창업 조건 설정</h2>
+      <h2>
+        나에게 맞는 창업 조건 설정
+      </h2>
 
       <p class="panel-desc">
-        몇 가지 정보를 입력하면 AI가
-        당신의 조건에 맞는 창업 아이템을 찾아드립니다.
+        기본 정보를 입력하면 AI가 개인 조건에 맞는
+        창업 아이템을 제안합니다.
       </p>
 
       <div class="form-grid">
@@ -1158,7 +1260,7 @@
 
         <div class="form-group">
           <label for="primaryMajor">
-            제1전공 학과/학부
+            제1전공 학과·학부
           </label>
 
           <select id="primaryMajor"></select>
@@ -1172,20 +1274,22 @@
           <select id="secondaryCollege"></select>
 
           <p class="hint">
-            제2전공이 없다면 "해당 없음"을 선택하세요.
+            제2전공이 없다면 해당 없음을 선택하세요.
           </p>
         </div>
 
         <div class="form-group">
           <label for="secondaryMajor">
-            제2전공 학과/학부
+            제2전공 학과·학부
           </label>
 
           <select id="secondaryMajor"></select>
         </div>
 
         <div class="form-group full">
-          <label>보유 자격증</label>
+          <label>
+            보유 자격증
+          </label>
 
           <div
             class="checklist"
@@ -1194,28 +1298,48 @@
         </div>
 
         <div class="form-group">
-          <label for="interests">관심 분야</label>
+          <label for="interests">
+            관심 분야
+          </label>
 
           <input
             id="interests"
-            placeholder="예: 교육, 콘텐츠, 패션, AI, 커머스"
+            placeholder="예: 교육, 콘텐츠, AI"
           />
         </div>
 
         <div class="form-group">
-          <label for="goal">창업 목적</label>
+          <label for="goal">
+            창업 목적
+          </label>
 
           <select id="goal">
-            <option value="수익 창출">수익 창출</option>
-            <option value="포트폴리오 제작">포트폴리오 제작</option>
-            <option value="사회문제 해결">사회문제 해결</option>
-            <option value="취업 준비">취업 준비</option>
-            <option value="부업 실험">부업 실험</option>
+            <option value="수익 창출">
+              수익 창출
+            </option>
+
+            <option value="포트폴리오 제작">
+              포트폴리오 제작
+            </option>
+
+            <option value="사회문제 해결">
+              사회문제 해결
+            </option>
+
+            <option value="취업 준비">
+              취업 준비
+            </option>
+
+            <option value="부업 실험">
+              부업 실험
+            </option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="budget">초기 자본</label>
+          <label for="budget">
+            초기 자본
+          </label>
 
           <input
             id="budget"
@@ -1227,12 +1351,14 @@
           />
 
           <p class="hint">
-            숫자만 입력하세요. 단위는 만원입니다.
+            단위는 만원입니다.
           </p>
         </div>
 
         <div class="form-group">
-          <label for="time">투입 가능 시간</label>
+          <label for="time">
+            투입 가능 시간
+          </label>
 
           <input
             id="time"
@@ -1244,7 +1370,7 @@
           />
 
           <p class="hint">
-            숫자만 입력하세요. 단위는 주당 시간입니다.
+            단위는 주당 시간입니다.
           </p>
         </div>
 
@@ -1254,32 +1380,51 @@
           </label>
 
           <select id="businessType">
-            <option value="온라인 서비스">온라인 서비스</option>
-            <option value="콘텐츠 기반">콘텐츠 기반</option>
-            <option value="교육 서비스">교육 서비스</option>
-            <option value="커머스">커머스</option>
-            <option value="지역 기반 서비스">지역 기반 서비스</option>
-            <option value="상관없음">상관없음</option>
+            <option value="온라인 서비스">
+              온라인 서비스
+            </option>
+
+            <option value="콘텐츠 기반">
+              콘텐츠 기반
+            </option>
+
+            <option value="교육 서비스">
+              교육 서비스
+            </option>
+
+            <option value="커머스">
+              커머스
+            </option>
+
+            <option value="지역 기반 서비스">
+              지역 기반 서비스
+            </option>
+
+            <option value="상관없음">
+              상관없음
+            </option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="target">관심 고객층</label>
+          <label for="target">
+            관심 고객층
+          </label>
 
           <input
             id="target"
-            placeholder="예: 대학생, 자취생, 직장인, 소상공인"
+            placeholder="예: 대학생, 직장인, 소상공인"
           />
         </div>
 
         <div class="form-group full">
           <label for="avoid">
-            피하고 싶은 분야 / 제약 조건
+            피하고 싶은 분야·제약 조건
           </label>
 
           <textarea
             id="avoid"
-            placeholder="예: 재고 관리가 필요한 사업은 피하고 싶음"
+            placeholder="예: 재고 관리와 오프라인 매장 운영은 피하고 싶음"
           ></textarea>
         </div>
       </div>
@@ -1287,6 +1432,7 @@
       <div class="actions">
         <button
           class="primary-btn"
+          type="button"
           id="recommendBtn"
         >
           AI에게 창업 아이템 추천받기
@@ -1294,6 +1440,7 @@
 
         <button
           class="secondary-btn"
+          type="button"
           id="sampleBtn"
         >
           예시 정보 채우기
@@ -1301,6 +1448,7 @@
 
         <button
           class="secondary-btn"
+          type="button"
           id="resetBtn"
         >
           초기화
@@ -1313,23 +1461,31 @@
       id="recommendStatusCard"
       aria-live="polite"
     >
-      <span class="loader" aria-hidden="true"></span>
-      <span class="complete-icon" aria-hidden="true">✓</span>
+      <span
+        class="loader"
+        aria-hidden="true"
+      ></span>
 
-      <span id="recommendStatusText">
-        창업 아이템을 생성하는 중입니다...
+      <span
+        class="complete-icon"
+        aria-hidden="true"
+      >
+        ✓
       </span>
+
+      <span id="recommendStatusText"></span>
     </section>
 
     <section
       class="panel hidden"
       id="recommendationSection"
     >
-      <h2>추천 아이템</h2>
+      <h2>
+        추천 아이템
+      </h2>
 
       <p class="panel-desc">
-        아래 아이템 중 하나를 선택하면
-        시장 전망과 실행 가능성을 심층 분석합니다.
+        아이템을 선택하면 심층 분석 워크스페이스가 열립니다.
       </p>
 
       <div
@@ -1349,23 +1505,12 @@
     </section>
 
     <section
-      class="status-card hidden"
-      id="analysisStatusCard"
-      aria-live="polite"
-    >
-      <span class="loader" aria-hidden="true"></span>
-      <span class="complete-icon" aria-hidden="true">✓</span>
-
-      <span id="analysisStatusText">
-        선택한 아이템을 심층 분석하는 중입니다...
-      </span>
-    </section>
-
-    <section
       class="panel hidden"
-      id="analysisSection"
+      id="workspaceSection"
     >
-      <h2>아이템 분석 대시보드</h2>
+      <h2>
+        창업 프로젝트 워크스페이스
+      </h2>
 
       <p
         class="panel-desc"
@@ -1373,163 +1518,250 @@
       ></p>
 
       <div
-        class="score-dashboard"
-        id="scoreDashboard"
-      ></div>
-
-      <div
-        class="summary-card hidden"
-        id="analysisSummary"
-      ></div>
-
-      <div
-        class="analysis-grid"
-        id="analysisGrid"
-      ></div>
-
-      <div class="actions">
+        class="workspace-tabs"
+        role="tablist"
+        aria-label="창업 분석 메뉴"
+      >
         <button
-          class="primary-btn"
-          id="forecastBtn"
+          class="workspace-tab active"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          id="analysisTabBtn"
         >
-          최신 경제 동향으로 사업 전망 분석
+          기본 분석
+          <span
+            class="tab-badge"
+            id="analysisTabBadge"
+          >
+            분석 중
+          </span>
         </button>
 
         <button
-          class="secondary-btn"
-          id="planBtn"
+          class="workspace-tab"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          id="forecastTabBtn"
+          disabled
         >
-          창업 계획 초안 생성
-        </button>
-      </div>
-    </section>
-
-    <section
-      class="status-card hidden"
-      id="forecastStatusCard"
-      aria-live="polite"
-    >
-      <span class="loader" aria-hidden="true"></span>
-      <span class="complete-icon" aria-hidden="true">✓</span>
-
-      <span id="forecastStatusText">
-        최신 공개 자료를 검색하고 경제 전망을 분석하는 중입니다...
-      </span>
-    </section>
-
-    <section
-      class="panel hidden"
-      id="forecastSection"
-    >
-      <h2>경제 환경 기반 사업 전망</h2>
-
-      <p class="panel-desc">
-        분석 시점에 확인 가능한 최신 공개 자료와
-        관련 산업 동향을 바탕으로 정리한 전망입니다.
-      </p>
-
-      <div
-        class="forecast-meta"
-        id="forecastMeta"
-      ></div>
-
-      <div
-        class="forecast-summary"
-        id="forecastTrendSummary"
-      ></div>
-
-      <h3 class="section-heading">
-        핵심 경제·산업 변수
-      </h3>
-
-      <div
-        class="forecast-factor-grid"
-        id="forecastFactors"
-      ></div>
-
-      <h3 class="section-heading">
-        시점별 전망
-      </h3>
-
-      <div
-        class="forecast-outlook-grid"
-        id="forecastOutlook"
-      ></div>
-
-      <h3 class="section-heading">
-        시나리오 분석
-      </h3>
-
-      <div
-        class="forecast-scenario-grid"
-        id="forecastScenarios"
-      ></div>
-
-      <h3 class="section-heading">
-        추천 대응 행동
-      </h3>
-
-      <ul
-        class="forecast-action-list"
-        id="forecastActions"
-      ></ul>
-
-      <h3 class="section-heading">
-        참고 자료
-      </h3>
-
-      <ul
-        class="forecast-source-list"
-        id="forecastSources"
-      ></ul>
-
-      <div class="actions">
-        <button
-          class="secondary-btn"
-          id="refreshForecastBtn"
-        >
-          최신 동향으로 다시 분석
+          최신 경제 전망
+          <span
+            class="tab-badge"
+            id="forecastTabBadge"
+          >
+            분석 전
+          </span>
         </button>
       </div>
-    </section>
 
-    <section
-      class="status-card hidden"
-      id="planStatusCard"
-      aria-live="polite"
-    >
-      <span class="loader" aria-hidden="true"></span>
-      <span class="complete-icon" aria-hidden="true">✓</span>
-
-      <span id="planStatusText">
-        창업 계획 초안을 정리하는 중입니다...
-      </span>
-    </section>
-
-    <section
-      class="panel hidden"
-      id="planSection"
-    >
-      <h2>창업 계획 초안</h2>
-
-      <p class="panel-desc">
-        분석 결과를 바탕으로
-        창업 계획의 핵심 내용을 정리했습니다.
-      </p>
-
-      <div
-        class="result-box report-box"
-        id="planBox"
-      ></div>
-
-      <div class="actions">
-        <button
-          class="secondary-btn"
-          id="copyPlanBtn"
+      <section id="analysisTabPanel">
+        <section
+          class="status-card hidden"
+          id="analysisStatusCard"
+          aria-live="polite"
         >
-          계획서 복사하기
-        </button>
-      </div>
+          <span
+            class="loader"
+            aria-hidden="true"
+          ></span>
+
+          <span
+            class="complete-icon"
+            aria-hidden="true"
+          >
+            ✓
+          </span>
+
+          <span id="analysisStatusText"></span>
+        </section>
+
+        <div
+          class="score-dashboard"
+          id="scoreDashboard"
+        ></div>
+
+        <div
+          class="summary-card hidden"
+          id="analysisSummary"
+        ></div>
+
+        <div
+          class="analysis-grid"
+          id="analysisGrid"
+        ></div>
+
+        <div class="actions">
+          <button
+            class="primary-btn"
+            type="button"
+            id="planBtn"
+          >
+            창업 계획 초안 생성
+          </button>
+        </div>
+
+        <section
+          class="status-card hidden"
+          id="planStatusCard"
+          aria-live="polite"
+        >
+          <span
+            class="loader"
+            aria-hidden="true"
+          ></span>
+
+          <span
+            class="complete-icon"
+            aria-hidden="true"
+          >
+            ✓
+          </span>
+
+          <span id="planStatusText"></span>
+        </section>
+
+        <section
+          class="hidden"
+          id="planSection"
+        >
+          <h3 class="section-heading">
+            창업 계획 초안
+          </h3>
+
+          <div
+            class="result-box report-box"
+            id="planBox"
+          ></div>
+
+          <div class="actions">
+            <button
+              class="secondary-btn"
+              type="button"
+              id="copyPlanBtn"
+            >
+              계획서 복사하기
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <section
+        class="hidden"
+        id="forecastTabPanel"
+      >
+        <div class="forecast-intro">
+          최신 경제 전망은 분석 버튼을 누른 시점에
+          확인 가능한 공개 자료를 검색하여 작성합니다.
+          기사, 공공기관 자료, 공식 발표, 산업 동향을 참고하며
+          결과에는 출처 링크와 분석 기준 시각이 함께 표시됩니다.
+        </div>
+
+        <div class="actions">
+          <button
+            class="primary-btn"
+            type="button"
+            id="forecastBtn"
+          >
+            최신 경제 동향으로 사업 전망 분석
+          </button>
+        </div>
+
+        <section
+          class="status-card hidden"
+          id="forecastStatusCard"
+          aria-live="polite"
+        >
+          <span
+            class="loader"
+            aria-hidden="true"
+          ></span>
+
+          <span
+            class="complete-icon"
+            aria-hidden="true"
+          >
+            ✓
+          </span>
+
+          <span id="forecastStatusText"></span>
+        </section>
+
+        <section
+          class="hidden"
+          id="forecastSection"
+        >
+          <h3 class="section-heading">
+            경제 환경 기반 사업 전망
+          </h3>
+
+          <div
+            class="forecast-meta"
+            id="forecastMeta"
+          ></div>
+
+          <div
+            class="forecast-summary"
+            id="forecastTrendSummary"
+          ></div>
+
+          <h3 class="section-heading">
+            핵심 경제·산업 변수
+          </h3>
+
+          <div
+            class="forecast-factor-grid"
+            id="forecastFactors"
+          ></div>
+
+          <h3 class="section-heading">
+            시점별 전망
+          </h3>
+
+          <div
+            class="forecast-outlook-grid"
+            id="forecastOutlook"
+          ></div>
+
+          <h3 class="section-heading">
+            시나리오 분석
+          </h3>
+
+          <div
+            class="forecast-scenario-grid"
+            id="forecastScenarios"
+          ></div>
+
+          <h3 class="section-heading">
+            추천 대응 행동
+          </h3>
+
+          <ul
+            class="forecast-action-list"
+            id="forecastActions"
+          ></ul>
+
+          <h3 class="section-heading">
+            참고 자료
+          </h3>
+
+          <ul
+            class="forecast-source-list"
+            id="forecastSources"
+          ></ul>
+
+          <div class="actions">
+            <button
+              class="secondary-btn"
+              type="button"
+              id="refreshForecastBtn"
+            >
+              최신 동향으로 다시 분석
+            </button>
+          </div>
+        </section>
+      </section>
     </section>
   </main>
 
@@ -1561,9 +1793,8 @@
       </h2>
 
       <p class="projects-modal-desc">
-        저장한 프로젝트를 다시 열어
-        추천 아이템, 심층 분석, 경제 전망 결과를
-        이어서 확인할 수 있습니다.
+        저장된 프로젝트의 진행 상태와 다음 행동을 확인하고,
+        이전 분석 결과를 이어서 볼 수 있습니다.
       </p>
 
       <div
@@ -1612,8 +1843,7 @@
 
       <p>
         로그인하면 추천 아이템, 심층 분석,
-        경제 전망 결과를 하나의 프로젝트로 저장하고
-        이후에도 계속 관리할 수 있습니다.
+        최신 경제 전망 결과를 프로젝트로 저장할 수 있습니다.
       </p>
 
       <button
@@ -1621,7 +1851,10 @@
         type="button"
         id="googleLoginBtn"
       >
-        <span class="google-icon">G</span>
+        <span class="google-icon">
+          G
+        </span>
+
         Google로 계속하기
       </button>
 
@@ -1638,10 +1871,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    /* ======================================================
+    /* =====================================================
        1. Supabase 설정
-       기존에 사용하던 실제 값으로 교체하세요.
-    ====================================================== */
+       기존에 사용하던 실제 값을 넣으세요.
+    ===================================================== */
 
     const SUPABASE_URL =
       "https://nsbjwvptegtbrqrczgwh.supabase.co";
@@ -1649,19 +1882,27 @@
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_tlBEKCUQojxeQiQUCohewg_Z4BMnAKJ";
 
-    let supabaseClient = null;
+    let supabaseClient =
+      null;
 
-    /* ======================================================
-       2. 데이터베이스
-    ====================================================== */
+    /* =====================================================
+       2. 데이터
+    ===================================================== */
 
     const kuMajorDatabase = [
       {
-        college: "경영대학",
-        majors: ["경영학과"]
+        college:
+          "경영대학",
+
+        majors: [
+          "경영학과"
+        ]
       },
+
       {
-        college: "문과대학",
+        college:
+          "문과대학",
+
         majors: [
           "국어국문학과",
           "철학과",
@@ -1679,8 +1920,11 @@
           "언어학과"
         ]
       },
+
       {
-        college: "생명과학대학",
+        college:
+          "생명과학대학",
+
         majors: [
           "생명과학부",
           "생명공학부",
@@ -1689,8 +1933,11 @@
           "식품자원경제학과"
         ]
       },
+
       {
-        college: "정경대학",
+        college:
+          "정경대학",
+
         majors: [
           "정치외교학과",
           "경제학과",
@@ -1698,8 +1945,11 @@
           "행정학과"
         ]
       },
+
       {
-        college: "이과대학",
+        college:
+          "이과대학",
+
         majors: [
           "수학과",
           "물리학과",
@@ -1707,8 +1957,11 @@
           "지구환경과학과"
         ]
       },
+
       {
-        college: "공과대학",
+        college:
+          "공과대학",
+
         majors: [
           "화공생명공학과",
           "건축사회환경공학부",
@@ -1722,12 +1975,21 @@
           "차세대통신학과"
         ]
       },
+
       {
-        college: "의과대학",
-        majors: ["의예과", "의학과"]
+        college:
+          "의과대학",
+
+        majors: [
+          "의예과",
+          "의학과"
+        ]
       },
+
       {
-        college: "사범대학",
+        college:
+          "사범대학",
+
         majors: [
           "교육학과",
           "체육교육과",
@@ -1740,39 +2002,61 @@
           "컴퓨터교육과"
         ]
       },
+
       {
-        college: "간호대학",
-        majors: ["간호학과"]
+        college:
+          "간호대학",
+
+        majors: [
+          "간호학과"
+        ]
       },
+
       {
-        college: "정보대학",
+        college:
+          "정보대학",
+
         majors: [
           "컴퓨터학과",
           "데이터과학과",
           "인공지능학과"
         ]
       },
+
       {
-        college: "디자인조형학부",
-        majors: ["디자인조형학부"]
+        college:
+          "디자인조형학부",
+
+        majors: [
+          "디자인조형학부"
+        ]
       },
+
       {
-        college: "국제대학",
+        college:
+          "국제대학",
+
         majors: [
           "국제학부",
           "글로벌한국융합학부",
           "글로벌자율학부"
         ]
       },
+
       {
-        college: "미디어대학",
+        college:
+          "미디어대학",
+
         majors: [
           "미디어학부",
           "글로벌엔터테인먼트학부"
         ]
       },
+
       {
-        college: "보건과학대학",
+        college:
+          "보건과학대학",
+
         majors: [
           "바이오의공학부",
           "바이오시스템의과학부",
@@ -1780,24 +2064,42 @@
           "보건정책관리학부"
         ]
       },
+
       {
-        college: "자유전공학부",
-        majors: ["자유전공학부"]
+        college:
+          "자유전공학부",
+
+        majors: [
+          "자유전공학부"
+        ]
       },
+
       {
-        college: "심리학부",
-        majors: ["심리학부"]
+        college:
+          "심리학부",
+
+        majors: [
+          "심리학부"
+        ]
       },
+
       {
-        college: "스마트보안학부",
+        college:
+          "스마트보안학부",
+
         majors: [
           "사이버국방학과",
           "스마트보안학부"
         ]
       },
+
       {
-        college: "스마트모빌리티학부",
-        majors: ["스마트모빌리티학부"]
+        college:
+          "스마트모빌리티학부",
+
+        majors: [
+          "스마트모빌리티학부"
+        ]
       }
     ];
 
@@ -1816,197 +2118,406 @@
     ];
 
     const sectionLabels = {
-      market: "시장 전망",
-      customer: "고객 분석",
-      competition: "경쟁 분석",
-      revenue: "수익 모델",
-      mvp: "초기 실행 계획",
-      risk: "리스크 및 대응 방안",
-      growth: "향후 발전 가능성"
+      market:
+        "시장 전망",
+
+      customer:
+        "고객 분석",
+
+      competition:
+        "경쟁 분석",
+
+      revenue:
+        "수익 모델",
+
+      mvp:
+        "초기 실행 계획",
+
+      risk:
+        "리스크 및 대응 방안",
+
+      growth:
+        "향후 발전 가능성"
     };
 
-    /* ======================================================
+    /* =====================================================
        3. DOM
-    ====================================================== */
+    ===================================================== */
+
+    const get =
+      (id) =>
+        document
+          .getElementById(
+            id
+          );
 
     const heroStartBtn =
-      document.getElementById("heroStartBtn");
+      get(
+        "heroStartBtn"
+      );
 
     const heroSampleBtn =
-      document.getElementById("heroSampleBtn");
+      get(
+        "heroSampleBtn"
+      );
 
     const loginBtn =
-      document.getElementById("loginBtn");
+      get(
+        "loginBtn"
+      );
 
     const logoutBtn =
-      document.getElementById("logoutBtn");
+      get(
+        "logoutBtn"
+      );
 
     const myProjectsBtn =
-      document.getElementById("myProjectsBtn");
+      get(
+        "myProjectsBtn"
+      );
 
     const userChip =
-      document.getElementById("userChip");
+      get(
+        "userChip"
+      );
 
     const authModal =
-      document.getElementById("authModal");
+      get(
+        "authModal"
+      );
 
     const closeAuthModalBtn =
-      document.getElementById("closeAuthModalBtn");
+      get(
+        "closeAuthModalBtn"
+      );
 
     const googleLoginBtn =
-      document.getElementById("googleLoginBtn");
+      get(
+        "googleLoginBtn"
+      );
 
     const guestContinueBtn =
-      document.getElementById("guestContinueBtn");
+      get(
+        "guestContinueBtn"
+      );
 
     const inputPanel =
-      document.getElementById("inputPanel");
+      get(
+        "inputPanel"
+      );
 
     const recommendBtn =
-      document.getElementById("recommendBtn");
+      get(
+        "recommendBtn"
+      );
 
     const sampleBtn =
-      document.getElementById("sampleBtn");
+      get(
+        "sampleBtn"
+      );
 
     const resetBtn =
-      document.getElementById("resetBtn");
-
-    const planBtn =
-      document.getElementById("planBtn");
-
-    const copyPlanBtn =
-      document.getElementById("copyPlanBtn");
+      get(
+        "resetBtn"
+      );
 
     const saveProjectBtn =
-      document.getElementById("saveProjectBtn");
-
-    const certificateChecklist =
-      document.getElementById("certificateChecklist");
-
-    const primaryCollegeSelect =
-      document.getElementById("primaryCollege");
-
-    const primaryMajorSelect =
-      document.getElementById("primaryMajor");
-
-    const secondaryCollegeSelect =
-      document.getElementById("secondaryCollege");
-
-    const secondaryMajorSelect =
-      document.getElementById("secondaryMajor");
+      get(
+        "saveProjectBtn"
+      );
 
     const recommendationSection =
-      document.getElementById("recommendationSection");
+      get(
+        "recommendationSection"
+      );
 
-    const analysisSection =
-      document.getElementById("analysisSection");
+    const workspaceSection =
+      get(
+        "workspaceSection"
+      );
 
-    const planSection =
-      document.getElementById("planSection");
+    const analysisTabBtn =
+      get(
+        "analysisTabBtn"
+      );
 
-    const ideaCards =
-      document.getElementById("ideaCards");
+    const forecastTabBtn =
+      get(
+        "forecastTabBtn"
+      );
+
+    const analysisTabBadge =
+      get(
+        "analysisTabBadge"
+      );
+
+    const analysisTabPanel =
+      get(
+        "analysisTabPanel"
+      );
+
+    const forecastTabPanel =
+      get(
+        "forecastTabPanel"
+      );
 
     const selectedIdeaText =
-      document.getElementById("selectedIdeaText");
+      get(
+        "selectedIdeaText"
+      );
 
-    const scoreDashboard =
-      document.getElementById("scoreDashboard");
-
-    const analysisSummary =
-      document.getElementById("analysisSummary");
-
-    const analysisGrid =
-      document.getElementById("analysisGrid");
-
-    const planBox =
-      document.getElementById("planBox");
-
-    const recommendStatusCard =
-      document.getElementById("recommendStatusCard");
-
-    const recommendStatusText =
-      document.getElementById("recommendStatusText");
+    const ideaCards =
+      get(
+        "ideaCards"
+      );
 
     const analysisStatusCard =
-      document.getElementById("analysisStatusCard");
+      get(
+        "analysisStatusCard"
+      );
 
     const analysisStatusText =
-      document.getElementById("analysisStatusText");
+      get(
+        "analysisStatusText"
+      );
+
+    const recommendStatusCard =
+      get(
+        "recommendStatusCard"
+      );
+
+    const recommendStatusText =
+      get(
+        "recommendStatusText"
+      );
+
+    const scoreDashboard =
+      get(
+        "scoreDashboard"
+      );
+
+    const analysisSummary =
+      get(
+        "analysisSummary"
+      );
+
+    const analysisGrid =
+      get(
+        "analysisGrid"
+      );
+
+    const planBtn =
+      get(
+        "planBtn"
+      );
 
     const planStatusCard =
-      document.getElementById("planStatusCard");
+      get(
+        "planStatusCard"
+      );
 
     const planStatusText =
-      document.getElementById("planStatusText");
+      get(
+        "planStatusText"
+      );
 
-    let currentProfile = null;
-    let currentIdeas = [];
-    let selectedIdea = null;
-    let currentAnalysis = null;
+    const planSection =
+      get(
+        "planSection"
+      );
 
-    /* ======================================================
-       4. Auth
-    ====================================================== */
+    const planBox =
+      get(
+        "planBox"
+      );
+
+    const copyPlanBtn =
+      get(
+        "copyPlanBtn"
+      );
+
+    const certificateChecklist =
+      get(
+        "certificateChecklist"
+      );
+
+    const primaryCollegeSelect =
+      get(
+        "primaryCollege"
+      );
+
+    const primaryMajorSelect =
+      get(
+        "primaryMajor"
+      );
+
+    const secondaryCollegeSelect =
+      get(
+        "secondaryCollege"
+      );
+
+    const secondaryMajorSelect =
+      get(
+        "secondaryMajor"
+      );
+
+    /* =====================================================
+       4. 상태
+    ===================================================== */
+
+    const appState = {
+      profile:
+        null,
+
+      ideas:
+        [],
+
+      selectedIdea:
+        null,
+
+      analysis:
+        null,
+
+      planGenerated:
+        false
+    };
+
+    /* =====================================================
+       5. 이벤트
+    ===================================================== */
+
+    function emit(
+      name,
+      detail = {}
+    ) {
+      document.dispatchEvent(
+        new CustomEvent(
+          name,
+          {
+            detail
+          }
+        )
+      );
+    }
+
+    /* =====================================================
+       6. Auth
+    ===================================================== */
 
     function initializeSupabaseClient() {
       supabaseClient =
-        window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_PUBLISHABLE_KEY
-        );
+        window
+          .supabase
+          .createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+          );
 
       initializeAuth();
     }
 
     function openAuthModal() {
-      authModal.classList.remove("hidden");
+      authModal
+        .classList
+        .remove(
+          "hidden"
+        );
     }
 
     function closeAuthModal() {
-      authModal.classList.add("hidden");
+      authModal
+        .classList
+        .add(
+          "hidden"
+        );
     }
 
-    function getUserLabel(user) {
-      return (
-        user?.user_metadata?.full_name ||
-        user?.user_metadata?.name ||
-        user?.email ||
-        "로그인 사용자"
-      );
-    }
-
-    function updateAuthUI(session) {
+    function updateAuthUI(
+      session
+    ) {
       const user =
-        session?.user || null;
+        session
+          ?.user ||
+        null;
 
-      const isLoggedIn =
-        Boolean(user);
+      const loggedIn =
+        Boolean(
+          user
+        );
 
-      loginBtn.classList.toggle(
-        "hidden",
-        isLoggedIn
-      );
+      loginBtn
+        .classList
+        .toggle(
+          "hidden",
+          loggedIn
+        );
 
-      logoutBtn.classList.toggle(
-        "hidden",
-        !isLoggedIn
-      );
+      logoutBtn
+        .classList
+        .toggle(
+          "hidden",
+          !loggedIn
+        );
 
-      myProjectsBtn.classList.toggle(
-        "hidden",
-        !isLoggedIn
-      );
+      myProjectsBtn
+        .classList
+        .toggle(
+          "hidden",
+          !loggedIn
+        );
 
-      userChip.classList.toggle(
-        "hidden",
-        !isLoggedIn
-      );
+      userChip
+        .classList
+        .toggle(
+          "hidden",
+          !loggedIn
+        );
 
       userChip.textContent =
-        isLoggedIn
-          ? getUserLabel(user)
+        loggedIn
+          ? (
+              user
+                ?.user_metadata
+                ?.full_name ||
+
+              user
+                ?.user_metadata
+                ?.name ||
+
+              user
+                ?.email ||
+
+              "로그인 사용자"
+            )
           : "";
+    }
+
+    async function initializeAuth() {
+      const {
+        data: {
+          session
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+      updateAuthUI(
+        session
+      );
+
+      supabaseClient
+        .auth
+        .onAuthStateChange(
+          (
+            _event,
+            nextSession
+          ) => {
+            updateAuthUI(
+              nextSession
+            );
+          }
+        );
     }
 
     async function signInWithGoogle() {
@@ -2016,14 +2527,20 @@
         await supabaseClient
           .auth
           .signInWithOAuth({
-            provider: "google",
+            provider:
+              "google",
+
             options: {
               redirectTo:
-                window.location.origin
+                window
+                  .location
+                  .origin
             }
           });
 
-      if (error) {
+      if (
+        error
+      ) {
         alert(
           `Google 로그인에 실패했습니다: ${error.message}`
         );
@@ -2038,83 +2555,141 @@
           .auth
           .signOut();
 
-      if (error) {
+      if (
+        error
+      ) {
         alert(
           `로그아웃에 실패했습니다: ${error.message}`
         );
-
-        return;
       }
-
-      updateAuthUI(null);
     }
 
-    async function initializeAuth() {
-      const {
-        data: {
-          session
-        }
-      } =
-        await supabaseClient
-          .auth
-          .getSession();
-
-      updateAuthUI(session);
-
-      supabaseClient
-        .auth
-        .onAuthStateChange(
-          (_event, nextSession) => {
-            updateAuthUI(nextSession);
-          }
-        );
-    }
-
-    /* ======================================================
-       5. Status
-    ====================================================== */
+    /* =====================================================
+       7. Status
+    ===================================================== */
 
     function showStatus(
       card,
       textElement,
       message,
-      isComplete = false
+      complete = false
     ) {
       textElement.textContent =
         message;
 
-      card.classList.remove("hidden");
+      card
+        .classList
+        .remove(
+          "hidden"
+        );
 
-      card.classList.toggle(
-        "complete",
-        isComplete
-      );
+      card
+        .classList
+        .toggle(
+          "complete",
+          complete
+        );
     }
 
-    function hideStatus(card) {
-      card.classList.add("hidden");
-      card.classList.remove("complete");
+    function hideStatus(
+      card
+    ) {
+      card
+        .classList
+        .add(
+          "hidden"
+        );
+
+      card
+        .classList
+        .remove(
+          "complete"
+        );
     }
 
-    function setLoading(isLoading) {
-      recommendBtn.disabled =
-        isLoading;
+    /* =====================================================
+       8. Tabs
+    ===================================================== */
 
-      planBtn.disabled =
-        isLoading;
+    function switchWorkspaceTab(
+      tab
+    ) {
+      const showAnalysis =
+        tab ===
+        "analysis";
+
+      analysisTabPanel
+        .classList
+        .toggle(
+          "hidden",
+          !showAnalysis
+        );
+
+      forecastTabPanel
+        .classList
+        .toggle(
+          "hidden",
+          showAnalysis
+        );
+
+      analysisTabBtn
+        .classList
+        .toggle(
+          "active",
+          showAnalysis
+        );
+
+      forecastTabBtn
+        .classList
+        .toggle(
+          "active",
+          !showAnalysis
+        );
+
+      analysisTabBtn
+        .setAttribute(
+          "aria-selected",
+          String(
+            showAnalysis
+          )
+        );
+
+      forecastTabBtn
+        .setAttribute(
+          "aria-selected",
+          String(
+            !showAnalysis
+          )
+        );
     }
 
-    /* ======================================================
-       6. Input UI
-    ====================================================== */
+    function setForecastTabEnabled(
+      enabled
+    ) {
+      forecastTabBtn.disabled =
+        !enabled;
+    }
+
+    function setAnalysisTabBadge(
+      text
+    ) {
+      analysisTabBadge.textContent =
+        text;
+    }
+
+    /* =====================================================
+       9. Input
+    ===================================================== */
 
     function appendOption(
-      selectElement,
+      select,
       value,
       label
     ) {
       const option =
-        document.createElement("option");
+        document.createElement(
+          "option"
+        );
 
       option.value =
         value;
@@ -2122,19 +2697,30 @@
       option.textContent =
         label;
 
-      selectElement.appendChild(option);
-    }
-
-    function getCollegeGroup(collegeName) {
-      return kuMajorDatabase.find(
-        (group) =>
-          group.college === collegeName
+      select.appendChild(
+        option
       );
     }
 
+    function findCollege(
+      name
+    ) {
+      return kuMajorDatabase
+        .find(
+          (
+            item
+          ) =>
+            item.college ===
+            name
+        );
+    }
+
     function renderCollegeOptions() {
-      primaryCollegeSelect.replaceChildren();
-      secondaryCollegeSelect.replaceChildren();
+      primaryCollegeSelect
+        .replaceChildren();
+
+      secondaryCollegeSelect
+        .replaceChildren();
 
       appendOption(
         primaryCollegeSelect,
@@ -2148,49 +2734,55 @@
         "해당 없음"
       );
 
-      kuMajorDatabase.forEach(
-        (group) => {
-          appendOption(
-            primaryCollegeSelect,
-            group.college,
-            group.college
-          );
+      kuMajorDatabase
+        .forEach(
+          (
+            group
+          ) => {
+            appendOption(
+              primaryCollegeSelect,
+              group.college,
+              group.college
+            );
 
-          appendOption(
-            secondaryCollegeSelect,
-            group.college,
-            group.college
-          );
-        }
-      );
+            appendOption(
+              secondaryCollegeSelect,
+              group.college,
+              group.college
+            );
+          }
+        );
     }
 
     function renderMajorOptions(
       collegeSelect,
       majorSelect,
-      includeNone
+      allowNone
     ) {
-      const selectedCollege =
+      const college =
         collegeSelect.value;
 
-      majorSelect.replaceChildren();
+      majorSelect
+        .replaceChildren();
 
       if (
-        !selectedCollege ||
-        selectedCollege === "해당 없음"
+        !college ||
+        college ===
+          "해당 없음"
       ) {
         appendOption(
           majorSelect,
-          includeNone
+          allowNone
             ? "해당 없음"
             : "",
-          includeNone
+
+          allowNone
             ? "해당 없음"
             : "먼저 단과대학을 선택하세요"
         );
 
         majorSelect.disabled =
-          !includeNone;
+          !allowNone;
 
         return;
       }
@@ -2198,21 +2790,24 @@
       appendOption(
         majorSelect,
         "",
-        "학과/학부를 선택하세요"
+        "학과·학부를 선택하세요"
       );
 
-      const group =
-        getCollegeGroup(selectedCollege);
-
-      group?.majors?.forEach(
-        (major) => {
-          appendOption(
-            majorSelect,
-            major,
+      findCollege(
+        college
+      )
+        ?.majors
+        ?.forEach(
+          (
             major
-          );
-        }
-      );
+          ) => {
+            appendOption(
+              majorSelect,
+              major,
+              major
+            );
+          }
+        );
 
       majorSelect.disabled =
         false;
@@ -2234,116 +2829,113 @@
       );
     }
 
-    function getSelectedMajor(
-      collegeSelect,
-      majorSelect,
-      allowNone
-    ) {
-      if (
-        allowNone &&
-        collegeSelect.value === "해당 없음"
-      ) {
-        return {
-          college: "",
-          major: "해당 없음",
-          text: "해당 없음"
-        };
-      }
-
-      const college =
-        collegeSelect.value;
-
-      const major =
-        majorSelect.value;
-
-      return {
-        college,
-        major,
-        text:
-          college && major
-            ? `${college} ${major}`
-            : ""
-      };
-    }
-
     function renderCertificateChecklist() {
-      certificateChecklist.replaceChildren();
+      certificateChecklist
+        .replaceChildren();
 
-      certificateOptions.forEach(
-        (certificate, index) => {
-          const label =
-            document.createElement("label");
+      certificateOptions
+        .forEach(
+          (
+            certificate,
+            index
+          ) => {
+            const label =
+              document.createElement(
+                "label"
+              );
 
-          const checkbox =
-            document.createElement("input");
+            const input =
+              document.createElement(
+                "input"
+              );
 
-          const span =
-            document.createElement("span");
+            const span =
+              document.createElement(
+                "span"
+              );
 
-          label.className =
-            "check-item";
+            label.className =
+              "check-item";
 
-          checkbox.type =
-            "checkbox";
+            input.type =
+              "checkbox";
 
-          checkbox.name =
-            "certificates";
+            input.name =
+              "certificates";
 
-          checkbox.value =
-            certificate;
+            input.value =
+              certificate;
 
-          if (
-            index ===
-            certificateOptions.length - 1
-          ) {
-            checkbox.dataset.noneOption =
-              "true";
+            if (
+              index ===
+              certificateOptions
+                .length -
+              1
+            ) {
+              input.dataset.noneOption =
+                "true";
+            }
+
+            span.textContent =
+              certificate;
+
+            label.appendChild(
+              input
+            );
+
+            label.appendChild(
+              span
+            );
+
+            certificateChecklist
+              .appendChild(
+                label
+              );
           }
-
-          span.textContent =
-            certificate;
-
-          label.appendChild(checkbox);
-          label.appendChild(span);
-
-          certificateChecklist.appendChild(
-            label
-          );
-        }
-      );
+        );
     }
 
-    function handleCertificateChange(event) {
+    function handleCertificateChange(
+      event
+    ) {
       const noneOption =
-        certificateChecklist.querySelector(
-          "input[data-none-option='true']"
-        );
+        certificateChecklist
+          .querySelector(
+            "input[data-none-option='true']"
+          );
 
       const options =
         Array.from(
-          certificateChecklist.querySelectorAll(
-            "input[name='certificates']"
-          )
+          certificateChecklist
+            .querySelectorAll(
+              "input[name='certificates']"
+            )
         );
 
       if (
-        event.target === noneOption &&
+        event.target ===
+          noneOption &&
         noneOption.checked
       ) {
-        options.forEach(
-          (option) => {
-            if (
-              option !== noneOption
-            ) {
-              option.checked =
-                false;
+        options
+          .forEach(
+            (
+              option
+            ) => {
+              if (
+                option !==
+                noneOption
+              ) {
+                option.checked =
+                  false;
+              }
             }
-          }
-        );
+          );
       }
 
       if (
-        event.target !== noneOption &&
+        event.target !==
+          noneOption &&
         event.target.checked
       ) {
         noneOption.checked =
@@ -2354,38 +2946,80 @@
     function getSelectedCertificates() {
       return Array
         .from(
-          document.querySelectorAll(
-            "input[name='certificates']:checked"
-          )
+          document
+            .querySelectorAll(
+              "input[name='certificates']:checked"
+            )
         )
         .map(
-          (checkbox) =>
-            checkbox.value
+          (
+            item
+          ) =>
+            item.value
         );
     }
 
-    function getUserProfile() {
+    function getMajorValue(
+      collegeSelect,
+      majorSelect,
+      allowNone
+    ) {
+      if (
+        allowNone &&
+        collegeSelect.value ===
+          "해당 없음"
+      ) {
+        return {
+          college:
+            "",
+
+          major:
+            "해당 없음",
+
+          text:
+            "해당 없음"
+        };
+      }
+
+      return {
+        college:
+          collegeSelect.value,
+
+        major:
+          majorSelect.value,
+
+        text:
+          collegeSelect.value &&
+          majorSelect.value
+            ? `${collegeSelect.value} ${majorSelect.value}`
+            : ""
+      };
+    }
+
+    function getProfileFromForm() {
       const budget =
-        document
-          .getElementById("budget")
+        get(
+          "budget"
+        )
           .value
           .trim();
 
       const time =
-        document
-          .getElementById("time")
+        get(
+          "time"
+        )
           .value
           .trim();
 
       const primaryMajor =
-        getSelectedMajor(
+        getMajorValue(
           primaryCollegeSelect,
           primaryMajorSelect,
           false
         );
 
       const secondaryMajor =
-        getSelectedMajor(
+        getMajorValue(
           secondaryCollegeSelect,
           secondaryMajorSelect,
           true
@@ -2393,62 +3027,120 @@
 
       return {
         primaryMajor,
+
         secondaryMajor,
+
         primaryMajorText:
           primaryMajor.text,
+
         secondaryMajorText:
           secondaryMajor.text ||
           "해당 없음",
+
         certificates:
           getSelectedCertificates(),
+
         interests:
-          document
-            .getElementById("interests")
+          get(
+            "interests"
+          )
             .value
             .trim(),
+
         goal:
-          document
-            .getElementById("goal")
+          get(
+            "goal"
+          )
             .value,
+
         budget,
+
         time,
+
         budgetText:
-          `${Number(budget || 0).toLocaleString()}만원`,
+          `${Number(
+            budget ||
+            0
+          ).toLocaleString()}만원`,
+
         budgetWonText:
           `${(
-            Number(budget || 0) *
+            Number(
+              budget ||
+              0
+            ) *
             10000
           ).toLocaleString()}원`,
+
         timeText:
           `주 ${time || 0}시간`,
+
         businessType:
-          document
-            .getElementById("businessType")
+          get(
+            "businessType"
+          )
             .value,
+
         target:
-          document
-            .getElementById("target")
+          get(
+            "target"
+          )
             .value
             .trim(),
+
         avoid:
-          document
-            .getElementById("avoid")
+          get(
+            "avoid"
+          )
             .value
             .trim()
       };
     }
 
-    function validateProfile(profile) {
+    function validateProfile(
+      profile
+    ) {
       if (
-        !profile.primaryMajorText ||
-        profile.certificates.length === 0 ||
-        !profile.interests ||
-        !profile.budget ||
-        !profile.time ||
-        !profile.target
+        !profile
+          .primaryMajorText ||
+
+        profile
+          .certificates
+          .length ===
+          0 ||
+
+        !profile
+          .interests ||
+
+        !profile
+          .budget ||
+
+        !profile
+          .time ||
+
+        !profile
+          .target
       ) {
         alert(
-          "제1전공, 보유 자격증, 관심 분야, 초기 자본, 투입 가능 시간, 관심 고객층은 반드시 입력해야 합니다."
+          "제1전공, 자격증, 관심 분야, 초기 자본, 투입 가능 시간, 관심 고객층을 입력해주세요."
+        );
+
+        return false;
+      }
+
+      if (
+        Number(
+          profile.budget
+        ) <
+          0 ||
+
+        Number(
+          profile.time
+        ) <
+          0
+      ) {
+        alert(
+          "초기 자본과 투입 가능 시간은 0 이상의 숫자여야 합니다."
         );
 
         return false;
@@ -2457,9 +3149,9 @@
       return true;
     }
 
-    /* ======================================================
-       7. API
-    ====================================================== */
+    /* =====================================================
+       10. API
+    ===================================================== */
 
     async function callBackendJson(
       endpoint,
@@ -2469,31 +3161,39 @@
         await fetch(
           endpoint,
           {
-            method: "POST",
+            method:
+              "POST",
+
             headers: {
               "Content-Type":
                 "application/json"
             },
+
             body:
-              JSON.stringify(payload)
+              JSON.stringify(
+                payload
+              )
           }
         );
 
-      const data =
+      const result =
         await response
           .json()
           .catch(
             () => ({})
           );
 
-      if (!response.ok) {
+      if (
+        !response.ok
+      ) {
         throw new Error(
-          data?.error ||
-          "백엔드 API 요청에 실패했습니다."
+          result
+            ?.error ||
+          "백엔드 요청에 실패했습니다."
         );
       }
 
-      return data;
+      return result;
     }
 
     function clampScore(
@@ -2501,407 +3201,608 @@
       fallback = 75
     ) {
       const score =
-        Number(value);
+        Number(
+          value
+        );
 
-      return Number.isFinite(score)
+      return Number
+        .isFinite(
+          score
+        )
         ? Math.max(
             0,
             Math.min(
               100,
-              Math.round(score)
+              Math.round(
+                score
+              )
             )
           )
         : fallback;
     }
 
-    function normalizeIdeas(rawIdeas) {
+    function normalizeIdeas(
+      ideas
+    ) {
       if (
-        !Array.isArray(rawIdeas)
+        !Array.isArray(
+          ideas
+        )
       ) {
         return [];
       }
 
-      return rawIdeas
-        .slice(0, 5)
+      return ideas
+        .slice(
+          0,
+          5
+        )
         .map(
-          (idea, index) => ({
+          (
+            idea,
+            index
+          ) => ({
             name:
-              idea.name ||
+              idea
+                ?.name ||
               `창업 아이템 ${index + 1}`,
+
             summary:
-              idea.summary ||
+              idea
+                ?.summary ||
               "설명 없음",
+
             customer:
-              idea.customer ||
+              idea
+                ?.customer ||
               "목표 고객 미정",
+
             problem:
-              idea.problem ||
+              idea
+                ?.problem ||
               "해결 문제 미정",
+
             revenue:
-              idea.revenue ||
+              idea
+                ?.revenue ||
               "수익 모델 미정",
+
             reason:
-              idea.reason ||
+              idea
+                ?.reason ||
               "추천 이유 미정",
+
             reasons:
-              Array.isArray(
-                idea.reasons
-              )
-                ? idea.reasons
+              Array
+                .isArray(
+                  idea
+                    ?.reasons
+                )
+                ? idea
+                    .reasons
                 : [
-                    idea.reason ||
+                    idea
+                      ?.reason ||
                     "추천 이유 미정"
                   ],
+
             fitScore:
               clampScore(
-                idea.fitScore,
-                75
+                idea
+                  ?.fitScore
               ),
+
             difficulty:
-              idea.difficulty ||
+              idea
+                ?.difficulty ||
               "보통",
+
             cost:
-              idea.cost ||
+              idea
+                ?.cost ||
               "미정"
           })
         );
     }
 
     function normalizeAnalysis(
-      rawAnalysis
+      raw
     ) {
       const scores = {
-        "사용자 적합성": 75,
-        "실행 가능성": 75,
-        "시장성": 75,
-        "수익성": 75,
-        "차별성": 75,
-        "확장성": 75,
-        "리스크 안정성": 75,
-        ...(rawAnalysis?.scores || {})
+        "사용자 적합성":
+          75,
+
+        "실행 가능성":
+          75,
+
+        "시장성":
+          75,
+
+        "수익성":
+          75,
+
+        "차별성":
+          75,
+
+        "확장성":
+          75,
+
+        "리스크 안정성":
+          75,
+
+        ...(
+          raw
+            ?.scores ||
+          {}
+        )
       };
 
       Object
-        .keys(scores)
+        .keys(
+          scores
+        )
         .forEach(
-          (key) => {
-            scores[key] =
+          (
+            key
+          ) => {
+            scores[
+              key
+            ] =
               clampScore(
-                scores[key],
-                75
+                scores[
+                  key
+                ]
               );
           }
         );
 
       const sections = {
-        market: "시장 전망이 제공되지 않았습니다.",
-        customer: "고객 분석이 제공되지 않았습니다.",
-        competition: "경쟁 분석이 제공되지 않았습니다.",
-        revenue: "수익 모델 분석이 제공되지 않았습니다.",
-        mvp: "초기 실행 계획이 제공되지 않았습니다.",
-        risk: "리스크 분석이 제공되지 않았습니다.",
-        growth: "발전 가능성이 제공되지 않았습니다.",
-        ...(rawAnalysis?.sections || {})
+        market:
+          "시장 전망이 제공되지 않았습니다.",
+
+        customer:
+          "고객 분석이 제공되지 않았습니다.",
+
+        competition:
+          "경쟁 분석이 제공되지 않았습니다.",
+
+        revenue:
+          "수익 모델 분석이 제공되지 않았습니다.",
+
+        mvp:
+          "초기 실행 계획이 제공되지 않았습니다.",
+
+        risk:
+          "리스크 분석이 제공되지 않았습니다.",
+
+        growth:
+          "발전 가능성이 제공되지 않았습니다.",
+
+        ...(
+          raw
+            ?.sections ||
+          {}
+        )
       };
 
       const average =
         Math.round(
           Object
-            .values(scores)
+            .values(
+              scores
+            )
             .reduce(
-              (sum, value) =>
-                sum + value,
+              (
+                sum,
+                value
+              ) =>
+                sum +
+                value,
               0
             ) /
-          Object.keys(scores).length
+          Object
+            .keys(
+              scores
+            )
+            .length
         );
 
       return {
         scores,
+
         sections,
+
         summary:
-          rawAnalysis?.summary ||
+          raw
+            ?.summary ||
           "종합 평가가 제공되지 않았습니다.",
+
         average
       };
     }
 
-    async function generateIdeasWithAI(profile) {
-      const result =
-        await callBackendJson(
-          "/api/recommend",
-          {
-            profile
-          }
-        );
+    /* =====================================================
+       11. Rendering
+    ===================================================== */
 
-      return normalizeIdeas(
-        result.ideas
-      );
-    }
-
-    async function analyzeIdeaWithAI(
-      profile,
-      idea
+    function createElement(
+      tag,
+      className,
+      text
     ) {
-      const result =
-        await callBackendJson(
-          "/api/analyze",
-          {
-            profile,
-            idea
-          }
+      const element =
+        document.createElement(
+          tag
         );
 
-      return normalizeAnalysis(
-        result
-      );
+      if (
+        className
+      ) {
+        element.className =
+          className;
+      }
+
+      if (
+        typeof text ===
+        "string"
+      ) {
+        element.textContent =
+          text;
+      }
+
+      return element;
     }
 
-    /* ======================================================
-       8. Render
-    ====================================================== */
-
-    function createLabeledParagraph(
+    function createParagraph(
       label,
       value
     ) {
       const paragraph =
-        document.createElement("p");
+        createElement(
+          "p"
+        );
 
       const strong =
-        document.createElement("strong");
+        createElement(
+          "strong",
+          "",
+          label
+        );
 
-      strong.textContent =
-        label;
-
-      paragraph.appendChild(strong);
       paragraph.appendChild(
-        document.createElement("br")
+        strong
       );
 
       paragraph.appendChild(
-        document.createTextNode(
-          value || ""
-        )
+        document
+          .createElement(
+            "br"
+          )
+      );
+
+      paragraph.appendChild(
+        document
+          .createTextNode(
+            value ||
+            ""
+          )
       );
 
       return paragraph;
     }
 
-    function renderIdeas(ideas) {
-      ideaCards.replaceChildren();
+    function renderIdeas(
+      ideas
+    ) {
+      ideaCards
+        .replaceChildren();
 
-      ideas.forEach(
-        (idea, index) => {
-          const card =
-            document.createElement("div");
+      ideas
+        .forEach(
+          (
+            idea,
+            index
+          ) => {
+            const card =
+              createElement(
+                "article",
+                "card"
+              );
 
-          card.className =
-            "card";
+            card.appendChild(
+              createElement(
+                "h3",
+                "",
+                `${index + 1}. ${idea.name}`
+              )
+            );
 
-          const title =
-            document.createElement("h3");
+            card.appendChild(
+              createParagraph(
+                "한 줄 설명",
+                idea.summary
+              )
+            );
 
-          title.textContent =
-            `${index + 1}. ${idea.name}`;
+            card.appendChild(
+              createParagraph(
+                "목표 고객",
+                idea.customer
+              )
+            );
 
-          const list =
-            document.createElement("ul");
+            card.appendChild(
+              createParagraph(
+                "해결 문제",
+                idea.problem
+              )
+            );
 
-          list.className =
-            "reason-list";
+            card.appendChild(
+              createParagraph(
+                "수익 모델",
+                idea.revenue
+              )
+            );
 
-          idea.reasons.forEach(
-            (reason) => {
-              const item =
-                document.createElement("li");
+            card.appendChild(
+              createParagraph(
+                "추천 이유",
+                idea.reason
+              )
+            );
 
-              item.textContent =
-                reason;
+            const reasonList =
+              createElement(
+                "ul",
+                "reason-list"
+              );
 
-              list.appendChild(item);
-            }
-          );
+            idea
+              .reasons
+              .forEach(
+                (
+                  reason
+                ) => {
+                  reasonList
+                    .appendChild(
+                      createElement(
+                        "li",
+                        "",
+                        reason
+                      )
+                    );
+                }
+              );
 
-          const tags =
-            document.createElement("div");
+            card.appendChild(
+              reasonList
+            );
 
-          tags.className =
-            "tag-row";
+            const tagRow =
+              createElement(
+                "div",
+                "tag-row"
+              );
 
-          [
-            `추천 적합도: ${idea.fitScore}점`,
-            `난이도: ${idea.difficulty}`,
-            `초기 비용: ${idea.cost}`
-          ].forEach(
-            (text) => {
-              const tag =
-                document.createElement("span");
+            [
+              `추천 적합도: ${idea.fitScore}점`,
+              `난이도: ${idea.difficulty}`,
+              `초기 비용: ${idea.cost}`
+            ]
+              .forEach(
+                (
+                  text
+                ) => {
+                  tagRow
+                    .appendChild(
+                      createElement(
+                        "span",
+                        "tag",
+                        text
+                      )
+                    );
+                }
+              );
 
-              tag.className =
-                "tag";
+            card.appendChild(
+              tagRow
+            );
 
-              tag.textContent =
-                text;
+            const button =
+              createElement(
+                "button",
+                "primary-btn",
+                "이 아이템 분석하기"
+              );
 
-              tags.appendChild(tag);
-            }
-          );
+            button.type =
+              "button";
 
-          const button =
-            document.createElement("button");
+            button
+              .addEventListener(
+                "click",
+                () =>
+                  selectIdea(
+                    index
+                  )
+              );
 
-          button.className =
-            "primary-btn";
+            card.appendChild(
+              button
+            );
 
-          button.type =
-            "button";
-
-          button.textContent =
-            "이 아이템 분석하기";
-
-          button.addEventListener(
-            "click",
-            () =>
-              selectIdea(index)
-          );
-
-          card.appendChild(title);
-          card.appendChild(
-            createLabeledParagraph(
-              "한 줄 설명",
-              idea.summary
-            )
-          );
-          card.appendChild(
-            createLabeledParagraph(
-              "목표 고객",
-              idea.customer
-            )
-          );
-          card.appendChild(
-            createLabeledParagraph(
-              "해결 문제",
-              idea.problem
-            )
-          );
-          card.appendChild(
-            createLabeledParagraph(
-              "수익 모델",
-              idea.revenue
-            )
-          );
-          card.appendChild(
-            createLabeledParagraph(
-              "추천 이유",
-              idea.reason
-            )
-          );
-          card.appendChild(list);
-          card.appendChild(tags);
-          card.appendChild(button);
-
-          ideaCards.appendChild(card);
-        }
-      );
+            ideaCards
+              .appendChild(
+                card
+              );
+          }
+        );
     }
 
     function renderAnalysis(
       analysis
     ) {
-      scoreDashboard.replaceChildren();
-      analysisGrid.replaceChildren();
+      scoreDashboard
+        .replaceChildren();
+
+      analysisGrid
+        .replaceChildren();
 
       Object
-        .entries(analysis.scores)
+        .entries(
+          analysis
+            .scores
+        )
         .forEach(
-          ([label, score]) => {
+          ([
+            label,
+            score
+          ]) => {
             const item =
-              document.createElement("div");
+              createElement(
+                "article",
+                "score-item"
+              );
 
-            item.className =
-              "score-item";
+            const head =
+              createElement(
+                "div",
+                "score-head"
+              );
 
-            item.innerHTML = `
-              <div class="score-head">
-                <span>${label}</span>
-                <span class="score-value">${score}점</span>
-              </div>
+            head
+              .appendChild(
+                createElement(
+                  "span",
+                  "",
+                  label
+                )
+              );
 
-              <div class="score-bar-track">
-                <div
-                  class="score-bar-fill"
-                  style="width: ${score}%"
-                ></div>
-              </div>
-            `;
+            head
+              .appendChild(
+                createElement(
+                  "span",
+                  "score-value",
+                  `${score}점`
+                )
+              );
 
-            scoreDashboard.appendChild(item);
+            const track =
+              createElement(
+                "div",
+                "score-bar-track"
+              );
+
+            const fill =
+              createElement(
+                "div",
+                "score-bar-fill"
+              );
+
+            fill.style.width =
+              `${score}%`;
+
+            track.appendChild(
+              fill
+            );
+
+            item.appendChild(
+              head
+            );
+
+            item.appendChild(
+              track
+            );
+
+            scoreDashboard
+              .appendChild(
+                item
+              );
           }
         );
 
-      analysisSummary.classList.remove(
-        "hidden"
-      );
+      analysisSummary
+        .classList
+        .remove(
+          "hidden"
+        );
 
       analysisSummary.textContent =
         analysis.summary;
 
       Object
-        .entries(sectionLabels)
+        .entries(
+          sectionLabels
+        )
         .forEach(
-          ([key, label]) => {
+          ([
+            key,
+            label
+          ]) => {
             const card =
-              document.createElement("div");
+              createElement(
+                "article",
+                "analysis-card"
+              );
 
-            card.className =
-              "analysis-card";
+            card.appendChild(
+              createElement(
+                "h3",
+                "",
+                label
+              )
+            );
 
-            const heading =
-              document.createElement("h3");
+            card.appendChild(
+              createElement(
+                "p",
+                "",
+                analysis
+                  .sections[
+                    key
+                  ]
+              )
+            );
 
-            heading.textContent =
-              label;
-
-            const paragraph =
-              document.createElement("p");
-
-            paragraph.textContent =
-              analysis.sections[key];
-
-            card.appendChild(heading);
-            card.appendChild(paragraph);
-
-            analysisGrid.appendChild(card);
+            analysisGrid
+              .appendChild(
+                card
+              );
           }
         );
+
+      setAnalysisTabBadge(
+        "✓ 완료"
+      );
+
+      setForecastTabEnabled(
+        true
+      );
     }
 
-    function appendHeading(
-      container,
-      text
+    function appendPlanSection(
+      heading,
+      body
     ) {
-      const heading =
-        document.createElement("h3");
+      planBox
+        .appendChild(
+          createElement(
+            "h3",
+            "",
+            heading
+          )
+        );
 
-      heading.textContent =
-        text;
-
-      container.appendChild(heading);
-    }
-
-    function appendParagraph(
-      container,
-      text
-    ) {
-      const paragraph =
-        document.createElement("p");
-
-      paragraph.textContent =
-        text;
-
-      container.appendChild(paragraph);
+      planBox
+        .appendChild(
+          createElement(
+            "p",
+            "",
+            body
+          )
+        );
     }
 
     function renderBusinessPlan(
@@ -2909,96 +3810,297 @@
       idea,
       analysis
     ) {
-      planBox.replaceChildren();
+      planBox
+        .replaceChildren();
 
-      appendHeading(
-        planBox,
-        "1. 사업 개요"
+      appendPlanSection(
+        "1. 사업 개요",
+        `${idea.name}\n${idea.summary}`
       );
 
-      appendParagraph(
-        planBox,
-        `${idea.name}: ${idea.summary}`
+      appendPlanSection(
+        "2. 창업자 조건",
+        [
+          `제1전공: ${profile.primaryMajorText}`,
+          `제2전공: ${profile.secondaryMajorText}`,
+          `보유 자격증: ${profile.certificates.join(", ")}`,
+          `초기 자본: ${profile.budgetText}`,
+          `투입 가능 시간: ${profile.timeText}`
+        ]
+          .join(
+            "\n"
+          )
       );
 
-      appendHeading(
-        planBox,
-        "2. 핵심 고객과 문제"
+      appendPlanSection(
+        "3. 핵심 고객과 문제",
+        `${idea.customer}\n${idea.problem}`
       );
 
-      appendParagraph(
-        planBox,
-        `${idea.customer} / ${idea.problem}`
+      appendPlanSection(
+        "4. 시장성 분석",
+        analysis
+          .sections
+          .market
       );
 
-      appendHeading(
-        planBox,
-        "3. 시장성 분석"
+      appendPlanSection(
+        "5. 경쟁 분석",
+        analysis
+          .sections
+          .competition
       );
 
-      appendParagraph(
-        planBox,
-        analysis.sections.market
+      appendPlanSection(
+        "6. 수익 모델",
+        analysis
+          .sections
+          .revenue
       );
 
-      appendHeading(
-        planBox,
-        "4. 수익 모델"
+      appendPlanSection(
+        "7. MVP 실행 계획",
+        analysis
+          .sections
+          .mvp
       );
 
-      appendParagraph(
-        planBox,
-        analysis.sections.revenue
+      appendPlanSection(
+        "8. 리스크 대응",
+        analysis
+          .sections
+          .risk
       );
 
-      appendHeading(
-        planBox,
-        "5. MVP 계획"
+      appendPlanSection(
+        "9. 향후 발전 가능성",
+        analysis
+          .sections
+          .growth
       );
 
-      appendParagraph(
-        planBox,
-        analysis.sections.mvp
+      appendPlanSection(
+        "10. 종합 결론",
+        analysis
+          .summary
       );
 
-      appendHeading(
-        planBox,
-        "6. 리스크 대응"
-      );
+      planSection
+        .classList
+        .remove(
+          "hidden"
+        );
 
-      appendParagraph(
-        planBox,
-        analysis.sections.risk
-      );
-
-      appendHeading(
-        planBox,
-        "7. 종합 결론"
-      );
-
-      appendParagraph(
-        planBox,
-        analysis.summary
-      );
+      appState.planGenerated =
+        true;
     }
 
-    /* ======================================================
-       9. Actions
-    ====================================================== */
+    /* =====================================================
+       12. Actions
+    ===================================================== */
 
-    async function selectIdea(index) {
-      selectedIdea =
-        currentIdeas[index];
+    async function recommendIdeas() {
+      const profile =
+        getProfileFromForm();
 
-      selectedIdeaText.textContent =
-        `선택한 아이템: ${selectedIdea.name}`;
+      if (
+        !validateProfile(
+          profile
+        )
+      ) {
+        return;
+      }
 
-      analysisSection.classList.remove(
-        "hidden"
+      appState.profile =
+        profile;
+
+      appState.ideas =
+        [];
+
+      appState.selectedIdea =
+        null;
+
+      appState.analysis =
+        null;
+
+      appState.planGenerated =
+        false;
+
+      recommendationSection
+        .classList
+        .add(
+          "hidden"
+        );
+
+      workspaceSection
+        .classList
+        .add(
+          "hidden"
+        );
+
+      showStatus(
+        recommendStatusCard,
+        recommendStatusText,
+        "입력 정보를 바탕으로 창업 아이템을 생성하는 중입니다..."
       );
 
-      planSection.classList.add(
-        "hidden"
+      recommendBtn.disabled =
+        true;
+
+      emit(
+        "ku:recommendations-started"
+      );
+
+      try {
+        const result =
+          await callBackendJson(
+            "/api/recommend",
+            {
+              profile
+            }
+          );
+
+        const ideas =
+          normalizeIdeas(
+            result
+              ?.ideas
+          );
+
+        if (
+          ideas.length ===
+          0
+        ) {
+          throw new Error(
+            "AI가 추천 아이템을 반환하지 않았습니다."
+          );
+        }
+
+        appState.ideas =
+          ideas;
+
+        renderIdeas(
+          ideas
+        );
+
+        recommendationSection
+          .classList
+          .remove(
+            "hidden"
+          );
+
+        saveProjectBtn
+          .classList
+          .remove(
+            "hidden"
+          );
+
+        showStatus(
+          recommendStatusCard,
+          recommendStatusText,
+          "추천 아이템 생성 완료!",
+          true
+        );
+
+        emit(
+          "ku:recommendations-completed",
+          {
+            profile,
+            ideas
+          }
+        );
+
+        recommendationSection
+          .scrollIntoView({
+            behavior:
+              "smooth",
+
+            block:
+              "start"
+          });
+      } catch (
+        error
+      ) {
+        hideStatus(
+          recommendStatusCard
+        );
+
+        alert(
+          `창업 아이템 추천에 실패했습니다: ${error.message}`
+        );
+      } finally {
+        recommendBtn.disabled =
+          false;
+      }
+    }
+
+    async function selectIdea(
+      index
+    ) {
+      const idea =
+        appState
+          .ideas[
+            index
+          ];
+
+      if (
+        !idea
+      ) {
+        return;
+      }
+
+      appState.selectedIdea =
+        idea;
+
+      appState.analysis =
+        null;
+
+      appState.planGenerated =
+        false;
+
+      planSection
+        .classList
+        .add(
+          "hidden"
+        );
+
+      selectedIdeaText.textContent =
+        `선택한 아이템: ${idea.name}`;
+
+      workspaceSection
+        .classList
+        .remove(
+          "hidden"
+        );
+
+      switchWorkspaceTab(
+        "analysis"
+      );
+
+      setForecastTabEnabled(
+        false
+      );
+
+      setAnalysisTabBadge(
+        "분석 중"
+      );
+
+      scoreDashboard
+        .replaceChildren();
+
+      analysisGrid
+        .replaceChildren();
+
+      analysisSummary
+        .classList
+        .add(
+          "hidden"
+        );
+
+      emit(
+        "ku:item-selected",
+        {
+          idea
+        }
       );
 
       showStatus(
@@ -3007,43 +4109,120 @@
         "선택한 아이템을 심층 분석하는 중입니다..."
       );
 
-      analysisStatusCard.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
+      analysisStatusCard
+        .scrollIntoView({
+          behavior:
+            "smooth",
 
-      setLoading(true);
+          block:
+            "center"
+        });
 
       try {
-        currentAnalysis =
-          await analyzeIdeaWithAI(
-            currentProfile,
-            selectedIdea
+        const analysis =
+          normalizeAnalysis(
+            await callBackendJson(
+              "/api/analyze",
+              {
+                profile:
+                  appState
+                    .profile,
+
+                idea
+              }
+            )
           );
 
+        appState.analysis =
+          analysis;
+
         renderAnalysis(
-          currentAnalysis
+          analysis
         );
 
         showStatus(
           analysisStatusCard,
           analysisStatusText,
-          "아이템 분석 완료!",
+          "아이템 심층 분석 완료!",
           true
         );
-      } catch (error) {
-        console.error(error);
 
-        alert(
-          `아이템 분석에 실패했습니다: ${error.message}`
+        emit(
+          "ku:analysis-completed",
+          {
+            profile:
+              appState
+                .profile,
+
+            idea,
+
+            analysis
+          }
         );
-
+      } catch (
+        error
+      ) {
         hideStatus(
           analysisStatusCard
         );
-      } finally {
-        setLoading(false);
+
+        alert(
+          `아이템 심층 분석에 실패했습니다: ${error.message}`
+        );
       }
+    }
+
+    function generateBusinessPlan() {
+      if (
+        !appState
+          .profile ||
+
+        !appState
+          .selectedIdea ||
+
+        !appState
+          .analysis
+      ) {
+        alert(
+          "먼저 아이템 심층 분석을 완료해주세요."
+        );
+
+        return;
+      }
+
+      showStatus(
+        planStatusCard,
+        planStatusText,
+        "창업 계획 초안을 정리하는 중입니다..."
+      );
+
+      renderBusinessPlan(
+        appState
+          .profile,
+
+        appState
+          .selectedIdea,
+
+        appState
+          .analysis
+      );
+
+      showStatus(
+        planStatusCard,
+        planStatusText,
+        "창업 계획 초안 생성 완료!",
+        true
+      );
+
+      emit(
+        "ku:plan-generated"
+      );
+    }
+
+    function getBusinessPlanText() {
+      return planBox
+        .innerText
+        .trim();
     }
 
     function fillSampleProfile() {
@@ -3073,242 +4252,482 @@
           "input[name='certificates']"
         )
         .forEach(
-          (checkbox) => {
+          (
+            checkbox
+          ) => {
             checkbox.checked =
               [
                 "컴퓨터활용능력",
                 "TOEIC/TOEFL/OPIc 등 어학 자격"
-              ].includes(
-                checkbox.value
-              );
+              ]
+                .includes(
+                  checkbox.value
+                );
           }
         );
 
-      document.getElementById(
+      get(
         "interests"
       ).value =
         "AI, 교육, 콘텐츠";
 
-      document.getElementById(
+      get(
         "goal"
       ).value =
         "포트폴리오 제작";
 
-      document.getElementById(
+      get(
         "budget"
       ).value =
         "10";
 
-      document.getElementById(
+      get(
         "time"
       ).value =
         "5";
 
-      document.getElementById(
+      get(
         "businessType"
       ).value =
         "온라인 서비스";
 
-      document.getElementById(
+      get(
         "target"
       ).value =
         "대학생";
 
-      document.getElementById(
+      get(
         "avoid"
       ).value =
         "재고 관리와 오프라인 매장 운영은 피하고 싶음";
     }
 
     function resetApp() {
-      window.location.reload();
+      window
+        .location
+        .reload();
     }
 
-    /* ======================================================
-       10. Events
-    ====================================================== */
+    /* =====================================================
+       13. 저장 프로젝트 복원
+    ===================================================== */
 
-    recommendBtn.addEventListener(
-      "click",
-      async () => {
-        const profile =
-          getUserProfile();
+    function applyProfileToForm(
+      profile
+    ) {
+      primaryCollegeSelect.value =
+        profile
+          ?.primaryMajor
+          ?.college ||
+        "";
 
-        if (
-          !validateProfile(profile)
-        ) {
-          return;
-        }
+      renderMajorOptions(
+        primaryCollegeSelect,
+        primaryMajorSelect,
+        false
+      );
 
-        currentProfile =
-          profile;
+      primaryMajorSelect.value =
+        profile
+          ?.primaryMajor
+          ?.major ||
+        "";
 
-        showStatus(
-          recommendStatusCard,
-          recommendStatusText,
-          "입력 정보를 바탕으로 창업 아이템을 생성하는 중입니다..."
-        );
+      secondaryCollegeSelect.value =
+        profile
+          ?.secondaryMajor
+          ?.college ||
+        "해당 없음";
 
-        setLoading(true);
+      renderMajorOptions(
+        secondaryCollegeSelect,
+        secondaryMajorSelect,
+        true
+      );
 
-        try {
-          currentIdeas =
-            await generateIdeasWithAI(
+      secondaryMajorSelect.value =
+        profile
+          ?.secondaryMajor
+          ?.major ||
+        "해당 없음";
+
+      document
+        .querySelectorAll(
+          "input[name='certificates']"
+        )
+        .forEach(
+          (
+            checkbox
+          ) => {
+            checkbox.checked =
               profile
-            );
-
-          renderIdeas(
-            currentIdeas
-          );
-
-          recommendationSection.classList.remove(
-            "hidden"
-          );
-
-          saveProjectBtn.classList.remove(
-            "hidden"
-          );
-
-          showStatus(
-            recommendStatusCard,
-            recommendStatusText,
-            "추천 아이템 생성 완료!",
-            true
-          );
-
-          recommendationSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-        } catch (error) {
-          alert(
-            `추천 생성에 실패했습니다: ${error.message}`
-          );
-
-          hideStatus(
-            recommendStatusCard
-          );
-        } finally {
-          setLoading(false);
-        }
-      }
-    );
-
-    planBtn.addEventListener(
-      "click",
-      () => {
-        if (
-          !currentProfile ||
-          !selectedIdea ||
-          !currentAnalysis
-        ) {
-          return;
-        }
-
-        showStatus(
-          planStatusCard,
-          planStatusText,
-          "창업 계획 초안을 정리하는 중입니다..."
+                ?.certificates
+                ?.includes(
+                  checkbox.value
+                ) ||
+              false;
+          }
         );
 
-        renderBusinessPlan(
-          currentProfile,
-          selectedIdea,
-          currentAnalysis
+      const values = {
+        interests:
+          profile
+            ?.interests ||
+          "",
+
+        goal:
+          profile
+            ?.goal ||
+          "수익 창출",
+
+        budget:
+          profile
+            ?.budget ||
+          "",
+
+        time:
+          profile
+            ?.time ||
+          "",
+
+        businessType:
+          profile
+            ?.businessType ||
+          "온라인 서비스",
+
+        target:
+          profile
+            ?.target ||
+          "",
+
+        avoid:
+          profile
+            ?.avoid ||
+          ""
+      };
+
+      Object
+        .entries(
+          values
+        )
+        .forEach(
+          ([
+            id,
+            value
+          ]) => {
+            get(
+              id
+            ).value =
+              value;
+          }
+        );
+    }
+
+    function loadProjectState({
+      profile,
+      ideas,
+      selectedIdea,
+      analysis
+    }) {
+      appState.profile =
+        profile ||
+        null;
+
+      appState.ideas =
+        normalizeIdeas(
+          ideas ||
+          []
         );
 
-        planSection.classList.remove(
+      appState.selectedIdea =
+        selectedIdea ||
+        null;
+
+      appState.analysis =
+        analysis
+          ? normalizeAnalysis(
+              analysis
+            )
+          : null;
+
+      appState.planGenerated =
+        false;
+
+      applyProfileToForm(
+        appState.profile
+      );
+
+      renderIdeas(
+        appState.ideas
+      );
+
+      recommendationSection
+        .classList
+        .remove(
           "hidden"
         );
 
+      saveProjectBtn
+        .classList
+        .remove(
+          "hidden"
+        );
+
+      if (
+        appState
+          .selectedIdea &&
+        appState
+          .analysis
+      ) {
+        selectedIdeaText.textContent =
+          `선택한 아이템: ${appState.selectedIdea.name}`;
+
+        workspaceSection
+          .classList
+          .remove(
+            "hidden"
+          );
+
+        renderAnalysis(
+          appState
+            .analysis
+        );
+
+        renderBusinessPlan(
+          appState
+            .profile,
+
+          appState
+            .selectedIdea,
+
+          appState
+            .analysis
+        );
+
+        showStatus(
+          analysisStatusCard,
+          analysisStatusText,
+          "저장된 아이템 분석을 불러왔습니다!",
+          true
+        );
+
         showStatus(
           planStatusCard,
           planStatusText,
-          "창업 계획 초안 생성 완료!",
+          "저장된 창업 계획 초안을 불러왔습니다!",
           true
         );
+
+        switchWorkspaceTab(
+          "analysis"
+        );
+      } else {
+        workspaceSection
+          .classList
+          .add(
+            "hidden"
+          );
       }
-    );
+    }
 
-    heroStartBtn.addEventListener(
-      "click",
-      () =>
-        inputPanel.scrollIntoView({
-          behavior: "smooth"
-        })
-    );
+    /* =====================================================
+       14. 공개 API
+    ===================================================== */
 
-    heroSampleBtn.addEventListener(
-      "click",
-      fillSampleProfile
-    );
+    window.KUApp = {
+      getState() {
+        return {
+          ...appState
+        };
+      },
 
-    sampleBtn.addEventListener(
-      "click",
-      fillSampleProfile
-    );
+      callBackendJson,
 
-    resetBtn.addEventListener(
-      "click",
+      showStatus,
+
+      hideStatus,
+
+      switchWorkspaceTab,
+
+      setForecastTabEnabled,
+
+      loadProjectState,
+
+      openAuthModal,
+
       resetApp
-    );
+    };
 
-    loginBtn.addEventListener(
-      "click",
-      openAuthModal
-    );
+    /* =====================================================
+       15. 이벤트 연결
+    ===================================================== */
 
-    logoutBtn.addEventListener(
-      "click",
-      signOut
-    );
+    heroStartBtn
+      .addEventListener(
+        "click",
+        () => {
+          inputPanel
+            .scrollIntoView({
+              behavior:
+                "smooth"
+            });
+        }
+      );
 
-    closeAuthModalBtn.addEventListener(
-      "click",
-      closeAuthModal
-    );
+    heroSampleBtn
+      .addEventListener(
+        "click",
+        fillSampleProfile
+      );
 
-    googleLoginBtn.addEventListener(
-      "click",
-      signInWithGoogle
-    );
+    sampleBtn
+      .addEventListener(
+        "click",
+        fillSampleProfile
+      );
 
-    guestContinueBtn.addEventListener(
-      "click",
-      closeAuthModal
-    );
+    resetBtn
+      .addEventListener(
+        "click",
+        resetApp
+      );
 
-    certificateChecklist.addEventListener(
-      "change",
-      handleCertificateChange
-    );
+    recommendBtn
+      .addEventListener(
+        "click",
+        recommendIdeas
+      );
 
-    primaryCollegeSelect.addEventListener(
-      "change",
-      () =>
-        renderMajorOptions(
-          primaryCollegeSelect,
-          primaryMajorSelect,
-          false
-        )
-    );
+    planBtn
+      .addEventListener(
+        "click",
+        generateBusinessPlan
+      );
 
-    secondaryCollegeSelect.addEventListener(
-      "change",
-      () =>
-        renderMajorOptions(
-          secondaryCollegeSelect,
-          secondaryMajorSelect,
-          true
-        )
-    );
+    copyPlanBtn
+      .addEventListener(
+        "click",
+        async () => {
+          try {
+            await navigator
+              .clipboard
+              .writeText(
+                getBusinessPlanText()
+              );
+
+            alert(
+              "창업 계획 초안이 복사되었습니다."
+            );
+          } catch {
+            alert(
+              "복사에 실패했습니다. 직접 드래그하여 복사해주세요."
+            );
+          }
+        }
+      );
+
+    analysisTabBtn
+      .addEventListener(
+        "click",
+        () => {
+          switchWorkspaceTab(
+            "analysis"
+          );
+        }
+      );
+
+    forecastTabBtn
+      .addEventListener(
+        "click",
+        () => {
+          if (
+            !forecastTabBtn
+              .disabled
+          ) {
+            switchWorkspaceTab(
+              "forecast"
+            );
+          }
+        }
+      );
+
+    loginBtn
+      .addEventListener(
+        "click",
+        openAuthModal
+      );
+
+    logoutBtn
+      .addEventListener(
+        "click",
+        signOut
+      );
+
+    closeAuthModalBtn
+      .addEventListener(
+        "click",
+        closeAuthModal
+      );
+
+    googleLoginBtn
+      .addEventListener(
+        "click",
+        signInWithGoogle
+      );
+
+    guestContinueBtn
+      .addEventListener(
+        "click",
+        closeAuthModal
+      );
+
+    certificateChecklist
+      .addEventListener(
+        "change",
+        handleCertificateChange
+      );
+
+    primaryCollegeSelect
+      .addEventListener(
+        "change",
+        () => {
+          renderMajorOptions(
+            primaryCollegeSelect,
+            primaryMajorSelect,
+            false
+          );
+        }
+      );
+
+    secondaryCollegeSelect
+      .addEventListener(
+        "change",
+        () => {
+          renderMajorOptions(
+            secondaryCollegeSelect,
+            secondaryMajorSelect,
+            true
+          );
+        }
+      );
+
+    /* =====================================================
+       16. 초기화
+    ===================================================== */
 
     initializeMajorSelectors();
+
     renderCertificateChecklist();
+
     initializeSupabaseClient();
+
+    console.info(
+      "KU STARTUP PLANNER 메인 앱 연결 완료"
+    );
   </script>
 
   <script src="/js/projects.js"></script>
+
   <script src="/js/forecast.js"></script>
 </body>
 </html>
