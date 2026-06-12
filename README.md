@@ -1,5 +1,6 @@
 # KU STARTUP PLANNER
-wwww.m0on1115.com
+[https://www.m0on1115.com](https://www.m0on1115.com/)
+
 
 > **개인의 조건을 반영해 실행 가능한 창업 아이템을 추천하고,  
 > AI 심층 분석과 최신 경제 동향을 연결하여 하나의 창업 프로젝트로 발전시키는 서비스**
