@@ -1,4 +1,4 @@
-# KU STARTUP PLANNER
+# KU STARTUP PLANNER 2024130871 신희문
 [https://www.m0on1115.com](https://www.m0on1115.com/)
 
 
