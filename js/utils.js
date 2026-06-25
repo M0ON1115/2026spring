@@ -305,7 +305,8 @@
       [
         "analysis",
         "forecast",
-        "validation"
+        "validation",
+        "memo"
       ].forEach(
         (tabName) => {
           const selected =

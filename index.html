@@ -9,7 +9,7 @@
   />
 
   <title>KU STARTUP PLANNER</title>
-  <link rel="stylesheet" href="/css/styles.css?v=20260625-validation-logs-final" />
+  <link rel="stylesheet" href="/css/styles.css?v=20260625-memo-summary-tab-final" />
 </head>
 
 <body>
@@ -385,6 +385,20 @@
               대기
             </span>
           </button>
+
+          <button
+            class="tab-btn"
+            id="memoTabBtn"
+            type="button"
+          >
+            메모/요약
+            <span
+              class="tab-badge"
+              id="memoTabBadge"
+            >
+              기록
+            </span>
+          </button>
         </nav>
       </header>
 
@@ -593,6 +607,15 @@
         >
           모든 과제를 완료하셨습니다. 행운을 빕니다!
         </div>
+      </section>
+
+      <section
+        class="tab-panel hidden"
+        id="memoTabPanel"
+      >
+        <div class="forecast-intro">
+          시장 검증 과정에서 확인한 메모, 검증 기록, 자동 변경 이력과 분석 요약을 관리합니다.
+        </div>
 
         <section class="validation-section validation-memo-section">
           <h3 class="section-heading">프로젝트 메모</h3>
@@ -665,7 +688,7 @@
         <section class="validation-section validation-history-section">
           <h3 class="section-heading">자동 변경 이력</h3>
           <p class="validation-section-desc">
-            체크리스트 변경, 메모 수정, 날짜 변경이 발생하면 자동으로 남는 내부 변경 기록입니다.
+            체크리스트 변경, 프로젝트 메모 수정, 검증 기록 추가·수정·삭제가 발생하면 자동으로 남는 내부 변경 기록입니다.
           </p>
           <div
             class="validation-history-list"
@@ -763,17 +786,17 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/js/config.js?v=20260625-validation-logs-final"></script>
-  <script src="/js/data.js?v=20260625-validation-logs-final"></script>
-  <script src="/js/state.js?v=20260625-validation-logs-final"></script>
-  <script src="/js/utils.js?v=20260625-validation-logs-final"></script>
-  <script src="/js/auth.js?v=20260625-validation-logs-final"></script>
-  <script src="/js/form.js?v=20260625-validation-logs-final"></script>
-  <script src="/js/recommendations.js?v=20260625-validation-logs-final"></script>
-  <script src="/js/analysis.js?v=20260625-validation-logs-final"></script>
-  <script src="/js/forecast.js?v=20260625-validation-logs-final"></script>
-  <script src="/js/projects.js?v=20260625-validation-logs-final"></script>
-  <script src="/js/app.js?v=20260625-validation-log-delete-final"></script>
+  <script src="/js/config.js?v=20260625-memo-summary-tab-final"></script>
+  <script src="/js/data.js?v=20260625-memo-summary-tab-final"></script>
+  <script src="/js/state.js?v=20260625-memo-summary-tab-final"></script>
+  <script src="/js/utils.js?v=20260625-memo-summary-tab-final"></script>
+  <script src="/js/auth.js?v=20260625-memo-summary-tab-final"></script>
+  <script src="/js/form.js?v=20260625-memo-summary-tab-final"></script>
+  <script src="/js/recommendations.js?v=20260625-memo-summary-tab-final"></script>
+  <script src="/js/analysis.js?v=20260625-memo-summary-tab-final"></script>
+  <script src="/js/forecast.js?v=20260625-memo-summary-tab-final"></script>
+  <script src="/js/projects.js?v=20260625-memo-summary-tab-final"></script>
+  <script src="/js/app.js?v=20260625-memo-summary-tab-final"></script>
 
 </body>
 </html>

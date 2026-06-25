@@ -263,7 +263,7 @@
     ===================================================== */
 
     .form-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .form-group {
@@ -476,7 +476,7 @@
 
     .workspace-tab-nav {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       margin-top: 22px;
       border-bottom: 1px solid #e5e7eb;
     }
@@ -512,7 +512,7 @@
     .score-grid,
     .analysis-grid,
     .forecast-factor-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .forecast-outlook-grid,
