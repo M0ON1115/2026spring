@@ -3,7 +3,7 @@
 
 
     const FRONTEND_VERSION =
-      "20260625-forecast-validation-1";
+      "20260625-validation-complete-message-v2";
 
     function ensureValidationWorkspaceUi() {
       if (
@@ -153,6 +153,20 @@
         checklist
       );
 
+      const completionMessage =
+        createElement(
+          "div",
+          "validation-completion-message hidden",
+          VALIDATION_COMPLETE_MESSAGE
+        );
+
+      completionMessage.id =
+        "validationCompletionMessage";
+
+      panel.appendChild(
+        completionMessage
+      );
+
       forecastPanel.insertAdjacentElement(
         "afterend",
         panel
@@ -173,7 +187,7 @@
         "validationDynamicStyles";
 
       style.textContent =
-        `.workspace-tab-nav{grid-template-columns:repeat(3,minmax(0,1fr));}.validation-progress-card{margin-top:18px;padding:17px;border:1px solid #e5e7eb;border-radius:18px;background:#f9fafb;}.validation-checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px;}.validation-item{display:flex;align-items:center;gap:10px;padding:15px;border:1px solid #e5e7eb;border-radius:18px;background:white;box-shadow:0 8px 22px rgba(134,38,51,.05);color:#374151;font-size:14px;font-weight:800;line-height:1.55;}.validation-item input{width:auto;margin:0;accent-color:#862633;}@media(max-width:900px){.validation-checklist{grid-template-columns:1fr;}}`;
+        `.workspace-tab-nav{grid-template-columns:repeat(3,minmax(0,1fr));}.validation-progress-card{margin-top:18px;padding:17px;border:1px solid #e5e7eb;border-radius:18px;background:#f9fafb;}.validation-checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px;}.validation-item{display:flex;align-items:center;gap:10px;padding:15px;border:1px solid #e5e7eb;border-radius:18px;background:white;box-shadow:0 8px 22px rgba(134,38,51,.05);color:#374151;font-size:14px;font-weight:800;line-height:1.55;}.validation-item input{width:auto;margin:0;accent-color:#862633;}.validation-completion-message{margin-top:18px;padding:18px;border:1px solid #d8b4bc;border-radius:18px;background:#fbf4f5;color:#862633;font-size:15px;font-weight:900;line-height:1.6;text-align:center;box-shadow:0 10px 24px rgba(134,38,51,.08);}.validation-completion-message.hidden{display:none;}@media(max-width:900px){.validation-checklist{grid-template-columns:1fr;}}`;
 
       document.head.appendChild(
         style
@@ -189,6 +203,12 @@
       ["firstUsers", "첫 사용자 확보 여부"],
       ["firstPayment", "첫 결제 발생 여부"]
     ];
+
+    const VALIDATION_COMPLETE_MESSAGE =
+      "모든 과제를 완료하셨습니다. 행운을 빕니다!";
+
+    let validationCompletionAnnounced =
+      false;
 
     function createEmptyValidationChecklist() {
       return validationItems.reduce(
@@ -212,8 +232,13 @@
       ) {
         validationItems.forEach(
           ([key]) => {
+            const value =
+              raw[key];
+
             base[key] =
-              raw[key] === true;
+              value === true ||
+              value?.done === true ||
+              value?.checked === true;
           }
         );
       }
@@ -310,6 +335,39 @@
       return fallbackStatus;
     }
 
+    function ensureValidationCompletionMessage() {
+      if (
+        get("validationCompletionMessage")
+      ) {
+        return get("validationCompletionMessage");
+      }
+
+      const panel =
+        get("validationTabPanel");
+
+      if (
+        !panel
+      ) {
+        return null;
+      }
+
+      const message =
+        createElement(
+          "div",
+          "validation-completion-message hidden",
+          VALIDATION_COMPLETE_MESSAGE
+        );
+
+      message.id =
+        "validationCompletionMessage";
+
+      panel.appendChild(
+        message
+      );
+
+      return message;
+    }
+
     function validationProgressPercent(checklist) {
       if (
         isValidationComplete(
@@ -348,7 +406,7 @@
       return 25;
     }
 
-    function renderValidationProgress() {
+    function renderValidationProgress(options = {}) {
       if (
         !get("validationProgressFill")
       ) {
@@ -362,6 +420,9 @@
         completedValidationCount(
           checklist
         );
+
+      const isComplete =
+        completed === validationItems.length;
 
       const percent =
         validationProgressPercent(
@@ -377,9 +438,66 @@
       get("validationTabBadge").textContent =
         completed === 0
           ? "대기"
-          : completed === validationItems.length
+          : isComplete
             ? "✓ 완료"
             : `${completed}/${validationItems.length}`;
+
+      const completionMessage =
+        ensureValidationCompletionMessage();
+
+      if (
+        completionMessage
+      ) {
+        completionMessage.textContent =
+          VALIDATION_COMPLETE_MESSAGE;
+
+        completionMessage.classList.toggle(
+          "hidden",
+          !isComplete
+        );
+
+        completionMessage.setAttribute(
+          "role",
+          "status"
+        );
+
+        completionMessage.setAttribute(
+          "aria-live",
+          "polite"
+        );
+
+        if (
+          isComplete &&
+          options.announce === true &&
+          !validationCompletionAnnounced
+        ) {
+          validationCompletionAnnounced =
+            true;
+
+          window.setTimeout(
+            () => {
+              alert(
+                VALIDATION_COMPLETE_MESSAGE
+              );
+
+              completionMessage.scrollIntoView({
+                behavior:
+                  "smooth",
+                block:
+                  "center"
+              });
+            },
+            0
+          );
+        }
+
+        if (
+          !isComplete
+        ) {
+          validationCompletionAnnounced =
+            false;
+        }
+      }
     }
 
     function renderValidationChecklist() {
@@ -420,7 +538,10 @@
               state.validationChecklist[key] =
                 checkbox.checked;
 
-              renderValidationProgress();
+              renderValidationProgress({
+                announce:
+                  true
+              });
 
               try {
                 await saveValidationIfNeeded();
@@ -455,6 +576,9 @@
 
       state.savedValidationSignature =
         null;
+
+      validationCompletionAnnounced =
+        false;
 
       if (
         get("validationChecklist")
