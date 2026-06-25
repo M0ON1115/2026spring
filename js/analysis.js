@@ -128,10 +128,14 @@
       state.forecast =
         null;
 
+      state.validationChecklist =
+        createEmptyValidationChecklist();
+
       state.planGenerated =
         false;
 
       clearForecastUI();
+      clearValidationUI();
 
       get("selectedIdeaText").textContent =
         `선택한 아이템: ${idea.name}`;
@@ -152,6 +156,8 @@
 
       get("forecastTabBtn").disabled =
         true;
+
+      renderValidationChecklist();
 
       showTab("analysis");
 
