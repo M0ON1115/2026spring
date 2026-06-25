@@ -243,5 +243,6 @@
     initializeAuth();
 
     console.info(
-      "KU STARTUP PLANNER 통합 프론트엔드 연결 완료"
+      "KU STARTUP PLANNER front-end loaded:",
+      "20260625-forecast-renderer-1"
     );

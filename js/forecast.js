@@ -1,5 +1,13 @@
 /* KU STARTUP PLANNER - refactored front-end */
 
+    const FORECAST_RENDERER_VERSION =
+      "forecast-renderer-20260625-1";
+
+    console.info(
+      "KU STARTUP PLANNER forecast renderer loaded:",
+      FORECAST_RENDERER_VERSION
+    );
+
 
 
     /* =====================================================
@@ -227,7 +235,12 @@
           /^방향\s*:\s*/i,
           ""
         )
-        .trim();
+        .replace(
+          /^\s*\((?:\+|-|±|\?)\)\s*/,
+          ""
+        )
+        .trim() ||
+        "설명 없음";
     }
 
     function formatDirectionSymbol(
@@ -269,6 +282,38 @@
           ""
         )
           .trim();
+
+      if (
+        /^\s*\(\+\)/.test(
+          direction
+        )
+      ) {
+        return "(+)";
+      }
+
+      if (
+        /^\s*\(-\)/.test(
+          direction
+        )
+      ) {
+        return "(-)";
+      }
+
+      if (
+        /^\s*\(±\)/.test(
+          direction
+        )
+      ) {
+        return "(±)";
+      }
+
+      if (
+        /^\s*\(\?\)/.test(
+          direction
+        )
+      ) {
+        return "(?)";
+      }
 
       if (
         /긍정|증가|확대|상승|기회|성장|개선|활성화|수요 형성|수요 증가/.test(
@@ -325,36 +370,8 @@
         get("forecastSources")
       );
 
-      get("forecastMeta").appendChild(
-        createElement(
-          "span",
-          "forecast-meta-chip",
-          `분석 기준 시각: ${
-            new Intl.DateTimeFormat(
-              "ko-KR",
-              {
-                year:
-                  "numeric",
-
-                month:
-                  "2-digit",
-
-                day:
-                  "2-digit",
-
-                hour:
-                  "2-digit",
-
-                minute:
-                  "2-digit"
-              }
-            ).format(
-              new Date(
-                forecast.fetchedAt
-              )
-            )
-          }`
-        )
+      clear(
+        get("forecastTrendSummary")
       );
 
       get("forecastMeta").appendChild(
@@ -409,14 +426,6 @@
           );
 
           card.appendChild(meta);
-
-          card.appendChild(
-            createElement(
-              "p",
-              "",
-              factor.reason
-            )
-          );
 
           get("forecastFactors").appendChild(
             card
