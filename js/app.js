@@ -84,6 +84,17 @@
       }
     );
 
+    get("validationTabBtn").addEventListener(
+      "click",
+      () => {
+        renderValidationChecklist();
+
+        showTab(
+          "validation"
+        );
+      }
+    );
+
     get("forecastBtn").addEventListener(
       "click",
       () => {
@@ -218,6 +229,12 @@
       "경제 전망 독립 탭 연결 실패"
     );
 
+    console.assert(
+      typeof renderValidationChecklist ===
+        "function",
+      "시장 검증 체크리스트 연결 실패"
+    );
+
 
 
     /* =====================================================
@@ -242,6 +259,9 @@
 
     initializeAuth();
 
+    renderValidationChecklist();
+
     console.info(
-      "KU STARTUP PLANNER 통합 프론트엔드 연결 완료"
+      "KU STARTUP PLANNER front-end loaded:",
+      "20260625-forecast-validation-1"
     );
