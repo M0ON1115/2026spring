@@ -302,26 +302,24 @@
     ===================================================== */
 
     function showTab(tab) {
-      const analysisSelected =
-        tab === "analysis";
+      [
+        "analysis",
+        "forecast",
+        "validation"
+      ].forEach(
+        (tabName) => {
+          const selected =
+            tab === tabName;
 
-      get("analysisTabPanel").classList.toggle(
-        "hidden",
-        !analysisSelected
-      );
+          get(`${tabName}TabPanel`).classList.toggle(
+            "hidden",
+            !selected
+          );
 
-      get("forecastTabPanel").classList.toggle(
-        "hidden",
-        analysisSelected
-      );
-
-      get("analysisTabBtn").classList.toggle(
-        "active",
-        analysisSelected
-      );
-
-      get("forecastTabBtn").classList.toggle(
-        "active",
-        !analysisSelected
+          get(`${tabName}TabBtn`).classList.toggle(
+            "active",
+            selected
+          );
+        }
       );
     }
