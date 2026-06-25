@@ -22,6 +22,9 @@
       forecast:
         null,
 
+      validationChecklist:
+        null,
+
       planGenerated:
         false,
 
@@ -32,5 +35,8 @@
         null,
 
       savedForecastSignature:
+        null,
+
+      savedValidationSignature:
         null
     };
