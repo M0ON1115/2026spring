@@ -854,3 +854,19 @@
         justify-content: flex-start;
       }
     }
+
+
+/* Validation completion message */
+.validation-completion-message {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid #d8b4bc;
+  border-radius: 18px;
+  background: #fbf4f5;
+  color: #862633;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.6;
+  text-align: center;
+  box-shadow: 0 10px 24px rgba(134, 38, 51, 0.08);
+}

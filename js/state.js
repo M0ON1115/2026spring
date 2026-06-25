@@ -25,6 +25,15 @@
       validationChecklist:
         null,
 
+      validationNotes:
+        null,
+
+      projectMemo:
+        "",
+
+      validationHistory:
+        [],
+
       planGenerated:
         false,
 

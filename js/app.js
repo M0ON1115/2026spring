@@ -3,7 +3,7 @@
 
 
     const FRONTEND_VERSION =
-      "20260625-forecast-validation-complete-1";
+      "20260625-validation-memo-history-final";
 
     function ensureValidationWorkspaceUi() {
       if (
@@ -157,7 +157,7 @@
         createElement(
           "div",
           "validation-completion-message hidden",
-          "모든 과제를 완료하셨습니다. 행운을 빕니다!"
+          VALIDATION_COMPLETE_MESSAGE
         );
 
       completionMessage.id =
@@ -165,6 +165,135 @@
 
       panel.appendChild(
         completionMessage
+      );
+
+      const memoSection =
+        createElement(
+          "section",
+          "validation-section validation-memo-section"
+        );
+
+      memoSection.appendChild(
+        createElement(
+          "h3",
+          "section-heading",
+          "프로젝트 메모"
+        )
+      );
+
+      memoSection.appendChild(
+        createElement(
+          "p",
+          "validation-section-desc",
+          "인터뷰 결과, 고객 반응, 아이템 수정 방향 등 프로젝트 진행 중 확인한 내용을 기록합니다."
+        )
+      );
+
+      const memoInput =
+        document.createElement("textarea");
+
+      memoInput.id =
+        "projectMemoInput";
+
+      memoInput.className =
+        "validation-textarea";
+
+      memoInput.rows =
+        5;
+
+      memoInput.placeholder =
+        "예: 대학생 5명 인터뷰 결과, 과제 초안 작성 기능에 대한 수요는 있으나 표절 우려가 큼.";
+
+      memoSection.appendChild(
+        memoInput
+      );
+
+      const memoHelper =
+        createElement(
+          "div",
+          "validation-helper",
+          "메모는 프로젝트 저장 데이터에 함께 보관됩니다."
+        );
+
+      memoHelper.id =
+        "projectMemoHelper";
+
+      memoSection.appendChild(
+        memoHelper
+      );
+
+      panel.appendChild(
+        memoSection
+      );
+
+      const historySection =
+        createElement(
+          "section",
+          "validation-section validation-history-section"
+        );
+
+      historySection.appendChild(
+        createElement(
+          "h3",
+          "section-heading",
+          "수정 이력"
+        )
+      );
+
+      historySection.appendChild(
+        createElement(
+          "p",
+          "validation-section-desc",
+          "시장 검증 항목 변경, 메모 저장, 주요 단계 완료 내역을 시간순으로 기록합니다."
+        )
+      );
+
+      const historyList =
+        createElement(
+          "div",
+          "validation-history-list"
+        );
+
+      historyList.id =
+        "validationHistoryList";
+
+      historySection.appendChild(
+        historyList
+      );
+
+      panel.appendChild(
+        historySection
+      );
+
+      const comparisonSection =
+        createElement(
+          "section",
+          "validation-section validation-comparison-section"
+        );
+
+      comparisonSection.appendChild(
+        createElement(
+          "h3",
+          "section-heading",
+          "분석 기록 요약"
+        )
+      );
+
+      const comparisonBox =
+        createElement(
+          "div",
+          "validation-comparison-box"
+        );
+
+      comparisonBox.id =
+        "validationComparisonBox";
+
+      comparisonSection.appendChild(
+        comparisonBox
+      );
+
+      panel.appendChild(
+        comparisonSection
       );
 
       forecastPanel.insertAdjacentElement(
@@ -187,7 +316,7 @@
         "validationDynamicStyles";
 
       style.textContent =
-        `.workspace-tab-nav{grid-template-columns:repeat(3,minmax(0,1fr));}.validation-progress-card{margin-top:18px;padding:17px;border:1px solid #e5e7eb;border-radius:18px;background:#f9fafb;}.validation-checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px;}.validation-item{display:flex;align-items:center;gap:10px;padding:15px;border:1px solid #e5e7eb;border-radius:18px;background:white;box-shadow:0 8px 22px rgba(134,38,51,.05);color:#374151;font-size:14px;font-weight:800;line-height:1.55;}.validation-item input{width:auto;margin:0;accent-color:#862633;}.validation-completion-message{margin-top:18px;padding:18px;border:1px solid #d8b4bc;border-radius:18px;background:#fbf4f5;color:#862633;font-size:15px;font-weight:900;line-height:1.6;text-align:center;box-shadow:0 10px 24px rgba(134,38,51,.08);}.validation-completion-message.hidden{display:none;}@media(max-width:900px){.validation-checklist{grid-template-columns:1fr;}}`;
+        `.workspace-tab-nav{grid-template-columns:repeat(3,minmax(0,1fr));}.validation-progress-card,.validation-section{margin-top:18px;padding:17px;border:1px solid #e5e7eb;border-radius:18px;background:#f9fafb;}.validation-checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px;}.validation-item{display:block;padding:15px;border:1px solid #e5e7eb;border-radius:18px;background:white;box-shadow:0 8px 22px rgba(134,38,51,.05);color:#374151;font-size:14px;font-weight:800;line-height:1.55;}.validation-item-main{display:flex;align-items:center;gap:10px;}.validation-item input[type="checkbox"]{width:auto;margin:0;accent-color:#862633;}.validation-item-meta{display:grid;grid-template-columns:1fr 150px;gap:10px;margin-top:12px;}.validation-textarea,.validation-note-input,.validation-date-input{width:100%;border:1px solid #e5e7eb;border-radius:12px;background:white;color:#374151;font:inherit;font-size:13px;box-sizing:border-box;}.validation-textarea,.validation-note-input{min-height:76px;padding:10px;resize:vertical;line-height:1.6;}.validation-date-input{height:40px;padding:0 10px;}.validation-helper,.validation-section-desc{margin-top:8px;color:#6b7280;font-size:13px;line-height:1.6;}.validation-completion-message{margin-top:18px;padding:18px;border:1px solid #d8b4bc;border-radius:18px;background:#fbf4f5;color:#862633;font-size:15px;font-weight:900;line-height:1.6;text-align:center;box-shadow:0 10px 24px rgba(134,38,51,.08);}.validation-completion-message.hidden{display:none;}.validation-history-list{display:grid;gap:10px;margin-top:12px;}.validation-history-item{padding:12px 14px;border:1px solid #e5e7eb;border-radius:14px;background:white;color:#374151;font-size:13px;line-height:1.55;}.validation-history-time{display:block;margin-bottom:4px;color:#862633;font-weight:900;}.validation-history-empty{padding:12px 14px;border:1px dashed #d1d5db;border-radius:14px;color:#6b7280;background:white;font-size:13px;}.validation-comparison-box{display:grid;gap:10px;margin-top:12px;}.validation-comparison-item{padding:12px 14px;border:1px solid #e5e7eb;border-radius:14px;background:white;color:#374151;font-size:13px;line-height:1.6;}.validation-comparison-item strong{display:block;margin-bottom:4px;color:#862633;}@media(max-width:900px){.validation-checklist{grid-template-columns:1fr;}.validation-item-meta{grid-template-columns:1fr;}}`;
 
       document.head.appendChild(
         style
@@ -203,6 +332,12 @@
       ["firstUsers", "첫 사용자 확보 여부"],
       ["firstPayment", "첫 결제 발생 여부"]
     ];
+
+    const VALIDATION_COMPLETE_MESSAGE =
+      "모든 과제를 완료하셨습니다. 행운을 빕니다!";
+
+    let validationCompletionAnnounced =
+      false;
 
     function createEmptyValidationChecklist() {
       return validationItems.reduce(
@@ -226,8 +361,13 @@
       ) {
         validationItems.forEach(
           ([key]) => {
+            const value =
+              raw[key];
+
             base[key] =
-              raw[key] === true;
+              value === true ||
+              value?.done === true ||
+              value?.checked === true;
           }
         );
       }
@@ -268,6 +408,72 @@
       ) === validationItems.length;
     }
 
+    function normalizeValidationNotes(raw) {
+      const notes = {};
+
+      validationItems.forEach(
+        ([key]) => {
+          const value =
+            raw?.[key] ||
+            {};
+
+          notes[key] = {
+            memo:
+              typeof value.memo === "string"
+                ? value.memo
+                : "",
+
+            date:
+              typeof value.date === "string"
+                ? value.date
+                : ""
+          };
+        }
+      );
+
+      return notes;
+    }
+
+    function normalizeValidationHistory(raw) {
+      return Array.isArray(raw)
+        ? raw
+            .filter(
+              (entry) =>
+                entry &&
+                typeof entry.message === "string"
+            )
+            .map(
+              (entry) => ({
+                message:
+                  entry.message,
+
+                createdAt:
+                  entry.createdAt ||
+                  new Date().toISOString()
+              })
+            )
+            .slice(-30)
+        : [];
+    }
+
+    function getValidationNotes() {
+      state.validationNotes =
+        normalizeValidationNotes(
+          state.validationNotes
+        );
+
+      return state.validationNotes;
+    }
+
+    function getValidationHistory() {
+      state.validationHistory =
+        normalizeValidationHistory(
+          state.validationHistory
+        );
+
+      return state.validationHistory;
+    }
+
     function selectedIdeaForProjectSave() {
       if (
         !state.selectedIdea
@@ -279,7 +485,18 @@
         ...state.selectedIdea,
 
         validationChecklist:
-          getValidationChecklist()
+          getValidationChecklist(),
+
+        validationNotes:
+          getValidationNotes(),
+
+        projectMemo:
+          typeof state.projectMemo === "string"
+            ? state.projectMemo
+            : "",
+
+        validationHistory:
+          getValidationHistory()
       };
     }
 
@@ -292,6 +509,9 @@
 
       const {
         validationChecklist,
+        validationNotes,
+        projectMemo,
+        validationHistory,
         ...cleanSelectedIdea
       } = selectedIdea;
 
@@ -301,6 +521,24 @@
     function extractValidationChecklist(selectedIdea) {
       return normalizeValidationChecklist(
         selectedIdea?.validationChecklist
+      );
+    }
+
+    function extractValidationNotes(selectedIdea) {
+      return normalizeValidationNotes(
+        selectedIdea?.validationNotes
+      );
+    }
+
+    function extractProjectMemo(selectedIdea) {
+      return typeof selectedIdea?.projectMemo === "string"
+        ? selectedIdea.projectMemo
+        : "";
+    }
+
+    function extractValidationHistory(selectedIdea) {
+      return normalizeValidationHistory(
+        selectedIdea?.validationHistory
       );
     }
 
@@ -344,7 +582,7 @@
         createElement(
           "div",
           "validation-completion-message hidden",
-          "모든 과제를 완료하셨습니다. 행운을 빕니다!"
+          VALIDATION_COMPLETE_MESSAGE
         );
 
       message.id =
@@ -395,7 +633,7 @@
       return 25;
     }
 
-    function renderValidationProgress() {
+    function renderValidationProgress(options = {}) {
       if (
         !get("validationProgressFill")
       ) {
@@ -409,6 +647,9 @@
         completedValidationCount(
           checklist
         );
+
+      const isComplete =
+        completed === validationItems.length;
 
       const percent =
         validationProgressPercent(
@@ -424,7 +665,7 @@
       get("validationTabBadge").textContent =
         completed === 0
           ? "대기"
-          : completed === validationItems.length
+          : isComplete
             ? "✓ 완료"
             : `${completed}/${validationItems.length}`;
 
@@ -435,13 +676,293 @@
         completionMessage
       ) {
         completionMessage.textContent =
-          "모든 과제를 완료하셨습니다. 행운을 빕니다!";
+          VALIDATION_COMPLETE_MESSAGE;
 
         completionMessage.classList.toggle(
           "hidden",
-          completed !== validationItems.length
+          !isComplete
+        );
+
+        completionMessage.setAttribute(
+          "role",
+          "status"
+        );
+
+        completionMessage.setAttribute(
+          "aria-live",
+          "polite"
+        );
+
+        if (
+          isComplete &&
+          options.announce === true &&
+          !validationCompletionAnnounced
+        ) {
+          validationCompletionAnnounced =
+            true;
+
+          window.setTimeout(
+            () => {
+              alert(
+                VALIDATION_COMPLETE_MESSAGE
+              );
+
+              completionMessage.scrollIntoView({
+                behavior:
+                  "smooth",
+                block:
+                  "center"
+              });
+            },
+            0
+          );
+        }
+
+        if (
+          !isComplete
+        ) {
+          validationCompletionAnnounced =
+            false;
+        }
+      }
+    }
+
+    function formatValidationDateTime(value) {
+      const date =
+        value
+          ? new Date(value)
+          : new Date();
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return "기록 시각 확인 불가";
+      }
+
+      return new Intl.DateTimeFormat(
+        "ko-KR",
+        {
+          year:
+            "numeric",
+          month:
+            "2-digit",
+          day:
+            "2-digit",
+          hour:
+            "2-digit",
+          minute:
+            "2-digit"
+        }
+      ).format(date);
+    }
+
+    function appendValidationHistory(message) {
+      const history =
+        getValidationHistory();
+
+      const last =
+        history[history.length - 1];
+
+      if (
+        last?.message === message
+      ) {
+        return;
+      }
+
+      history.push({
+        message,
+        createdAt:
+          new Date().toISOString()
+      });
+
+      state.validationHistory =
+        history.slice(-30);
+    }
+
+    function renderValidationHistory() {
+      const list =
+        get("validationHistoryList");
+
+      if (
+        !list
+      ) {
+        return;
+      }
+
+      clear(list);
+
+      const history =
+        getValidationHistory();
+
+      if (
+        history.length === 0
+      ) {
+        list.appendChild(
+          createElement(
+            "div",
+            "validation-history-empty",
+            "아직 기록된 수정 이력이 없습니다. 체크리스트, 메모, 날짜를 수정하면 자동으로 기록됩니다."
+          )
+        );
+
+        return;
+      }
+
+      history
+        .slice()
+        .reverse()
+        .forEach(
+          (entry) => {
+            const item =
+              createElement(
+                "div",
+                "validation-history-item"
+              );
+
+            item.appendChild(
+              createElement(
+                "span",
+                "validation-history-time",
+                formatValidationDateTime(
+                  entry.createdAt
+                )
+              )
+            );
+
+            item.appendChild(
+              createElement(
+                "span",
+                "",
+                entry.message
+              )
+            );
+
+            list.appendChild(item);
+          }
+        );
+    }
+
+    function renderProjectMemo() {
+      const input =
+        get("projectMemoInput");
+
+      if (
+        !input
+      ) {
+        return;
+      }
+
+      input.value =
+        typeof state.projectMemo === "string"
+          ? state.projectMemo
+          : "";
+    }
+
+    async function handleProjectMemoSave() {
+      const input =
+        get("projectMemoInput");
+
+      if (
+        !input
+      ) {
+        return;
+      }
+
+      const nextMemo =
+        input.value.trim();
+
+      if (
+        nextMemo ===
+        (state.projectMemo || "")
+      ) {
+        return;
+      }
+
+      state.projectMemo =
+        nextMemo;
+
+      appendValidationHistory(
+        nextMemo
+          ? "프로젝트 메모를 수정했습니다."
+          : "프로젝트 메모를 비웠습니다."
+      );
+
+      renderValidationHistory();
+
+      try {
+        await saveValidationIfNeeded();
+      } catch (error) {
+        alert(
+          `프로젝트 메모 저장에 실패했습니다: ${error.message}`
         );
       }
+    }
+
+    function renderValidationComparison() {
+      const box =
+        get("validationComparisonBox");
+
+      if (
+        !box
+      ) {
+        return;
+      }
+
+      clear(box);
+
+      const items = [
+        [
+          "선택 아이템",
+          state.selectedIdea?.name ||
+          "아직 선택된 아이템이 없습니다."
+        ],
+        [
+          "기본 분석",
+          state.analysis
+            ? `완료 · 종합 평가: ${state.analysis.summary || "요약 없음"}`
+            : "아직 기본 분석이 없습니다."
+        ],
+        [
+          "경제 전망",
+          state.forecast
+            ? `완료 · 분석 기준: ${formatValidationDateTime(state.forecast.fetchedAt)}`
+            : "아직 최신 경제 전망이 없습니다."
+        ],
+        [
+          "시장 검증",
+          `${completedValidationCount(getValidationChecklist())}/${validationItems.length}개 항목 완료`
+        ]
+      ];
+
+      items.forEach(
+        ([title, body]) => {
+          const item =
+            createElement(
+              "div",
+              "validation-comparison-item"
+            );
+
+          item.appendChild(
+            createElement(
+              "strong",
+              "",
+              title
+            )
+          );
+
+          item.appendChild(
+            createElement(
+              "span",
+              "",
+              body
+            )
+          );
+
+          box.appendChild(item);
+        }
+      );
     }
 
     function renderValidationChecklist() {
@@ -457,14 +978,23 @@
       const checklist =
         getValidationChecklist();
 
+      const notes =
+        getValidationNotes();
+
       clear(list);
 
       validationItems.forEach(
         ([key, labelText]) => {
-          const label =
+          const item =
+            createElement(
+              "div",
+              "validation-item"
+            );
+
+          const main =
             createElement(
               "label",
-              "validation-item"
+              "validation-item-main"
             );
 
           const checkbox =
@@ -482,7 +1012,17 @@
               state.validationChecklist[key] =
                 checkbox.checked;
 
-              renderValidationProgress();
+              appendValidationHistory(
+                `${labelText} 항목을 ${checkbox.checked ? "완료" : "미완료"}로 변경했습니다.`
+              );
+
+              renderValidationProgress({
+                announce:
+                  true
+              });
+
+              renderValidationHistory();
+              renderValidationComparison();
 
               try {
                 await saveValidationIfNeeded();
@@ -494,9 +1034,9 @@
             }
           );
 
-          label.appendChild(checkbox);
+          main.appendChild(checkbox);
 
-          label.appendChild(
+          main.appendChild(
             createElement(
               "span",
               "",
@@ -504,19 +1044,122 @@
             )
           );
 
-          list.appendChild(label);
+          item.appendChild(main);
+
+          const meta =
+            createElement(
+              "div",
+              "validation-item-meta"
+            );
+
+          const memoInput =
+            document.createElement("textarea");
+
+          memoInput.className =
+            "validation-note-input";
+
+          memoInput.placeholder =
+            "검증 결과 메모";
+
+          memoInput.value =
+            notes[key]?.memo ||
+            "";
+
+          memoInput.addEventListener(
+            "change",
+            async () => {
+              state.validationNotes =
+                getValidationNotes();
+
+              state.validationNotes[key].memo =
+                memoInput.value.trim();
+
+              appendValidationHistory(
+                `${labelText} 메모를 수정했습니다.`
+              );
+
+              renderValidationHistory();
+
+              try {
+                await saveValidationIfNeeded();
+              } catch (error) {
+                alert(
+                  `시장 검증 메모 저장에 실패했습니다: ${error.message}`
+                );
+              }
+            }
+          );
+
+          const dateInput =
+            document.createElement("input");
+
+          dateInput.type =
+            "date";
+
+          dateInput.className =
+            "validation-date-input";
+
+          dateInput.value =
+            notes[key]?.date ||
+            "";
+
+          dateInput.addEventListener(
+            "change",
+            async () => {
+              state.validationNotes =
+                getValidationNotes();
+
+              state.validationNotes[key].date =
+                dateInput.value;
+
+              appendValidationHistory(
+                `${labelText} 검증 날짜를 수정했습니다.`
+              );
+
+              renderValidationHistory();
+
+              try {
+                await saveValidationIfNeeded();
+              } catch (error) {
+                alert(
+                  `시장 검증 날짜 저장에 실패했습니다: ${error.message}`
+                );
+              }
+            }
+          );
+
+          meta.appendChild(memoInput);
+          meta.appendChild(dateInput);
+          item.appendChild(meta);
+
+          list.appendChild(item);
         }
       );
 
       renderValidationProgress();
+      renderProjectMemo();
+      renderValidationHistory();
+      renderValidationComparison();
     }
 
     function clearValidationUI() {
       state.validationChecklist =
         createEmptyValidationChecklist();
 
+      state.validationNotes =
+        normalizeValidationNotes();
+
+      state.projectMemo =
+        "";
+
+      state.validationHistory =
+        [];
+
       state.savedValidationSignature =
         null;
+
+      validationCompletionAnnounced =
+        false;
 
       if (
         get("validationChecklist")
@@ -538,9 +1181,19 @@
       }
 
       const currentSignature =
-        signature(
-          getValidationChecklist()
-        );
+        signature({
+          checklist:
+            getValidationChecklist(),
+
+          notes:
+            getValidationNotes(),
+
+          memo:
+            state.projectMemo || "",
+
+          history:
+            getValidationHistory()
+        });
 
       if (
         state.savedValidationSignature ===
@@ -665,20 +1318,48 @@
         async function loadProjectWithValidation(projectId) {
           await originalLoadProject(projectId);
 
+          const rawSelectedIdea =
+            state.selectedIdea;
+
           state.validationChecklist =
             extractValidationChecklist(
-              state.selectedIdea
+              rawSelectedIdea
+            );
+
+          state.validationNotes =
+            extractValidationNotes(
+              rawSelectedIdea
+            );
+
+          state.projectMemo =
+            extractProjectMemo(
+              rawSelectedIdea
+            );
+
+          state.validationHistory =
+            extractValidationHistory(
+              rawSelectedIdea
             );
 
           state.selectedIdea =
             stripValidationFromSelectedIdea(
-              state.selectedIdea
+              rawSelectedIdea
             );
 
           state.savedValidationSignature =
-            signature(
-              getValidationChecklist()
-            );
+            signature({
+              checklist:
+                getValidationChecklist(),
+
+              notes:
+                getValidationNotes(),
+
+              memo:
+                state.projectMemo || "",
+
+              history:
+                getValidationHistory()
+            });
 
           renderValidationChecklist();
         };
@@ -687,6 +1368,15 @@
     ensureValidationWorkspaceUi();
     ensureValidationStyles();
     patchValidationProjectFlow();
+
+    if (
+      get("projectMemoInput")
+    ) {
+      get("projectMemoInput").addEventListener(
+        "change",
+        handleProjectMemoSave
+      );
+    }
 
 
 
