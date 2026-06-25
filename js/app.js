@@ -497,14 +497,14 @@
       const originalDeriveStatus =
         deriveStatus;
 
-      deriveStatus =
-        function deriveStatusWithValidation() {
-          return validationStatusFromChecklist(
-            state.validationChecklist,
-            originalDeriveStatus()
-          );
-        };
-
+      /*
+       * DB의 projects.status는 기존 check constraint가 허용하는
+       * draft/recommended/selected/analyzed/forecasted 값만 저장한다.
+       *
+       * 시장 검증 단계(validating, mvp_validated)는 selected_idea 안의
+       * validationChecklist를 기준으로 화면에서만 계산한다.
+       * 이렇게 해야 Supabase의 projects_status_check 오류를 피할 수 있다.
+       */
       syncProjectMetadata =
         async function syncProjectMetadataWithValidation() {
           if (
@@ -524,7 +524,7 @@
                   "새 창업 프로젝트",
 
                 status:
-                  deriveStatus(),
+                  originalDeriveStatus(),
 
                 selected_idea:
                   selectedIdeaForProjectSave()
