@@ -34,6 +34,9 @@
       validationHistory:
         [],
 
+      validationLogs:
+        [],
+
       planGenerated:
         false,
 

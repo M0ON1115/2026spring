@@ -9,7 +9,7 @@
   />
 
   <title>KU STARTUP PLANNER</title>
-  <link rel="stylesheet" href="/css/styles.css?v=20260625-validation-memo-history-final" />
+  <link rel="stylesheet" href="/css/styles.css?v=20260625-validation-logs-final" />
 </head>
 
 <body>
@@ -593,6 +593,93 @@
         >
           모든 과제를 완료하셨습니다. 행운을 빕니다!
         </div>
+
+        <section class="validation-section validation-memo-section">
+          <h3 class="section-heading">프로젝트 메모</h3>
+          <p class="validation-section-desc">
+            인터뷰 결과, 고객 반응, 아이템 수정 방향 등 프로젝트 진행 중 확인한 내용을 기록합니다.
+          </p>
+          <textarea
+            class="validation-textarea"
+            id="projectMemoInput"
+            rows="5"
+            placeholder="예: 대학생 5명 인터뷰 결과, 과제 초안 작성 기능에 대한 수요는 있으나 표절 우려가 큼."
+          ></textarea>
+          <div
+            class="validation-helper"
+            id="projectMemoHelper"
+          >
+            메모는 프로젝트 저장 데이터에 함께 보관됩니다.
+          </div>
+        </section>
+
+        <section class="validation-section validation-log-section">
+          <h3 class="section-heading">검증 기록</h3>
+          <p class="validation-section-desc">
+            고객 인터뷰, 설문조사, 경쟁 조사, 아이디어 수정 등 시장 검증 과정에서 확인한 내용을 기록 단위로 추가합니다.
+          </p>
+          <div class="validation-log-form">
+            <select
+              class="validation-input"
+              id="validationLogType"
+            >
+              <option value="customer_interview">고객 인터뷰</option>
+              <option value="survey">설문조사</option>
+              <option value="competitor_research">경쟁 조사</option>
+              <option value="idea_revision">아이디어 수정</option>
+              <option value="mvp_test">MVP 테스트</option>
+              <option value="payment_test">결제 검증</option>
+              <option value="other">기타</option>
+            </select>
+            <input
+              class="validation-input"
+              id="validationLogDate"
+              type="date"
+            />
+            <input
+              class="validation-input"
+              id="validationLogTitle"
+              type="text"
+              placeholder="기록 제목"
+            />
+            <textarea
+              class="validation-textarea"
+              id="validationLogContent"
+              rows="4"
+              placeholder="예: 고려대 학생 5명 인터뷰. 과제 초안 작성 기능에는 관심이 있었지만 표절 우려가 컸음."
+            ></textarea>
+            <button
+              class="validation-log-add-btn"
+              id="addValidationLogBtn"
+              type="button"
+            >
+              기록 추가
+            </button>
+          </div>
+          <div
+            class="validation-log-list"
+            id="validationLogList"
+          ></div>
+        </section>
+
+        <section class="validation-section validation-history-section">
+          <h3 class="section-heading">자동 변경 이력</h3>
+          <p class="validation-section-desc">
+            체크리스트 변경, 메모 수정, 날짜 변경이 발생하면 자동으로 남는 내부 변경 기록입니다.
+          </p>
+          <div
+            class="validation-history-list"
+            id="validationHistoryList"
+          ></div>
+        </section>
+
+        <section class="validation-section validation-comparison-section">
+          <h3 class="section-heading">분석 기록 요약</h3>
+          <div
+            class="validation-comparison-box"
+            id="validationComparisonBox"
+          ></div>
+        </section>
       </section>
     </section>
   </main>
@@ -676,17 +763,17 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/js/config.js?v=20260625-validation-memo-history-final"></script>
-  <script src="/js/data.js?v=20260625-validation-memo-history-final"></script>
-  <script src="/js/state.js?v=20260625-validation-memo-history-final"></script>
-  <script src="/js/utils.js?v=20260625-validation-memo-history-final"></script>
-  <script src="/js/auth.js?v=20260625-validation-memo-history-final"></script>
-  <script src="/js/form.js?v=20260625-validation-memo-history-final"></script>
-  <script src="/js/recommendations.js?v=20260625-validation-memo-history-final"></script>
-  <script src="/js/analysis.js?v=20260625-validation-memo-history-final"></script>
-  <script src="/js/forecast.js?v=20260625-validation-memo-history-final"></script>
-  <script src="/js/projects.js?v=20260625-validation-memo-history-final"></script>
-  <script src="/js/app.js?v=20260625-validation-memo-history-final"></script>
+  <script src="/js/config.js?v=20260625-validation-logs-final"></script>
+  <script src="/js/data.js?v=20260625-validation-logs-final"></script>
+  <script src="/js/state.js?v=20260625-validation-logs-final"></script>
+  <script src="/js/utils.js?v=20260625-validation-logs-final"></script>
+  <script src="/js/auth.js?v=20260625-validation-logs-final"></script>
+  <script src="/js/form.js?v=20260625-validation-logs-final"></script>
+  <script src="/js/recommendations.js?v=20260625-validation-logs-final"></script>
+  <script src="/js/analysis.js?v=20260625-validation-logs-final"></script>
+  <script src="/js/forecast.js?v=20260625-validation-logs-final"></script>
+  <script src="/js/projects.js?v=20260625-validation-logs-final"></script>
+  <script src="/js/app.js?v=20260625-validation-logs-final"></script>
 
 </body>
 </html>
