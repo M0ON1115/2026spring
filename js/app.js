@@ -3,7 +3,7 @@
 
 
     const FRONTEND_VERSION =
-      "20260625-validation-complete-message-v2";
+      "20260625-forecast-validation-complete-1";
 
     function ensureValidationWorkspaceUi() {
       if (
@@ -157,7 +157,7 @@
         createElement(
           "div",
           "validation-completion-message hidden",
-          VALIDATION_COMPLETE_MESSAGE
+          "모든 과제를 완료하셨습니다. 행운을 빕니다!"
         );
 
       completionMessage.id =
@@ -204,12 +204,6 @@
       ["firstPayment", "첫 결제 발생 여부"]
     ];
 
-    const VALIDATION_COMPLETE_MESSAGE =
-      "모든 과제를 완료하셨습니다. 행운을 빕니다!";
-
-    let validationCompletionAnnounced =
-      false;
-
     function createEmptyValidationChecklist() {
       return validationItems.reduce(
         (checklist, [key]) => {
@@ -232,13 +226,8 @@
       ) {
         validationItems.forEach(
           ([key]) => {
-            const value =
-              raw[key];
-
             base[key] =
-              value === true ||
-              value?.done === true ||
-              value?.checked === true;
+              raw[key] === true;
           }
         );
       }
@@ -355,7 +344,7 @@
         createElement(
           "div",
           "validation-completion-message hidden",
-          VALIDATION_COMPLETE_MESSAGE
+          "모든 과제를 완료하셨습니다. 행운을 빕니다!"
         );
 
       message.id =
@@ -406,7 +395,7 @@
       return 25;
     }
 
-    function renderValidationProgress(options = {}) {
+    function renderValidationProgress() {
       if (
         !get("validationProgressFill")
       ) {
@@ -420,9 +409,6 @@
         completedValidationCount(
           checklist
         );
-
-      const isComplete =
-        completed === validationItems.length;
 
       const percent =
         validationProgressPercent(
@@ -438,7 +424,7 @@
       get("validationTabBadge").textContent =
         completed === 0
           ? "대기"
-          : isComplete
+          : completed === validationItems.length
             ? "✓ 완료"
             : `${completed}/${validationItems.length}`;
 
@@ -449,54 +435,12 @@
         completionMessage
       ) {
         completionMessage.textContent =
-          VALIDATION_COMPLETE_MESSAGE;
+          "모든 과제를 완료하셨습니다. 행운을 빕니다!";
 
         completionMessage.classList.toggle(
           "hidden",
-          !isComplete
+          completed !== validationItems.length
         );
-
-        completionMessage.setAttribute(
-          "role",
-          "status"
-        );
-
-        completionMessage.setAttribute(
-          "aria-live",
-          "polite"
-        );
-
-        if (
-          isComplete &&
-          options.announce === true &&
-          !validationCompletionAnnounced
-        ) {
-          validationCompletionAnnounced =
-            true;
-
-          window.setTimeout(
-            () => {
-              alert(
-                VALIDATION_COMPLETE_MESSAGE
-              );
-
-              completionMessage.scrollIntoView({
-                behavior:
-                  "smooth",
-                block:
-                  "center"
-              });
-            },
-            0
-          );
-        }
-
-        if (
-          !isComplete
-        ) {
-          validationCompletionAnnounced =
-            false;
-        }
       }
     }
 
@@ -538,10 +482,7 @@
               state.validationChecklist[key] =
                 checkbox.checked;
 
-              renderValidationProgress({
-                announce:
-                  true
-              });
+              renderValidationProgress();
 
               try {
                 await saveValidationIfNeeded();
@@ -576,9 +517,6 @@
 
       state.savedValidationSignature =
         null;
-
-      validationCompletionAnnounced =
-        false;
 
       if (
         get("validationChecklist")
